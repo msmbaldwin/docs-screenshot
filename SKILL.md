@@ -60,7 +60,7 @@ The user has an existing markdown article with screenshots that need to be valid
 
 ## Quick Start
 
-> **Note:** This skill uses `playwright-cli` commands (from the Copilot CLI playwright-cli skill), which run headless by default. If you're using VS Code with the [Playwright MCP server](https://github.com/microsoft/playwright-mcp), configure it with `--headless --browser=msedge` to avoid browser popups. See [Phase 1](#phase-1-authentication--setup) for details.
+> **HEADLESS BY DEFAULT:** All browser automation MUST run headless to avoid interfering with (or being interfered by) the user's desktop. The only exception is when MFA or Conditional Access requires manual user interaction; in that case, notify the user, switch to a visible browser temporarily, and return to headless after authentication completes. See [Phase 1](#phase-1-authentication--setup) for details.
 
 ```bash
 # 1. Open Azure portal in Edge with persistent profile (inherits your SSO)
@@ -121,8 +121,15 @@ This skill works with ANY Microsoft web portal that uses Microsoft SSO. Choose t
 **Browser automation tool:** This skill uses browser automation via one of these approaches (adapt commands to your environment):
 - **Copilot CLI**: Uses the `playwright-cli` skill (install with `playwright-cli install --skills`)
 - **VS Code / other editors**: Uses the [Playwright MCP server](https://github.com/microsoft/playwright-mcp) (`npx @playwright/mcp@latest --headless --browser=msedge`)
+- **Playwright MCP tools**: When available in the tool list (e.g., `playwright-browser_navigate`, `playwright-browser_snapshot`), use those directly. They handle headless mode via their server configuration.
 
 The commands in this skill use `playwright-cli` syntax. If you are using the Playwright MCP server instead, the equivalent MCP tool calls are similar (e.g., `browser_navigate` instead of `playwright-cli goto`). Adapt as needed for your environment.
+
+**CRITICAL: Headless-first policy.** Always run headless to avoid desktop interference:
+- The browser runs in the background; the user never sees a window pop up
+- This is the default for both `playwright-cli` and the Playwright MCP server
+- The ONLY exception: MFA/Conditional Access prompts that require manual interaction
+- If MFA is triggered: notify the user, explain what is needed, and ask them to complete it. If the headless browser cannot render the MFA prompt, temporarily switch to visible mode, then return to headless.
 
 **Open browser with persistent Edge profile (picks up existing Microsoft SSO):**
 ```bash
@@ -152,8 +159,11 @@ playwright-cli snapshot
 #   $env:USERNAME + "@microsoft.com"  (as a guess, confirm with user)
 playwright-cli fill <ref> "<user's email>"
 playwright-cli click <submit-ref>
-# MFA may be triggered - if so, pause and ask the user to complete it manually
-# then wait for the redirect
+# MFA may be triggered - if so:
+#   1. Notify the user: "MFA required. Please complete the authentication prompt."
+#   2. If headless browser can't render the MFA UI, switch to visible mode temporarily
+#   3. Wait for the user to confirm completion
+#   4. Resume headless operation
 playwright-cli run-code "async page => { await page.waitForLoadState('networkidle'); }"
 ```
 
