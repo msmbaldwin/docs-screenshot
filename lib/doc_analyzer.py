@@ -530,6 +530,28 @@ class DocAnalyzer:
                     )
                     break
 
+        # Rule: if a button is highlighted with a callout in the original
+        # AND the screenshot shows a flyout/panel whose title matches that
+        # button label, then the button was clicked before the screenshot.
+        # Detect this by checking if the alt text or context mentions both
+        # a button name and "deleted", "manage", or similar action words
+        # that imply a flyout was triggered.
+        if not needs:
+            ctx_lower = combined_text.lower()
+            # Look for patterns like "manage deleted X" which strongly imply
+            # a button was clicked to open a management flyout.
+            manage_pattern = re.search(
+                r"\b(manage\s+deleted|manage\s+\w+\s+resources?|deleted\s+resources?)\b",
+                ctx_lower,
+            )
+            if manage_pattern:
+                needs = True
+                trigger = manage_pattern.group(0).strip()
+                reasons.append(
+                    f"Context references '{trigger}', which implies a "
+                    f"management flyout was opened via a button click."
+                )
+
         # If no specific trigger found but flyout keywords exist, try to
         # identify the most likely trigger from preceding actions.
         if needs and trigger is None and image_ref.preceding_actions:

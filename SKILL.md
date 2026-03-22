@@ -235,9 +235,10 @@ The analyzer extracts three types of objects:
 **Decision tree for flyouts and panels:**
 
 1. Does the doc say "click X" or "select X" before this screenshot? → Perform that click/selection
-2. Does the original image show a flyout or panel open? → Open it
-3. Does the doc describe specific data visible in the flyout? → Create that data first
-4. Is data visible in the original but NOT described in the doc and has no callout? → Incidental data, skip creating it
+2. Is a button highlighted with a callout box in the original, AND the screenshot shows a flyout/panel whose title matches that button's label? → The button was clicked to reveal the flyout. Click it before capture.
+3. Does the original image show a flyout or panel open? → Open it
+4. Does the doc describe specific data visible in the flyout? → Create that data first
+5. Is data visible in the original but NOT described in the doc and has no callout? → Incidental data, skip creating it
 
 **Required vs. incidental data:**
 - If an element has a red callout box in the original screenshot, the data it contains is **required**. Create matching data before capture.
