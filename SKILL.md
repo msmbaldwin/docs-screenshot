@@ -572,11 +572,25 @@ Some portal navigation panes hide items behind a "More" or "Show more" button. I
 2. Click it to expand the full list of nav items
 3. Retry finding the target nav item
 
-This is particularly common in Azure AI Foundry portal (docs in the `foundry/` folder, NOT `foundry-classic/`). See `lib/repo_config.py` for the list of known hidden nav items per repo.
+**Azure AI Foundry specific:** The Foundry portal has two experiences: "New Foundry" and "Classic". When navigating to a Foundry project, the portal may default to one or the other. If the nav pane does not show the expected items (Playgrounds, Fine-tuning, Models + endpoints, etc.):
+
+1. Look for a toggle or selector at the top of the page to switch between "New Foundry" and "Classic" experiences
+2. Select "New Foundry" (unless the doc is specifically in the `foundry-classic/` folder)
+3. After switching, the left nav items should update to show the expected items
+4. If items are still hidden, check for the "... More" button and click to reveal them
+
+This applies to all docs in the `foundry/` folder of azure-ai-docs-pr (NOT `foundry-classic/`). See `lib/repo_config.py` for the list of known hidden nav items per repo.
 
 ```bash
 playwright-cli run-code "async page => {
-  // Example: expand hidden nav items in AI Foundry
+  // Step 1: Switch to New Foundry experience if toggle is available
+  const newFoundryToggle = await page.locator('button:has-text(\"New Foundry\"), [aria-label*=\"New Foundry\"]').first();
+  if (await newFoundryToggle.isVisible({ timeout: 2000 }).catch(() => false)) {
+    await newFoundryToggle.click();
+    await page.waitForTimeout(2000);
+  }
+  
+  // Step 2: Expand hidden nav items via More button
   const moreBtn = await page.locator('button:has-text(\"More\"), button:has-text(\"Show more\")').first();
   if (await moreBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
     await moreBtn.click();
@@ -593,8 +607,9 @@ After navigating to the target page, validate that you reached the correct page 
 
 1. **Title/breadcrumb match**: Does the page title or breadcrumb trail match the expected resource type from the doc?
 2. **URL resource provider**: Does the URL contain the expected resource provider (e.g., `Microsoft.CognitiveServices` vs `Microsoft.OpenAI`)?
-3. **Service identity**: If the doc mentions "Azure OpenAI", verify you are on an OpenAI resource, not a generic Cognitive Services resource
-4. **JSON view validation**: When the doc shows a JSON view, verify expected JSON properties (like `networkAcls`, `sku`, `kind`) appear in the page
+3. **Service identity**: If the doc mentions "Azure OpenAI", verify you are on an OpenAI resource, not a generic Cognitive Services resource. **Always check the doc text for the specific resource type** (e.g., "Navigate to your Azure OpenAI resource" means kind=OpenAI, NOT kind=CognitiveServices).
+4. **Original screenshot match**: If the original screenshot shows a specific resource type label (e.g., "Azure OpenAI" in the heading or breadcrumb), the captured screenshot MUST show the same resource type. Never substitute a generic Cognitive Services resource when the doc and original clearly show Azure OpenAI.
+5. **JSON view validation**: When the doc shows a JSON view, verify expected JSON properties (like `networkAcls`, `sku`, `kind`) appear in the page
 
 ```bash
 playwright-cli run-code "async page => {

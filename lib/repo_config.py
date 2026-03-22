@@ -51,8 +51,10 @@ REPO_CONFIGS: dict[str, dict[str, Any]] = {
                 ),
                 "nav_hints": [
                     "Use Azure AI Foundry portal (ai.azure.com), NOT foundry-classic.",
-                    "Left-nav items may be hidden behind a 'More' button.",
+                    "If the portal shows a 'New Foundry' vs 'Classic' toggle at the top, select 'New Foundry'.",
+                    "Left-nav items may be hidden behind a '... More' button at the bottom of the nav pane.",
                     "Playgrounds, Fine-tuning, and Models+endpoints are commonly hidden behind 'More'.",
+                    "After switching to New Foundry or clicking More, wait for the nav pane to refresh.",
                 ],
                 "known_hidden_nav_items": [
                     "Playgrounds",
