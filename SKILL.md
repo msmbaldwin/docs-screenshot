@@ -201,6 +201,38 @@ playwright-cli run-code "async page => {
 }"
 ```
 
+### Phase 2.5: Doc-Driven Interaction Analysis
+
+Before capturing any screenshot, thoroughly read the documentation text around the image reference. This analysis determines what interactions (clicks, expansions, toggles) must be performed before capture and what data must exist in the portal.
+
+**Use `lib/doc_analyzer.py` to parse the markdown:**
+
+```python
+from lib.doc_analyzer import DocAnalyzer
+
+analyzer = DocAnalyzer(article_path)
+for img_ref in analyzer.image_references:
+    steps = analyzer.get_interaction_steps(img_ref)      # InteractionStep objects
+    flyout_reqs = analyzer.get_flyout_requirements(img_ref)
+    data_reqs = analyzer.get_data_requirements(img_ref)   # DataRequirement objects
+```
+
+The analyzer extracts three types of objects:
+- **`ImageReference`**: The image path, alt text, and surrounding doc context
+- **`InteractionStep`**: Action verbs (click, select, expand, navigate, toggle) and their UI targets, extracted from the doc text preceding the image
+- **`DataRequirement`**: Data that must exist in the portal for the screenshot to be accurate
+
+**Decision tree for flyouts and panels:**
+
+1. Does the doc say "click X" or "select X" before this screenshot? → Perform that click/selection
+2. Does the original image show a flyout or panel open? → Open it
+3. Does the doc describe specific data visible in the flyout? → Create that data first
+4. Is data visible in the original but NOT described in the doc and has no callout? → Incidental data, skip creating it
+
+**Required vs. incidental data:**
+- If an element has a red callout box in the original screenshot, the data it contains is **required**. Create matching data before capture.
+- If data is visible in the screenshot but has no callout and is not mentioned in the doc text, it is **incidental**. Do not spend effort creating it; whatever appears naturally is fine.
+
 ### Phase 3: Azure Resource Provisioning
 
 If the screenshot requires specific Azure resources to exist, create them using Azure CLI:
@@ -228,6 +260,25 @@ az group show --name contoso-rg --query "{name:name, location:location}"
 # Ask user before deleting
 az group delete --name contoso-rg --yes --no-wait
 ```
+
+### Phase 3.5: Repo-Specific Configuration Loading
+
+Before navigating to the target page, load any repo-specific configuration that affects how the skill interacts with the portal.
+
+```python
+from lib.repo_config import detect_repo_from_path, get_path_rules
+
+repo = detect_repo_from_path(article_path)
+rules = get_path_rules(repo, article_path)
+```
+
+The config system provides:
+- **Navigation hints**: Portal-specific interaction patterns (e.g., Azure AI Foundry "More" button handling for hidden nav items)
+- **Service rename awareness**: Maps old service names to new ones (e.g., "Form Recognizer" → "Document Intelligence") so the skill navigates to the correct current page
+- **Portal privilege notes**: Flags pages that require elevated access (e.g., Fabric admin portal requires admin role)
+- **Path rules**: Doc-path-based behavior overrides (e.g., docs in `foundry/` use different navigation patterns than `foundry-classic/`)
+
+The config is embedded directly in the skill for portability. Repo owners add their config via PR to `lib/repo_config.py`; no external config files are needed.
 
 ### Phase 4: Window Sizing & Screenshot Capture
 
@@ -320,7 +371,7 @@ playwright-cli run-code "async page => {
 Use the screenshot processor to apply all transformations:
 
 ```bash
-python F:\home\azure-screenshot\lib\screenshot_processor.py \
+python lib/screenshot_processor.py \
   --dom-json dom_data.json \
   --image raw-screenshot.png \
   --output my-final-screenshot.png \
@@ -502,6 +553,66 @@ playwright-cli run-code "async page => {
 
 **When recreating callouts from original screenshots:** Study the original image carefully to identify WHICH elements have red boxes, then use the DOM finder above to locate those same elements in the recaptured page.
 
+**Handling hidden navigation items:**
+
+Some portal navigation panes hide items behind a "More" or "Show more" button. If an expected nav item (e.g., "Playgrounds", "Fine-tuning") is not found in the left navigation pane:
+
+1. Look for a "More" or "Show more" button at the bottom of the nav list
+2. Click it to expand the full list of nav items
+3. Retry finding the target nav item
+
+This is particularly common in Azure AI Foundry portal (docs in the `foundry/` folder, NOT `foundry-classic/`). See `lib/repo_config.py` for the list of known hidden nav items per repo.
+
+```bash
+playwright-cli run-code "async page => {
+  // Example: expand hidden nav items in AI Foundry
+  const moreBtn = await page.locator('button:has-text(\"More\"), button:has-text(\"Show more\")').first();
+  if (await moreBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
+    await moreBtn.click();
+    await page.waitForTimeout(500);
+  }
+}"
+```
+
+### Phase 8.5: Navigation Validation Gate
+
+After navigating to the target page, validate that you reached the correct page before capturing.
+
+**Validation checks:**
+
+1. **Title/breadcrumb match**: Does the page title or breadcrumb trail match the expected resource type from the doc?
+2. **URL resource provider**: Does the URL contain the expected resource provider (e.g., `Microsoft.CognitiveServices` vs `Microsoft.OpenAI`)?
+3. **Service identity**: If the doc mentions "Azure OpenAI", verify you are on an OpenAI resource, not a generic Cognitive Services resource
+4. **JSON view validation**: When the doc shows a JSON view, verify expected JSON properties (like `networkAcls`, `sku`, `kind`) appear in the page
+
+```bash
+playwright-cli run-code "async page => {
+  const url = page.url();
+  const title = await page.title();
+  const breadcrumb = await page.locator('[aria-label=\"Breadcrumb\"], .fxs-breadcrumb').textContent().catch(() => '');
+  return { url, title, breadcrumb };
+}"
+```
+
+**Self-correction on failure:**
+
+If validation fails, attempt to navigate to the correct resource before flagging an error:
+- Wrong resource type? Navigate to the correct resource via the portal search bar
+- Wrong service? Check if the service has been renamed and use the current name
+- Still failing? Flag as `NAVIGATION_FAILURE` using `lib/failure_analyzer.py` and continue to the next screenshot
+
+```python
+from lib.failure_analyzer import classify_failure
+
+result = classify_failure(
+    expected_url_fragment="Microsoft.OpenAI",
+    actual_url=page_url,
+    expected_title_keywords=["Azure OpenAI"],
+    actual_title=page_title,
+)
+# result.category, result.severity, result.explanation, result.recommendation
+```
+
 ### Phase 9: Final Review in GIMP
 
 The processor automatically opens the result in GIMP. In GIMP, the user should:
@@ -523,6 +634,58 @@ After processing, the skill outputs a summary:
 - Each PII item: original value, type, severity, replacement value, pixel location
 - Number of callout boxes drawn
 - Whether cropping was applied
+- **Failure category and severity** for each screenshot (see [Failure Categories Reference](#failure-categories-reference))
+- **Human-readable explanation** of what went wrong, if applicable
+- **Recommendation** for the human reviewer (e.g., "Re-run with admin credentials", "Update doc to reflect service rename")
+- **Report badge** (emoji + label) for each entry in the HTML comparison report
+
+### Phase 10.5: Post-Capture Validation Pipeline
+
+After each screenshot capture, run the validation pipeline before moving to the next image.
+
+**PII post-scan:**
+Run a final PII scan on the captured screenshot's DOM text. If PII remains after scrubbing, flag the capture as `PII_LEAK` and retry the scrub-and-capture cycle.
+
+**Page change analysis:**
+
+```python
+from lib.page_change_analyzer import analyze_changes
+
+changes = analyze_changes(
+    original_title="Create a resource - Azure AI services",
+    captured_title="Create a resource - Azure OpenAI",
+    original_service="Azure AI services",
+    captured_service="Azure OpenAI",
+)
+# changes.has_rename, changes.rename_details, changes.layout_changed
+```
+
+Compare original vs. captured page titles and detect service renames or significant UI restructuring. Flag cases where the documentation itself may need updating beyond just the screenshot.
+
+**Additional checks:**
+- **Privilege failures**: Search DOM text for "Access denied", "Forbidden", "You don't have permission", "Unauthorized". Flag as `PRIVILEGE_FAILURE`.
+- **Callout target verification**: Confirm that all expected callout target elements were found and that callout boxes were drawn at valid positions.
+- **Visual similarity**: Compare the original and captured screenshots for gross structural differences (layout changes, missing panels, completely different pages).
+
+**Failure classification:**
+
+```python
+from lib.failure_analyzer import classify_failure, FailureReport
+
+report = classify_failure(
+    pii_scan_result=pii_result,
+    page_changes=changes,
+    callout_results=callout_hits,
+    dom_text=captured_dom_text,
+)
+# report.category (e.g., "PII_LEAK", "PRIVILEGE_FAILURE")
+# report.severity ("error", "warning", "info")
+# report.explanation (human-readable)
+# report.recommendation (what the reviewer should do)
+# report.badge (emoji + label for HTML report)
+```
+
+If any check fails, generate a `FailureReport` with an actionable explanation. The report is included in the Phase 10 summary and the comparison HTML report.
 
 ---
 
@@ -549,6 +712,24 @@ Read the **alt text**, the **surrounding markdown** (especially numbered steps),
 - What elements have callout boxes
 - How the image is cropped (full browser frame vs. focused view)
 
+### Step 2.5: Analyze interaction requirements
+
+For each image, use `DocAnalyzer` to extract what must happen before capture:
+
+```python
+from lib.doc_analyzer import DocAnalyzer
+
+analyzer = DocAnalyzer(article_path)
+for img_ref in analyzer.image_references:
+    steps = analyzer.get_interaction_steps(img_ref)
+    flyouts = analyzer.get_flyout_requirements(img_ref)
+    data = analyzer.get_data_requirements(img_ref)
+```
+
+- **Interaction steps**: What to click, select, expand, or toggle before the screenshot (extracted from action verbs in the doc text)
+- **Flyout requirements**: Whether a panel, blade, or dropdown must be open
+- **Data requirements**: What data must exist, distinguishing **required** (has callout or is described in doc) from **incidental** (visible but not highlighted or mentioned)
+
 ### Step 3: Plan resource provisioning
 
 Examine all images together to build a single resource provisioning plan:
@@ -563,10 +744,14 @@ Follow the full workflow (Phases 1-9) for each screenshot, saving to the correct
 ### Step 5: Generate comparison report
 
 For each image, report:
+- **File paths**: Full repo-root-relative path for each doc and image (never local filesystem paths)
 - Original file: dimensions, size, exists?
 - New file: dimensions, size
 - What changed (new resources, updated UI, different crop)
 - Any PII that was found and replaced
+- **Failure category and explanation** for any captures that did not succeed (see [Failure Categories Reference](#failure-categories-reference))
+- **Page change flags** when the service has been restructured or renamed since the original screenshot
+- **Recommendation for human reviewer**: What action to take (approve, re-capture with different credentials, update doc text, etc.)
 
 ### Step 6: Offer cleanup
 
@@ -657,7 +842,7 @@ These are elements you'll frequently need to dismiss:
 
 ## Lib Module Reference
 
-All Python modules are at `F:\home\azure-screenshot\lib\`:
+All Python modules are at `lib/` (relative to the skill root):
 
 - **`screenshot_processor.py`**: Main orchestrator. CLI interface for full pipeline.
 - **`pii_detector.py`**: Regex-based PII detection with context-aware GUID classification. All approved replacement values built in.
@@ -665,3 +850,50 @@ All Python modules are at `F:\home\azure-screenshot\lib\`:
 - **`dom_scrubber.py`**: Frame-aware DOM PII replacement. Generates JS that uses `page.frames()` to scrub ALL frames including cross-origin Azure portal iframes. **This is the preferred pre-screenshot approach.**
 - **`gimp_bridge.py`**: GIMP integration (detect running instance, open images).
 - **`extract_dom_info.js`**: JavaScript payload for `playwright-cli run-code` DOM extraction (Shadow DOM aware).
+- **`repo_config.py`**: Repo-specific customization system. Embeds knowledge about supported repos (path rules, service renames, nav hints, portal privilege notes). Use `detect_repo_from_path()` to auto-detect the repo and `get_path_rules()` for doc-specific behavior.
+- **`doc_analyzer.py`**: Doc-driven interaction analyzer. Parses markdown to extract image references, interaction steps, flyout requirements, and data requirements. Used in Phase 2.5 to understand what each screenshot should show.
+- **`page_change_analyzer.py`**: Detects significant page changes by comparing titles, service names, and layout. Flags cases where docs need updating beyond screenshot replacement.
+- **`failure_analyzer.py`**: Classifies capture failures into actionable categories (`PRIVILEGE_FAILURE`, `PII_LEAK`, `NAVIGATION_FAILURE`, etc.) with severity, explanation, and recommendation. Generates HTML badges for the comparison report.
+
+---
+
+## Repo-Specific Customizations
+
+The skill supports repo-specific configuration through `lib/repo_config.py`, which embeds repo-specific knowledge directly in the skill code. This design is intentional: the skill can be run from anywhere and still understand how to interact with any supported repo. No external config files are needed.
+
+**How it works:**
+- `detect_repo_from_path(article_path)` identifies which repo the article belongs to based on the file path or git remote
+- `get_path_rules(repo, article_path)` returns path-specific rules that affect navigation, provisioning, and validation
+- Repo owners add their config via PR to `lib/repo_config.py`
+
+**Currently supported repos:**
+
+| Repo | Key Customizations |
+|------|-------------------|
+| `azure-ai-docs-pr` | AI Foundry nav hints (hidden "More" button items), Azure OpenAI vs. Cognitive Services routing, model deployment prerequisites |
+| `fabric-docs-pr` | Fabric admin privilege requirements, workspace provisioning hints, capacity-dependent feature flags |
+
+**Config includes:**
+- **Path rules**: Which doc paths map to which portal sections and resource types
+- **Service renames**: Old-to-new service name mappings for navigation and validation
+- **Navigation hints**: Portal-specific interaction quirks (hidden nav items, expandable menus, multi-step navigation)
+- **Portal privilege notes**: Pages that require specific roles or elevated access
+- **Known hidden nav items**: Items behind "More" buttons, per portal and doc path
+
+---
+
+## Failure Categories Reference
+
+Each capture attempt is classified into one of the following categories. The badge is shown in the HTML comparison report.
+
+| Category | Badge | Description | Example |
+|----------|-------|-------------|---------|
+| `CAPTURE_SUCCESS` | ✅ Success | Screenshot matches expectations | Normal successful capture |
+| `PRIVILEGE_FAILURE` | 🔒 Privilege | Insufficient permissions to access the page or resource | Cannot access Fabric Admin portal without admin role |
+| `NAVIGATION_FAILURE` | ❌ Navigation | Landed on the wrong page after navigation | Went to Cognitive Services overview instead of Azure OpenAI |
+| `DATA_SETUP_FAILURE` | ❌ Data Setup | Cannot create the required data for the screenshot | Doc describes a fine-tuned model deployment we cannot provision |
+| `UI_MISMATCH` | ⚠️ UI Mismatch | Page looks fundamentally different from the original screenshot | Service restructured with a completely new layout |
+| `PII_LEAK` | 🚨 PII Leak | PII detected in the final screenshot after scrubbing | Real email address still visible in a cross-origin iframe |
+| `DOC_INSUFFICIENT` | 📄 Doc Gap | Doc text lacks sufficient detail to reproduce the screenshot | Steps do not describe how to reach the target page |
+| `ELEMENT_NOT_FOUND` | 🔍 Not Found | Expected UI element is missing from the page | "Playgrounds" not in nav, "More" button also not found |
+| `SERVICE_RESTRUCTURED` | ⚠️ Restructured | Service has been renamed or reorganized since the doc was written | Form Recognizer is now Document Intelligence |

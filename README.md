@@ -99,6 +99,16 @@ Works with any Microsoft portal using Microsoft SSO authentication:
 - **Closed Shadow DOM**: Rare portal components with closed Shadow DOM cannot be accessed; post-screenshot pixel-level redaction is used as fallback.
 - **Dynamic content**: Real-time dashboards may show different data between captures.
 
+## Troubleshooting
+
+- **"I see ❌ Navigation Failed"**: The skill couldn't find the target page. Check that the resource exists and the URL is correct. For Azure OpenAI resources, ensure you're not accidentally on a generic Cognitive Services resource.
+- **"I see 🔒 Privilege Issue"**: Your account lacks permissions for the target portal. For Fabric Admin, you need Fabric Administrator role. For Power BI, you need Pro or Premium license.
+- **"I see ⚠️ Service Restructured"**: The Azure service has been renamed or restructured. The doc likely needs rewriting. Check the page change details in the comparison report.
+- **"I see 🚨 PII Leak"**: The DOM scrubber missed some PII. Check the comparison report for details. You may need to add custom scrub rules for the specific PII pattern.
+- **"Nav item not found in Foundry"**: Items like Playgrounds and Fine-tuning may be hidden behind the "More" button in the left nav. The skill tries to handle this automatically for docs in the `foundry/` folder.
+- **"Callout box too wide"**: The callout finder couldn't find a tight container. This usually means the portal's DOM structure changed. File an issue with the screenshot ID.
+- **"Flyout not opened"**: The skill didn't click a button to open a flyout. Check that the doc text clearly describes the click action before the screenshot. The skill uses `lib/doc_analyzer.py` to parse interaction steps.
+
 ## Prerequisites
 
 - **Windows** with [Microsoft Edge](https://www.microsoft.com/edge)
@@ -178,6 +188,48 @@ Per the [Azure screenshot guide](https://learn.microsoft.com/en-us/help/get-star
 - Thickness: **3px**
 - Rectangles hug the target element closely
 
+## Failure Reporting
+
+When a screenshot capture fails or produces unexpected results, the skill classifies the failure and explains *why*. Every failure report includes: what was attempted, what was expected, what actually happened, why it failed, and what the reviewer should do next.
+
+Failure categories:
+
+| Badge | Category | Meaning |
+|-------|----------|---------|
+| ✅ | Success | Screenshot captured successfully |
+| 🔧 | Fixed | A known issue was corrected in this run |
+| ⚠️ | UI Mismatch / Service Restructured | Page has significantly changed; doc may need updating |
+| ❌ | Navigation / Data Setup Failed | Could not reach the target page or create required data |
+| 🔒 | Privilege Issue | Insufficient permissions to access the portal/feature |
+| 🚨 | PII Leak | PII detected in the final screenshot |
+| 📄 | Doc Insufficient | Doc text lacks detail to reproduce the screenshot |
+| 🔍 | Element Missing | Expected UI elements not found |
+
+## Page Change Detection
+
+The skill detects when a page has significantly changed from what the doc describes. A common scenario is Azure service renames, such as Form Recognizer becoming Document Intelligence, or Azure Cognitive Services splitting into individual Azure AI services.
+
+When a page change is detected, the skill flags the screenshot with a ⚠️ badge and recommends that the doc itself may need updating, not just the screenshot. Built-in service rename mappings cover 18+ Azure service transitions.
+
+Human reviewers should check whether the doc needs rewriting, not just a screenshot swap.
+
+## Repo-Specific Customizations
+
+The skill embeds repo-specific knowledge directly in `lib/repo_config.py`. This makes the skill portable: it can be run from anywhere and still understand how to handle each repo.
+
+Currently supported repos:
+- `azure-ai-docs-pr`
+- `fabric-docs-pr`
+
+Repo owners add their config via PR to the skill repo. Each repo config can include:
+
+- **Path-based rules**: which portal to use and navigation hints per doc folder
+- **Service rename mappings**: old-name-to-new-name pairs for page change detection
+- **Known hidden nav items**: for portals like AI Foundry where items hide behind "More"
+- **Portal privilege hints**: what roles or licenses are needed for specific features
+
+To add your repo: add an entry to `REPO_CONFIGS` in `lib/repo_config.py`.
+
 ## Project structure
 
 ```
@@ -185,12 +237,17 @@ docs-screenshot/
 ├── SKILL.md                    # Copilot CLI skill definition (the brain)
 ├── README.md                   # This file
 ├── lib/
+│   ├── callout_finder.js       # DOM element finder for callout box placement
+│   ├── doc_analyzer.py         # Doc-driven interaction analyzer
 │   ├── dom_scrubber.py         # Frame-aware DOM PII replacement (preferred)
-│   ├── pii_detector.py         # PII pattern matching + approved replacements
-│   ├── image_editor.py         # Crop, redact, callout, border, optimize
-│   ├── screenshot_processor.py # CLI orchestrator + report generation
+│   ├── extract_dom_info.js     # DOM text extraction (Shadow DOM aware)
+│   ├── failure_analyzer.py     # Capture failure classification and reporting
 │   ├── gimp_bridge.py          # GIMP integration
-│   └── extract_dom_info.js     # DOM text extraction (Shadow DOM aware)
+│   ├── image_editor.py         # Crop, redact, callout, border, optimize
+│   ├── page_change_analyzer.py # Detects significant page/service changes
+│   ├── pii_detector.py         # PII pattern matching + approved replacements
+│   ├── repo_config.py          # Repo-specific customization system
+│   └── screenshot_processor.py # CLI orchestrator + report generation
 └── references/
     └── screenshot-guidelines.md # Consolidated MS contributor guide reference
 ```
@@ -199,10 +256,13 @@ docs-screenshot/
 
 1. **Browser automation** via `playwright-cli` with Edge persistent profile (inherits Microsoft SSO)
 2. **Resource provisioning** via `az` CLI, Graph PowerShell, PnP PowerShell, or whatever tool matches the target portal
-3. **DOM scrubbing** iterates all frames (including cross-origin) replacing PII with approved fictitious values directly in the browser, so the screenshot renders with correct fonts natively
-4. **Pixel-level fallback** via Pillow for cases where DOM scrubbing can't reach (canvas, SVG, closed shadow DOM): detects PII coordinates from DOM extraction, paints over with background color, re-renders replacement text in Segoe UI at matching size
-5. **Post-processing**: callout boxes (RGB 233,28,28 / 3px), smart crop, gray border, PNG optimization to <200KB
-6. **GIMP handoff**: opens processed images in running GIMP instance for final human review
+3. **Doc analysis** parses the markdown to extract interaction steps (clicks, selections, flyout triggers), data requirements, and expected page state using `lib/doc_analyzer.py`
+4. **DOM scrubbing** iterates all frames (including cross-origin) replacing PII with approved fictitious values directly in the browser, so the screenshot renders with correct fonts natively
+5. **Pixel-level fallback** via Pillow for cases where DOM scrubbing can't reach (canvas, SVG, closed shadow DOM): detects PII coordinates from DOM extraction, paints over with background color, re-renders replacement text in Segoe UI at matching size
+6. **Post-processing**: callout boxes (RGB 233,28,28 / 3px), smart crop, gray border, PNG optimization to <200KB
+7. **Post-capture validation** runs a pipeline checking for PII leaks, navigation failures, privilege issues, page changes, and missing UI elements. Failures are classified and explained using `lib/failure_analyzer.py`
+8. **GIMP handoff**: opens processed images in running GIMP instance for final human review
+9. **Comparison report** generates an HTML report with side-by-side original vs. captured images, failure badges, page change flags, and recommendations
 
 ## Supported PII patterns
 
