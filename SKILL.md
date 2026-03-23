@@ -574,6 +574,11 @@ playwright-cli run-code "async page => {
    python lib/verify_callouts.py originals/image.png captured/image.png
    ```
    If this fails, you MUST add the missing callout(s) before proceeding. This is a hard gate; no screenshot is considered complete until it passes.
+   
+   **Common callout pitfalls to avoid:**
+   - Callout boxes that are too close vertically (< 15px gap) may be merged by the detector. Ensure each callout is visually distinct.
+   - Button callout boxes must fully enclose the button text AND icon. If the button is 36px tall, the callout must be at least 40px tall (with 2px padding each side).
+   - When a radio button or tab has a callout, the box must surround the FULL text label, not just the radio circle/tab indicator.
 
 **Handling hidden navigation items:**
 
