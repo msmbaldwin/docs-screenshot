@@ -584,6 +584,13 @@ Some portal navigation panes hide items behind a "More" or "Show more" button. I
 2. Select "New Foundry" (unless the doc is specifically in the `foundry-classic/` folder)
 3. After switching, the left nav items should update to show the expected items
 4. If items are still hidden, check for the "... More" button and click to reveal them
+5. The "More" dialog may show a message "Some capabilities are only currently supported in default projects." If so, click "Switch to the default project" to reveal items like Fine-tuning that are only available in the default project.
+6. Once the target item is visible in the More dialog, **pin it** to the nav pane by clicking the pin icon next to it, then close the dialog.
+
+When a callout target element (like a button or tab) needs to be visible in the screenshot:
+- If the element is below the viewport fold, **scroll the content area** to bring it into view before capturing
+- Use `element.scrollIntoView({ block: 'center' })` to center it vertically
+- Verify both the nav callout target AND the content callout target are visible in the final screenshot
 
 This applies to all docs in the `foundry/` folder of azure-ai-docs-pr (NOT `foundry-classic/`). See `lib/repo_config.py` for the list of known hidden nav items per repo.
 
