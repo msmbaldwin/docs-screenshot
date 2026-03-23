@@ -640,6 +640,18 @@ If validation fails, attempt to navigate to the correct resource before flagging
 - Wrong service? Check if the service has been renamed and use the current name
 - Still failing? Flag as `NAVIGATION_FAILURE` using `lib/failure_analyzer.py` and continue to the next screenshot
 
+**Best-effort capture when service has been renamed/redirected:**
+
+If the portal redirects you to a renamed service (e.g., "Cognitive Services" became "Azure AI Services"), do NOT simply flag the screenshot as failed and move on. Instead:
+
+1. **Accept the redirect** and work from wherever you landed
+2. **Proceed with the remaining steps** described in the doc (expand menus, click nav items, select radio buttons, etc.)
+3. **Draw all callout boxes** that the original image shows, targeting the equivalent elements on the current page
+4. **Flag it as ⚠️ Page Changed** in the report, but still deliver the best-effort screenshot
+5. The human reviewer can then decide whether the screenshot is usable with the new service name or if the doc needs rewriting
+
+This applies to any scenario where the underlying page is structurally the same but the service name or branding has changed. If the page structure is so different that the described steps cannot be followed, then flag as SERVICE_RESTRUCTURED.
+
 ```python
 from lib.failure_analyzer import classify_failure
 
