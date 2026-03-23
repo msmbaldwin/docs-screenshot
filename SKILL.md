@@ -562,7 +562,13 @@ playwright-cli run-code "async page => {
 - Maximum 3-4 callouts per screenshot
 - Use numbered callouts for sequential steps if needed
 
-**When recreating callouts from original screenshots:** Study the original image carefully to identify WHICH elements have red boxes, then use the DOM finder above to locate those same elements in the recaptured page.
+**When recreating callouts from original screenshots:** This is a MANDATORY step, never optional. Before saving any recaptured screenshot:
+
+1. **Examine the original image** to identify every element with a red callout box
+2. **Cross-reference with the doc text** to understand which elements the doc instructs the user to interact with (e.g., "Select **Playgrounds** from the left pane" means Playgrounds gets a callout)
+3. **Use the DOM finder** to locate those same elements in the recaptured page and get their bounding boxes
+4. **Draw ALL callout boxes** that appear in the original. Never save a recaptured screenshot without matching the original's callouts.
+5. **Verify tab/state selection**: If the doc says "Select the X tab", you must click that tab AND draw a callout on it. If the doc says "select X radio button", the radio button must be selected AND have a callout.
 
 **Handling hidden navigation items:**
 
