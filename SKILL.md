@@ -566,7 +566,11 @@ playwright-cli run-code "async page => {
 
 1. **Examine the original image** to identify every element with a red callout box
 2. **Cross-reference with the doc text** to understand which elements the doc instructs the user to interact with (e.g., "Select **Playgrounds** from the left pane" means Playgrounds gets a callout)
-3. **Use the DOM finder** to locate those same elements in the recaptured page and get their bounding boxes
+3. **Use the DOM finder WHILE THE PAGE IS STILL LIVE** to get exact bounding boxes for every callout target. NEVER estimate callout positions from pixel scans of the saved screenshot. The DOM gives pixel-perfect coordinates; manual pixel guessing does not. Capture the coordinates in the same browser session, before or immediately after taking the raw screenshot.
+   - For left-nav items: search for the text, walk up to the `<a>` or `<li>` container, get `getBoundingClientRect()`
+   - For radio buttons/checkboxes: search for the label text, get the parent element's rect
+   - For buttons: search for button text, walk up to the `<button>` element, get its rect
+   - **Center every box**: `centerY = (top + bottom) / 2`, then `box = (centerY - halfHeight, centerY + halfHeight)`
 4. **Draw ALL callout boxes** that appear in the original. Never save a recaptured screenshot without matching the original's callouts.
 5. **Verify tab/state selection**: If the doc says "Select the X tab", you must click that tab AND draw a callout on it. If the doc says "select X radio button", the radio button must be selected AND have a callout.
 6. **Run `verify_callouts.py`** to deterministically confirm the captured image has at least as many callout boxes as the original:
