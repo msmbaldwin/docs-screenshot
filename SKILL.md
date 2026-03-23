@@ -569,6 +569,11 @@ playwright-cli run-code "async page => {
 3. **Use the DOM finder** to locate those same elements in the recaptured page and get their bounding boxes
 4. **Draw ALL callout boxes** that appear in the original. Never save a recaptured screenshot without matching the original's callouts.
 5. **Verify tab/state selection**: If the doc says "Select the X tab", you must click that tab AND draw a callout on it. If the doc says "select X radio button", the radio button must be selected AND have a callout.
+6. **Run `verify_callouts.py`** to deterministically confirm the captured image has at least as many callout boxes as the original:
+   ```bash
+   python lib/verify_callouts.py originals/image.png captured/image.png
+   ```
+   If this fails, you MUST add the missing callout(s) before proceeding. This is a hard gate; no screenshot is considered complete until it passes.
 
 **Handling hidden navigation items:**
 
