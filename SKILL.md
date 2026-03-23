@@ -579,6 +579,7 @@ playwright-cli run-code "async page => {
    - Callout boxes that are too close vertically (< 15px gap) may be merged by the detector. Ensure each callout is visually distinct.
    - Button callout boxes must fully enclose the button text AND icon. If the button is 36px tall, the callout must be at least 40px tall (with 2px padding each side).
    - When a radio button or tab has a callout, the box must surround the FULL text label, not just the radio circle/tab indicator.
+   - **Always center the callout box on the target element.** Do NOT position the box by aligning its top edge to the element's top edge. Instead: find the element's vertical center (`center_y = (top + bottom) / 2`), then compute the box as `(center_y - half_height, center_y + half_height)`. This prevents the box from clipping the bottom or top of the element.
 
 **Handling hidden navigation items:**
 
