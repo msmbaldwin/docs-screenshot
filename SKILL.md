@@ -564,9 +564,10 @@ playwright-cli run-code "async page => {
 
 **When recreating callouts from original screenshots:** This is a MANDATORY step, never optional. Before saving any recaptured screenshot:
 
-1. **Examine the original image** to identify every element with a red callout box
-2. **Cross-reference with the doc text** to understand which elements the doc instructs the user to interact with (e.g., "Select **Playgrounds** from the left pane" means Playgrounds gets a callout)
-3. **Use the DOM finder WHILE THE PAGE IS STILL LIVE** to get exact bounding boxes for every callout target. NEVER estimate callout positions from pixel scans of the saved screenshot. The DOM gives pixel-perfect coordinates; manual pixel guessing does not. Capture the coordinates in the same browser session, before or immediately after taking the raw screenshot.
+1. **Run `verify_callouts.py` on the ORIGINAL** to get the exact count and positions of callout boxes in the original image. This is the source of truth for how many callouts you need.
+2. **Examine the original image** to identify WHICH element each red callout box highlights. Match each detected box to a specific UI element (e.g., "KEY 1 field", "Networking nav link"). **Do NOT add callouts for elements that have no red box in the original.** If the original has 3 callouts, the captured image must have exactly 3; not 2, not 4.
+3. **Cross-reference with the doc text** to understand which elements the doc instructs the user to interact with (e.g., "Select **Playgrounds** from the left pane" means Playgrounds gets a callout). The doc text confirms your identification from step 2 but does NOT add extra callouts beyond what the original shows.
+4. **Use the DOM finder WHILE THE PAGE IS STILL LIVE** to get exact bounding boxes for every callout target. NEVER estimate callout positions from pixel scans of the saved screenshot. The DOM gives pixel-perfect coordinates; manual pixel guessing does not. Capture the coordinates in the same browser session, before or immediately after taking the raw screenshot.
    - For left-nav items: search for the text, walk up to the `<a>` or `<li>` container, get `getBoundingClientRect()`
    - For radio buttons/checkboxes: search for the label text, get the parent element's rect
    - For buttons: search for button text, walk up to the `<button>` element, get its rect
