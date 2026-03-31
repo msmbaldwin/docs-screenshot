@@ -82,7 +82,7 @@ Options can be combined with any scenario. Examples:
 
 **Failure categories:** ✅ Success | ⚠️ UI Mismatch | ❌ Navigation Failed | 🔒 Privilege Issue | 🚨 PII Leak | 📄 Doc Gap | 🔍 Element Missing
 
-**Prerequisites:** Windows + Edge, Playwright (via playwright-cli or MCP server), Python 3.10+ with Pillow, Azure CLI (for provisioning), GIMP (optional)
+**Prerequisites:** Windows + Edge + Node.js 18+, Python 3.10+, Azure CLI. Playwright MCP and Pillow are auto-installed on first run. GIMP is optional.
 
 ---
 
@@ -225,12 +225,22 @@ This skill works with ANY Microsoft web portal that uses Microsoft SSO. Choose t
 
 ### Phase 1: Authentication & Setup
 
-**Browser automation tool:** This skill uses browser automation via one of these approaches (adapt commands to your environment):
-- **Copilot CLI**: Uses the `playwright-cli` skill (install with `playwright-cli install --skills`)
-- **VS Code / other editors**: Uses the [Playwright MCP server](https://github.com/microsoft/playwright-mcp) (`npx @playwright/mcp@latest --headless --browser=msedge`)
-- **Playwright MCP tools**: When available in the tool list (e.g., `playwright-browser_navigate`, `playwright-browser_snapshot`), use those directly. They handle headless mode via their server configuration.
+**Browser automation auto-detection:** Before doing anything else, detect which browser automation approach is available. Check in this order and use the first one found:
 
-The commands in this skill use `playwright-cli` syntax. If you are using the Playwright MCP server instead, the equivalent MCP tool calls are similar (e.g., `browser_navigate` instead of `playwright-cli goto`). Adapt as needed for your environment.
+1. **Playwright MCP tools already loaded**: Check if tools like `playwright-browser_navigate`, `playwright-browser_snapshot`, `playwright-browser_click` are in the available tool list. If so, use them directly. No installation needed.
+2. **Playwright MCP server installable**: If Playwright MCP tools are not available, install and configure the Playwright MCP server automatically:
+   ```bash
+   npx @playwright/mcp@latest --headless --browser msedge
+   ```
+   Then use the `configure-copilot` agent (or equivalent) to add the MCP server configuration so the tools become available.
+3. **Python Pillow check**: Verify Pillow is installed (needed for image processing):
+   ```bash
+   python -c "from PIL import Image; print('Pillow OK')" || pip install Pillow
+   ```
+
+**Do NOT ask the user to install prerequisites manually.** If something is missing, install it automatically and inform the user what was installed.
+
+The commands in this skill use `playwright-browser_*` MCP tool calls as the primary interface (e.g., `playwright-browser_navigate`, `playwright-browser_snapshot`, `playwright-browser_click`). Older `playwright-cli` syntax is shown in some examples for reference but the MCP tools are preferred when available.
 
 **CRITICAL: Headless-first policy.** Always run headless to avoid desktop interference:
 - The browser runs in the background; the user never sees a window pop up

@@ -141,14 +141,18 @@ Works with any Microsoft portal using Microsoft SSO authentication:
 
 ## Prerequisites
 
+The skill auto-detects and installs most dependencies on first run. You only need:
+
 - **Windows** with [Microsoft Edge](https://www.microsoft.com/edge)
-- **Browser automation** (one of the following):
-  - **Copilot CLI users**: Install the [playwright-cli skill](https://github.com/microsoft/playwright-cli/blob/main/skills/playwright-cli/SKILL.md) (`playwright-cli install --skills`)
-  - **VS Code users**: Install the [Playwright MCP server](https://github.com/microsoft/playwright-mcp) (`npx @playwright/mcp@latest --headless --browser=msedge`)
-- **Python 3.10+** with Pillow: `pip install Pillow`
-- **Azure CLI**: `winget install Microsoft.AzureCLI` (for resource provisioning)
-- **GIMP 2.10+** (optional, for final review): `winget install GIMP.GIMP`
+- **Node.js 18+** (for the Playwright MCP server; check with `node --version`)
+- **Python 3.10+** (for image processing; check with `python --version`)
+- **Azure CLI** (for resource provisioning): `winget install Microsoft.AzureCLI`
 - **Your own Microsoft credentials**: The skill uses your logged-in identity. It will never hardcode or share credentials. If MFA is triggered, you will be asked to complete it manually.
+
+**Auto-installed on first run** (you don't need to do these manually):
+- **Playwright MCP server** (`@playwright/mcp`): detected and configured automatically if not already present
+- **Pillow** (Python imaging library): installed via `pip install Pillow` if missing
+- **GIMP** (optional): If not installed, the skill skips the GIMP review step gracefully
 
 ## Install
 
