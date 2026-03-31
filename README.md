@@ -4,7 +4,7 @@ A Copilot CLI skill that automates screenshot capture across Microsoft web porta
 
 This skill was created in [this Copilot chat session](https://gist.github.com/jonburchel/2a1f0f25b064f7276a45a2aa2e544970).
 
-## Two Usage Scenarios
+## Three Usage Scenarios
 
 ### 1. New Documentation Authoring
 
@@ -17,6 +17,7 @@ The skill will:
 - Open Azure portal in Edge, navigate to the VM creation blade
 - Configure the view to match your description
 - Scrub any remaining PII from the DOM (including cross-origin iframes)
+- Replace user avatars with a generic silhouette
 - Capture at 1200x800, add callout box, crop, optimize
 - Open in GIMP for your final review
 - Ask whether to clean up the provisioned resources
@@ -35,6 +36,21 @@ The skill will:
 - Save to the correct `media/` path with the original filename
 - Generate a comparison report (old vs. new dimensions, changes detected)
 - Open all screenshots in GIMP for final review
+
+### 3. Description-Only (No Existing Screenshot)
+
+You (or another agent) describe what you need without referencing an existing article or screenshot:
+
+> *"Take a screenshot of the Azure Storage file shares page showing a share named 'myfileshare'. Add callouts around the 'File shares' nav item and the share name."*
+
+> *"Capture the Key Vault secrets list. nocallouts"*
+
+The skill will:
+- Parse your description to determine the portal page, resources, and interactions
+- Provision resources, navigate, set up page state
+- Find callout targets from your descriptions (or skip if `nocallouts` is specified)
+- Expand the viewport if needed to fit all callout targets
+- Scrub PII and avatars, capture, process, and open in GIMP
 
 ## Example Prompts
 
@@ -72,6 +88,18 @@ This produces a self-contained HTML report with base64-embedded images, a summar
 
 > *"Capture a screenshot of the SharePoint admin center showing the Active sites list. Scrub any real site names and replace with contoso-*, fabrikam-*, and northwind-*."*
 
+### Clean screenshot without callouts
+
+> *"Take a screenshot of the Azure Key Vault overview page for a vault named contoso-kv. nocallouts"*
+
+The `nocallouts` keyword tells the skill to skip all callout box drawing. Useful when you want a clean base image to annotate manually, or when the UI is too dynamic for reliable automated callout placement.
+
+### Description-only (no article reference)
+
+> *"Set up an Azure Storage account with soft delete enabled. Navigate to the file shares blade, create a share named 'myfileshare', and capture the page. Add callouts around: 1) the 'File shares' nav item, 2) the share name in the list."*
+
+This works even without an existing article or screenshot to reference. The skill provisions resources, navigates, and captures based entirely on your description.
+
 ## Supported Portals
 
 Works with any Microsoft portal using Microsoft SSO authentication:
@@ -107,6 +135,8 @@ Works with any Microsoft portal using Microsoft SSO authentication:
 - **"I see 🚨 PII Leak"**: The DOM scrubber missed some PII. Check the comparison report for details. You may need to add custom scrub rules for the specific PII pattern.
 - **"Nav item not found in Foundry"**: Items like Playgrounds and Fine-tuning may be hidden behind the "More" button in the left nav. The skill tries to handle this automatically for docs in the `foundry/` folder.
 - **"Callout box too wide"**: The callout finder couldn't find a tight container. This usually means the portal's DOM structure changed. File an issue with the screenshot ID.
+- **"Callout clips through a border or icon"**: The never-clip rule should prevent this automatically. If it still occurs, the containing panel may not be detected. Add the panel's CSS class to the never-clip detector in `callout_finder.js`.
+- **"User avatar still visible"**: The avatar scrubber matches by CSS class, Graph API URLs, and circular image heuristics. If a portal uses a non-standard avatar pattern, add the selector to the avatar detection list in `dom_scrubber.py`.
 - **"Flyout not opened"**: The skill didn't click a button to open a flyout. Check that the doc text clearly describes the click action before the screenshot. The skill uses `lib/doc_analyzer.py` to parse interaction steps.
 
 ## Prerequisites
@@ -155,10 +185,11 @@ You can also just ask: *"Take an Azure screenshot of the resource groups page"* 
 2. **Navigates** to the target page, dismisses popups/banners
 3. **Provisions Azure resources** if needed (via `az` CLI)
 4. **Scrubs PII** from the live DOM before capture, including cross-origin iframes
-5. **Takes the screenshot** at 1200x800 (per contributor guide spec)
-6. **Post-processes**: crop, callout boxes, gray border, PNG optimization
-7. **Opens in GIMP** for final human review
-8. **Reports**: lists all PII found, replacements made, image dimensions/size
+5. **Replaces user avatars** with a generic silhouette (profile photos, persona images)
+6. **Takes the screenshot** at 1200x800 (per contributor guide spec), expanding viewport height if callout targets are below the fold
+7. **Post-processes**: crop, callout boxes, gray border, PNG optimization
+8. **Opens in GIMP** for final human review
+9. **Reports**: lists all PII found, replacements made, image dimensions/size
 
 ## Key innovation: cross-origin iframe scrubbing
 
@@ -187,6 +218,14 @@ Per the [Azure screenshot guide](https://learn.microsoft.com/en-us/help/get-star
 - Color: RGB **233, 28, 28**
 - Thickness: **3px**
 - Rectangles hug the target element closely
+
+The callout finder (`lib/callout_finder.js`) enforces several quality rules:
+- **Icon inclusion**: Expands bounding boxes to include icons adjacent to menu text (SVGs, images)
+- **Vertical centering**: Centers the callout on the text node, not the container (avoids asymmetric margins)
+- **Dropdown framing**: Encompasses full dropdown controls including the chevron indicator
+- **Never-clip**: Clamps callouts to panel/popup boundaries so they never cut through borders or graphics
+
+**To skip callouts entirely**, say `nocallouts` in your prompt or pass `--no-callouts` to `screenshot_processor.py`. This is useful when callout positions cannot be reliably determined, or when you want a clean screenshot first and plan to add callouts manually in GIMP.
 
 ## Failure Reporting
 
@@ -239,7 +278,7 @@ docs-screenshot/
 ├── lib/
 │   ├── callout_finder.js       # DOM element finder for callout box placement
 │   ├── doc_analyzer.py         # Doc-driven interaction analyzer
-│   ├── dom_scrubber.py         # Frame-aware DOM PII replacement (preferred)
+│   ├── dom_scrubber.py         # Frame-aware DOM PII + avatar replacement (preferred)
 │   ├── extract_dom_info.js     # DOM text extraction (Shadow DOM aware)
 │   ├── failure_analyzer.py     # Capture failure classification and reporting
 │   ├── gimp_bridge.py          # GIMP integration
@@ -247,7 +286,8 @@ docs-screenshot/
 │   ├── page_change_analyzer.py # Detects significant page/service changes
 │   ├── pii_detector.py         # PII pattern matching + approved replacements
 │   ├── repo_config.py          # Repo-specific customization system
-│   └── screenshot_processor.py # CLI orchestrator + report generation
+│   ├── screenshot_processor.py # CLI orchestrator + report generation
+│   └── verify_callouts.py      # Deterministic callout count verification
 └── references/
     └── screenshot-guidelines.md # Consolidated MS contributor guide reference
 ```
@@ -257,12 +297,13 @@ docs-screenshot/
 1. **Browser automation** via `playwright-cli` with Edge persistent profile (inherits Microsoft SSO)
 2. **Resource provisioning** via `az` CLI, Graph PowerShell, PnP PowerShell, or whatever tool matches the target portal
 3. **Doc analysis** parses the markdown to extract interaction steps (clicks, selections, flyout triggers), data requirements, and expected page state using `lib/doc_analyzer.py`
-4. **DOM scrubbing** iterates all frames (including cross-origin) replacing PII with approved fictitious values directly in the browser, so the screenshot renders with correct fonts natively
+4. **DOM scrubbing** iterates all frames (including cross-origin) replacing PII with approved fictitious values directly in the browser, so the screenshot renders with correct fonts natively. Also replaces user avatar images with a generic silhouette.
 5. **Pixel-level fallback** via Pillow for cases where DOM scrubbing can't reach (canvas, SVG, closed shadow DOM): detects PII coordinates from DOM extraction, paints over with background color, re-renders replacement text in Segoe UI at matching size
-6. **Post-processing**: callout boxes (RGB 233,28,28 / 3px), smart crop, gray border, PNG optimization to <200KB
-7. **Post-capture validation** runs a pipeline checking for PII leaks, navigation failures, privilege issues, page changes, and missing UI elements. Failures are classified and explained using `lib/failure_analyzer.py`
-8. **GIMP handoff**: opens processed images in running GIMP instance for final human review
-9. **Comparison report** generates an HTML report with side-by-side original vs. captured images, failure badges, page change flags, and recommendations
+6. **Viewport expansion**: if any callout target is below the viewport fold, the viewport height is automatically increased so all targets render at their natural positions
+7. **Post-processing**: callout boxes (RGB 233,28,28 / 3px), smart crop, gray border, PNG optimization to <200KB
+8. **Post-capture validation** runs a pipeline checking for PII leaks, navigation failures, privilege issues, page changes, and missing UI elements. Failures are classified and explained using `lib/failure_analyzer.py`
+9. **GIMP handoff**: opens processed images in running GIMP instance for final human review
+10. **Comparison report** generates an HTML report with side-by-side original vs. captured images, failure badges, page change flags, and recommendations
 
 ## Supported PII patterns
 
@@ -272,6 +313,7 @@ docs-screenshot/
 - Public IP addresses (flags non-reserved IPs)
 - Access keys, client secrets, thumbprints
 - Custom text patterns (resource names, subscription names, usernames)
+- **User avatars**: Profile photos, persona images, and small circular images are replaced with a generic silhouette
 
 ## Contributing
 
