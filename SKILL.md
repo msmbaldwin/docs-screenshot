@@ -49,6 +49,35 @@ The user has an existing markdown article with screenshots that need to be valid
 
 **Example prompt:** *"Update the screenshots in /docs/azure-sql/create-database.md. The article shows creating an Azure SQL database through the portal."*
 
+### Scenario 3: Description-Only (No Existing Screenshot)
+
+The user (or another agent) invokes the skill without an existing screenshot to reference. They describe what the screenshot should show, optionally including callout placement descriptions.
+
+**Example prompts:**
+- *"Take a screenshot of the Azure Storage account file shares page showing a file share named 'myfileshare'. Add a callout around the file share name."*
+- *"Capture the Azure Key Vault secrets list with the Generate/Import button highlighted. nocallouts"*
+- *"Set up a storage account with soft delete enabled, navigate to the file shares blade, and capture it. Add callouts around: 1) the 'File shares' nav item, 2) the soft delete toggle"*
+
+**Workflow:**
+1. Parse the user's description to determine:
+   - Target portal and page URL
+   - Resources to provision (if any)
+   - Page interactions needed (clicks, selections, expansions)
+   - Callout targets (if described) or `nocallouts` if specified
+2. Provision resources as needed (Phase 3)
+3. Navigate to the target page (Phases 1-2)
+4. Perform any described interactions (click buttons, open flyouts, select tabs)
+5. Scrub PII and avatars from the DOM (Phase 7)
+6. If callout targets were described:
+   a. Use `callout_finder.js` to find each described element's bounding box
+   b. Use the callout descriptions to match UI elements (e.g., "the file share name" maps to finding the text "myfileshare" in the page)
+7. If `nocallouts` was specified, skip callout detection and drawing entirely (`--no-callouts`)
+8. Set viewport size, expanding height if needed (Phase 4)
+9. Capture screenshot and process (Phases 5-6)
+10. Open in GIMP for review (Phase 9)
+
+**Key differences from Scenario 2:** There is no original screenshot to compare callout counts against, so `verify_callouts.py` comparison is skipped. Instead, the callout count is validated against the user's description: if they asked for 2 callouts, the final image should have exactly 2.
+
 ## Limitations
 
 - **Credential-scoped provisioning**: The skill can only create resources the user's credentials allow. If you lack permissions for a specific Azure service, M365 feature, or SharePoint site, the skill cannot provision those resources for you.
@@ -307,6 +336,35 @@ playwright-cli run-code "async page => {
 }"
 ```
 
+**Pre-capture viewport expansion:** Before taking the screenshot, verify that ALL elements you plan to highlight with callouts are within the viewport. If any element is below the fold (e.g., a copy button pushed below the visible area by a tall dialog), **expand the viewport height** to accommodate it. Never accept a screenshot where a callout target is invisible.
+
+```bash
+# Check if all callout targets are visible. If the farthest target's bottom
+# edge exceeds the viewport, increase the viewport height.
+playwright-cli run-code "async page => {
+  // Find the lowest callout target element (adapt selectors to your targets)
+  const targets = ['button:has-text(\"Copy\")', '.copy-button', '[aria-label=\"Copy\"]'];
+  let maxBottom = 0;
+  for (const sel of targets) {
+    const el = await page.locator(sel).first();
+    if (await el.isVisible({ timeout: 1000 }).catch(() => false)) {
+      const box = await el.boundingBox();
+      if (box) maxBottom = Math.max(maxBottom, box.y + box.height);
+    }
+  }
+  const viewport = page.viewportSize();
+  if (maxBottom > viewport.height - 20) {
+    const newHeight = Math.ceil(maxBottom + 60); // 60px padding below target
+    await page.setViewportSize({ width: viewport.width, height: newHeight });
+    await page.waitForTimeout(500); // let layout settle
+    return { expanded: true, oldHeight: viewport.height, newHeight };
+  }
+  return { expanded: false, height: viewport.height };
+}"
+```
+
+**IMPORTANT:** After expanding the viewport height, you MUST retake the screenshot at the new size. The wider viewport ensures all elements render at their natural positions rather than being pushed off-screen. After capture, you can crop back to the relevant area using `--crop-focus`.
+
 **Take the screenshot:**
 ```bash
 playwright-cli screenshot --filename=raw-screenshot.png
@@ -395,6 +453,7 @@ python lib/screenshot_processor.py \
 - `--skip-pii`: Skip PII detection/redaction
 - `--skip-crop`: Skip smart cropping
 - `--skip-border`: Skip gray border
+- `--no-callouts`: Skip callout box drawing entirely (useful when callout positions cannot be reliably determined, or when the user wants a clean screenshot without annotations)
 - `--no-gimp`: Don't open in GIMP
 - `--callouts`: JSON array of rectangles for red callout boxes
 - `--crop-focus`: JSON array of rectangles defining area of interest
@@ -478,6 +537,14 @@ playwright-cli run-code "async page => {
 4. The screenshot is "clean" from the start
 5. Verified to produce 56+ replacements on a real Azure portal page
 
+**Avatar scrubbing:** The DOM scrubber also replaces user profile avatars with a generic person icon. It detects avatar images by:
+- CSS class patterns: `avatar`, `persona`, `profile`, `user-photo`
+- Azure portal containers: `.fxs-avatarmenu-tenant-image`, `.fxs-avatar`
+- Microsoft Graph image URLs: `graph.microsoft.com`, `graph.windows.net`
+- Heuristic: small (20-80px) circular images with `border-radius: 50%`
+
+This prevents the user's actual face from appearing in published screenshots. The replacement is a neutral gray silhouette SVG. This is handled automatically by `dom_scrubber.py`; no additional configuration is needed.
+
 ### Phase 8: Callout Boxes
 
 **CRITICAL: Never hardcode callout coordinates.** Always find elements via DOM inspection across all frames.
@@ -489,6 +556,14 @@ playwright-cli run-code "async page => {
 - ALWAYS inspect the actual DOM element and walk up to its interactive container (button, link, list item) to get the full visual bounds including icons
 - DO NOT draw callout borders that clip through adjacent UI elements (e.g., a "copy to clipboard" button next to a text field). When highlighting a form field, expand the bounding box to include ALL sibling controls within the same form row (copy buttons, show/hide toggles, etc.)
 - When the callout target is a labeled field (like "KEY 1" or "Endpoint"), find the outermost form container that includes the label, the value, AND any action buttons (copy, regenerate, show/hide). Use that full container's bounding box.
+
+**Icon inclusion rule (MANDATORY):** When a menu item, button, or list item has an icon immediately beside its text (an SVG, `<i>`, or `<img>` element), the callout box MUST include the full icon. The `callout_finder.js` script handles this automatically by computing the union bounding rect of the interactive container AND all of its visible children. However, when manually specifying callout coordinates, always verify that icons are fully enclosed. If an icon is partially outside the container's layout box (e.g., absolutely positioned), the finder expands the rect to cover it.
+
+**Vertical centering rule (MANDATORY):** The callout box must vertically center on the target text, NOT on the container element's bounding box. Some Azure portal elements have asymmetric internal padding (e.g., more padding-top than padding-bottom). If the callout box is positioned around the container, the text may appear off-center (e.g., tight against the bottom edge but with a large gap at the top). The `callout_finder.js` detects this and re-centers the box symmetrically around the text node's vertical midpoint.
+
+**Dropdown/select control rule:** When the callout target is inside a dropdown (`<select>`, `role="combobox"`, `.dropdown`, etc.), the bounding box MUST encompass the entire dropdown control, including the chevron/indicator arrow on the right. Never clip through the dropdown border. The `callout_finder.js` detects dropdown containers and walks up to the full control element.
+
+**Never-clip rule (MANDATORY):** Callout rectangles MUST NOT extend beyond the visual boundary of the containing popup, flyout, context menu, or dropdown panel. If a callout target is inside a popup, the callout box is automatically clamped to the popup's bounds (with a 2px inset margin). This prevents callout lines from slashing through panel borders, dropdown indicators, or adjacent graphics. The `callout_finder.js` enforces this by walking up to the nearest panel/popup/menu ancestor and clamping the rect.
 
 **Finding callout targets robustly:**
 
@@ -584,7 +659,11 @@ playwright-cli run-code "async page => {
    - Callout boxes that are too close vertically (< 15px gap) may be merged by the detector. Ensure each callout is visually distinct.
    - Button callout boxes must fully enclose the button text AND icon. If the button is 36px tall, the callout must be at least 40px tall (with 2px padding each side).
    - When a radio button or tab has a callout, the box must surround the FULL text label, not just the radio circle/tab indicator.
-   - **Always center the callout box on the target element.** Do NOT position the box by aligning its top edge to the element's top edge. Instead: find the element's vertical center (`center_y = (top + bottom) / 2`), then compute the box as `(center_y - half_height, center_y + half_height)`. This prevents the box from clipping the bottom or top of the element.
+   - **Always center the callout box on the target text.** Do NOT position the box by aligning its top edge to the element's top edge. Instead: find the text's vertical center (`center_y = (top + bottom) / 2`), then compute the box symmetrically as `(center_y - half_height, center_y + half_height)`. This prevents asymmetric margins (e.g., lots of space above the text but none below).
+   - **Never clip through icons or graphics.** If the callout rect would extend beyond the edge of a popup, dropdown, or panel, clamp it to that boundary. Icons immediately adjacent to text on a menu item MUST be fully enclosed.
+   - **Dropdown controls:** When highlighting a dropdown/select, the callout must frame the ENTIRE control including the chevron indicator. Do NOT let the callout border cut through the dropdown arrow or the control's right edge.
+
+**Skipping callouts (`nocallouts` mode):** When callout positions cannot be reliably determined (e.g., complex dynamically-rendered UI, or when the user explicitly requests a clean screenshot), use the `--no-callouts` flag on `screenshot_processor.py` or simply omit the `--callouts` argument. The user or invoking agent can request `nocallouts` in their prompt to skip all callout box drawing.
 
 **Handling hidden navigation items:**
 

@@ -35,6 +35,16 @@ DEFAULT_SCRUB_RULES = {
     },
 }
 
+# Generic person avatar SVG as a data URI. This replaces user profile photos
+# to prevent PII leakage of the user's actual face/avatar.
+GENERIC_AVATAR_DATA_URI = (
+    "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E"
+    "%3Ccircle cx='24' cy='24' r='24' fill='%23bdbdbd'/%3E"
+    "%3Ccircle cx='24' cy='18' r='8' fill='%23fff'/%3E"
+    "%3Cpath d='M8 42c0-8.8 7.2-16 16-16s16 7.2 16 16' fill='%23fff'/%3E"
+    "%3C/svg%3E"
+)
+
 
 def generate_scrub_js(
     custom_replacements: dict[str, str] = None,
@@ -69,6 +79,7 @@ def generate_scrub_js(
     js_parts.append("""
 async page => {
   const rules = RULES_PLACEHOLDER;
+  const avatarDataUri = AVATAR_PLACEHOLDER;
   const frames = page.frames();
   let totalReplaced = 0;
   for (const frame of frames) {
@@ -133,6 +144,64 @@ async page => {
       totalReplaced += count;
     } catch(e) { /* frame may be navigating */ }
   }
+
+  // Avatar replacement: replace user profile images with a generic person icon.
+  // Searches for <img> elements that look like user avatars and replaces their src.
+  for (const frame of frames) {
+    try {
+      const avatarCount = await frame.evaluate((genericSrc) => {
+        let count = 0;
+        const selectors = [
+          'img[class*="avatar"]', 'img[class*="Avatar"]',
+          'img[class*="profile"]', 'img[class*="Profile"]',
+          'img[class*="persona"]', 'img[class*="Persona"]',
+          'img[class*="user-photo"]', 'img[class*="userPhoto"]',
+          'img[class*="ms-Image"][class*="person"]',
+          '.fxs-avatarmenu-tenant-image img',
+          '.fxs-avatar img',
+          '.ms-Persona-image img',
+          '[data-automationid="personaImage"] img',
+          'img[src*="graph.microsoft.com"]',
+          'img[src*="graph.windows.net"]',
+          'img[src*="/photos/"]',
+          'img[src*="/me/photo"]',
+        ];
+        const candidates = new Set();
+        for (const sel of selectors) {
+          try {
+            document.querySelectorAll(sel).forEach(el => {
+              // If the selector matched a parent, find img children
+              if (el.tagName === 'IMG') {
+                candidates.add(el);
+              } else {
+                el.querySelectorAll('img').forEach(img => candidates.add(img));
+              }
+            });
+          } catch(e) {}
+        }
+        // Also check for small circular images that are likely avatars
+        document.querySelectorAll('img').forEach(img => {
+          const r = img.getBoundingClientRect();
+          const style = getComputedStyle(img);
+          if (r.width >= 20 && r.width <= 80 && r.height >= 20 && r.height <= 80
+              && Math.abs(r.width - r.height) < 4
+              && style.borderRadius && (style.borderRadius === '50%' || parseInt(style.borderRadius) >= r.width / 2)) {
+            candidates.add(img);
+          }
+        });
+        for (const img of candidates) {
+          if (img.src && !img.src.startsWith('data:image/svg+xml')) {
+            img.src = genericSrc;
+            img.srcset = '';
+            count++;
+          }
+        }
+        return count;
+      }, avatarDataUri);
+      totalReplaced += avatarCount;
+    } catch(e) {}
+  }
+
   return { framesProcessed: frames.length, totalReplaced };
 }
 """)
@@ -184,9 +253,10 @@ async page => {
                 'replacement': replace_text,
             })
     
-    # Inject rules into the JS
+    # Inject rules and avatar URI into the JS
     rules_json = json.dumps(rules)
-    js = '\n'.join(js_parts).replace('RULES_PLACEHOLDER', rules_json)
+    avatar_json = json.dumps(GENERIC_AVATAR_DATA_URI)
+    js = '\n'.join(js_parts).replace('RULES_PLACEHOLDER', rules_json).replace('AVATAR_PLACEHOLDER', avatar_json)
     
     return js
 

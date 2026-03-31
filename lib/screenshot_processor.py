@@ -37,6 +37,7 @@ def process_screenshot(
     skip_pii_redaction: bool = False,
     skip_crop: bool = False,
     skip_gray_border: bool = False,
+    skip_callouts: bool = False,
     open_gimp: bool = True,
     description: str = "",
 ) -> dict:
@@ -52,6 +53,7 @@ def process_screenshot(
         skip_pii_redaction: Skip PII detection and redaction
         skip_crop: Skip smart cropping
         skip_gray_border: Skip gray border addition
+        skip_callouts: Skip callout box drawing entirely (nocallouts mode)
         open_gimp: Open result in GIMP for final edits
         description: Human-readable description of what this screenshot shows
         
@@ -119,7 +121,7 @@ def process_screenshot(
             print("PII Detection: No PII found")
     
     # Step 2: Callout Boxes
-    if callout_selectors:
+    if not skip_callouts and callout_selectors:
         callout_specs = [
             CalloutSpec(px_rect=rect)
             for rect in callout_selectors
@@ -233,6 +235,7 @@ if __name__ == '__main__':
     parser.add_argument('--skip-pii', action='store_true', help='Skip PII redaction')
     parser.add_argument('--skip-crop', action='store_true', help='Skip smart cropping')
     parser.add_argument('--skip-border', action='store_true', help='Skip gray border')
+    parser.add_argument('--no-callouts', action='store_true', help='Skip callout box drawing entirely')
     parser.add_argument('--no-gimp', action='store_true', help='Do not open in GIMP')
     parser.add_argument('--callouts', help='JSON array of {x,y,width,height} rects for callout boxes')
     parser.add_argument('--crop-focus', help='JSON array of {x,y,width,height} rects for crop focus')
@@ -251,6 +254,7 @@ if __name__ == '__main__':
         skip_pii_redaction=args.skip_pii,
         skip_crop=args.skip_crop,
         skip_gray_border=args.skip_border,
+        skip_callouts=args.no_callouts,
         open_gimp=not args.no_gimp,
         description=args.description,
     )
