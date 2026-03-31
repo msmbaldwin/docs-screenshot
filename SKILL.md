@@ -1,6 +1,6 @@
 ---
 name: docs-screenshot
-description: Capture, process, and redact screenshots for Microsoft Learn documentation. Use when the user needs screenshots of Azure, M365, SharePoint, Entra, or any Microsoft web portal. Also use when updating existing docs, validating screenshots, or creating screenshots for new documentation.
+description: 'docs-screenshot <article-path | description> [nocallouts] [nogimp] [nopii] [help]'
 allowed-tools: Bash(playwright-cli:*), Bash(python:*), Bash(az:*), Bash(pwsh:*), Bash(powershell:*)
 ---
 
@@ -8,7 +8,85 @@ allowed-tools: Bash(playwright-cli:*), Bash(python:*), Bash(az:*), Bash(pwsh:*),
 
 Automates the full pipeline for creating documentation screenshots across all Microsoft web portals (Azure, M365, SharePoint, Entra ID, Power Platform, etc.) that comply with Microsoft Learn contributor guidelines: browser automation, resource provisioning, PII redaction with approved fictitious values, callout boxes, smart cropping, and GIMP handoff.
 
-## Two Primary Usage Scenarios
+## Usage
+
+When this skill is invoked, parse the user's arguments and proceed accordingly.
+If the user says `help`, display the [Detailed Help](#detailed-help) section below and stop.
+
+### Quick Reference
+
+When invoked as `/docs-screenshot`, the skill prefix is stripped. Match the remaining text:
+
+| User's argument | What to do |
+|---|---|
+| `help` | Display the Detailed Help section (see below) and stop |
+| `<article-path>` | **Scenario 2**: Refresh all screenshots in the given markdown article |
+| `<description of what to capture>` | **Scenario 1/3**: Capture a new screenshot based on the description |
+| `nocallouts` (anywhere in text) | Skip all callout box drawing |
+| `nogimp` (anywhere in text) | Skip opening result in GIMP |
+| `nopii` (anywhere in text) | Skip PII detection and redaction (use when PII is already scrubbed via DOM) |
+
+Options can be combined with any scenario. Examples:
+
+```
+/docs-screenshot help
+/docs-screenshot F:\git\azure-docs\articles\storage\files\storage-how-to-use-files-windows.md
+/docs-screenshot Take a screenshot of the Azure Key Vault secrets page. nocallouts
+/docs-screenshot Capture the VM creation blade with size B2s selected. Add callouts on the Size dropdown and the Review+Create button.
+/docs-screenshot F:\git\azure-docs\articles\storage\files\soft-delete.md nogimp
+```
+
+### Detailed Help
+
+**docs-screenshot** captures, processes, and redacts screenshots for Microsoft Learn documentation.
+
+**Scenarios:**
+
+| Scenario | Trigger | Description |
+|---|---|---|
+| **New article** | Description of what to capture | Provision resources, navigate portal, capture, process |
+| **Refresh article** | Path to a `.md` file | Parse article, recapture all screenshots, generate comparison report |
+| **Description-only** | Description without article context | Like "New article" but can also work without any pre-existing screenshots; the skill sets up everything from your description |
+
+**Options:**
+
+| Option | Effect |
+|---|---|
+| `nocallouts` | Skip callout box drawing entirely. Use when callout positions are unreliable, or when you want a clean base image to annotate manually. |
+| `nogimp` | Skip opening the processed screenshot in GIMP. The image is still saved to disk. |
+| `nopii` | Skip PII detection and pixel-level redaction. Use when you have already scrubbed PII from the DOM before capture (the preferred approach). |
+| `help` | Display this help text and stop. |
+
+**Callout placement rules:**
+- Callouts use RGB(233, 28, 28), 3px thickness
+- Icons adjacent to menu text are always included in the bounding box
+- Text is vertically centered within the callout box
+- Dropdown controls include the full chevron indicator
+- Callout rects never clip through panel borders or graphics
+
+**PII scrubbing:**
+- DOM scrubbing (preferred): replaces PII in the live DOM before capture, including cross-origin iframes
+- Avatar replacement: user profile photos are replaced with a generic silhouette
+- Pixel-level fallback: for canvas/SVG/closed Shadow DOM content
+- All replacements use official Microsoft-approved fictitious values (contoso.com, etc.)
+
+**Supported portals:** Azure, M365 Admin, SharePoint, Entra ID, Power Platform, Teams Admin, Exchange, Intune, Defender, Fabric, DevOps
+
+**Post-processing pipeline:**
+1. PII redaction (DOM or pixel-level)
+2. Callout boxes (unless `nocallouts`)
+3. Smart crop to area of interest
+4. 1px gray border
+5. PNG optimization (target < 200 KB, max 1200px width)
+6. Open in GIMP (unless `nogimp`)
+
+**Failure categories:** ✅ Success | ⚠️ UI Mismatch | ❌ Navigation Failed | 🔒 Privilege Issue | 🚨 PII Leak | 📄 Doc Gap | 🔍 Element Missing
+
+**Prerequisites:** Windows + Edge, Playwright (via playwright-cli or MCP server), Python 3.10+ with Pillow, Azure CLI (for provisioning), GIMP (optional)
+
+---
+
+## Three Primary Scenarios
 
 ### Scenario 1: New Documentation Authoring
 
