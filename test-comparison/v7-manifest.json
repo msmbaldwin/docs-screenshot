@@ -1,0 +1,1002 @@
+[
+  {
+    "repo": "azure-ai-docs-pr",
+    "article": "articles/foundry-local/get-started.md",
+    "source": "media/get-started-output.png",
+    "alt_text": "Screenshot of output from Foundry Local run command.",
+    "context": "``` You see a response from the model in the terminal: Reference: [Foundry Local CLI reference](reference/reference-cli.md)",
+    "portal": "ai-foundry",
+    "service_area": "foundry-local",
+    "id": "v7-001"
+  },
+  {
+    "repo": "azure-ai-docs-pr",
+    "article": "articles/open-datasets/how-to-create-azure-machine-learning-dataset-from-open-dataset.md",
+    "source": "./media/how-to-create-dataset-from-open-dataset/data-assets-tab.png",
+    "alt_text": "Screenshot showing the Create control on the Data Assets tab.",
+    "context": "1. In your workspace, select the **Data** in the left nav. At the **Data assets** tab, select **Create**, as show in this screenshot: 1. At the next screen, add a name and an optional description for the new data asset. Then, select **Tabular** in the **Type** dropdown, as shown in this screenshot:",
+    "portal": "azure",
+    "service_area": "open-datasets",
+    "id": "v7-002"
+  },
+  {
+    "repo": "azure-ai-docs-pr",
+    "article": "articles/foundry/agents/concepts/agent-identity.md",
+    "source": "../media/agent-identity/azure-agent-identity-json-view.png",
+    "alt_text": "Screenshot of the JSON view in the Azure portal displaying an agent identity blueprint and agent identity details for a Foundry project.",
+    "context": "To find your shared agent identity blueprint and agent identity, go to your Foundry project in the [Azure portal](https://portal.azure.com). On the **Overview** pane, select **JSON View**. Choose the latest API version to view and copy the identities. ### Distinct agent identity",
+    "portal": "ai-foundry",
+    "service_area": "foundry",
+    "id": "v7-003"
+  },
+  {
+    "repo": "azure-ai-docs-pr",
+    "article": "articles/search/cognitive-search-attach-cognitive-services.md",
+    "source": "media/cognitive-search-attach-cognitive-services/ai-services-kind.png",
+    "alt_text": "Screenshot of the API kind property in the Azure portal.",
+    "context": "+ A [Foundry resource](/azure/ai-services/multi-service-resource) with the `AIServices` API kind. You can verify the API kind on the resource's **Overview** page in the Azure portal: > [!NOTE]",
+    "portal": "azure",
+    "service_area": "search",
+    "id": "v7-004"
+  },
+  {
+    "repo": "azure-ai-docs-pr",
+    "article": "articles/foundry-classic/what-is-foundry.md",
+    "source": "media/how-to/projects/breadcrumb.png",
+    "alt_text": "Screenshot shows both a Foundry and hub-based project in the breadcrumb navigation.",
+    "context": "* A [!INCLUDE [fdp-project-name](../foundry/includes/fdp-project-name.md)] displays **(Foundry)** on the second line * A [!INCLUDE [hub-project-name](includes/hub-project-name.md)] displays **(Hub)** on the second line * From the **All resources** page",
+    "portal": "ai-foundry",
+    "service_area": "foundry-classic",
+    "id": "v7-005"
+  },
+  {
+    "repo": "azure-ai-docs-pr",
+    "article": "articles/ai-services/autoscale.md",
+    "source": "~/reusable-content/ce-skilling/azure/media/ai-services/portal-autoscale.png",
+    "alt_text": "Screenshot of the Azure portal with the autoscale pane on right.",
+    "context": "Go to your resource's page in the Azure portal, and select the **Overview** tab on the left pane. Under the **Essentials** section, find the **Autoscale** line and select the link to view the **Autoscale Settings** pane and enable the feature. #### [Azure CLI](#tab/cli)",
+    "portal": "azure",
+    "service_area": "ai-services",
+    "id": "v7-006"
+  },
+  {
+    "repo": "azure-ai-docs-pr",
+    "article": "articles/machine-learning/apache-spark-environment-configuration.md",
+    "source": "media/apache-spark-environment-configuration/azure-key-vault-secrets-generate-import.png",
+    "alt_text": "Screenshot that shows the Azure Key Vault Secrets Generate Or Import tab.",
+    "context": "1. Select **Secrets** from the left panel 1. Select **+ Generate/Import** 1. At the **Create a secret** screen, enter a **Name** for the secret you want to create",
+    "portal": "azure",
+    "service_area": "machine-learning",
+    "id": "v7-007"
+  },
+  {
+    "repo": "azure-ai-docs-pr",
+    "article": "articles/open-datasets/how-to-create-azure-machine-learning-dataset-from-open-dataset.md",
+    "source": "./media/how-to-create-dataset-from-open-dataset/select-tabular-dropdown-option.png",
+    "alt_text": "Screenshot showing selection of the Tabular option in the Type dropdown.",
+    "context": "1. At the next screen, add a name and an optional description for the new data asset. Then, select **Tabular** in the **Type** dropdown, as shown in this screenshot: 1. At the next screen, select **From Azure Open Datasets**, and then select **Next**, as shown in this screenshot:",
+    "portal": "azure",
+    "service_area": "open-datasets",
+    "id": "v7-008"
+  },
+  {
+    "repo": "azure-ai-docs-pr",
+    "article": "articles/foundry/agents/concepts/agent-identity.md",
+    "source": "../media/agent-identity/entra-admin-center-agent-identities.png",
+    "alt_text": "Screenshot of the Microsoft Entra admin center that shows the tab for agent identities with an inventory of all agents in the tenant.",
+    "context": "You can view and manage all agent identities in your tenant through the Microsoft Entra admin center. Go to the [tab for agent identities](https://entra.microsoft.com/?Microsoft_AAD_RegisteredApps=stage1&exp.EnableAgentIDUX=true#view/Microsoft_AAD_RegisteredApps/AllAgents.MenuView/~/allAgentIds) to see an inventory of all agents in your tenant, including Foundry agents, Microsoft Copilot Studio agents, and others. In this experience, you can enable built-in security controls, including:",
+    "portal": "entra",
+    "service_area": "foundry",
+    "id": "v7-009"
+  },
+  {
+    "repo": "azure-ai-docs-pr",
+    "article": "articles/search/cognitive-search-attach-cognitive-services.md",
+    "source": "media/cognitive-search-attach-cognitive-services/attach-existing2.png",
+    "alt_text": "Screenshot of the key page.",
+    "context": "+ For a new or existing skillset, provide the key in skillset definition. > [!NOTE]",
+    "portal": "azure",
+    "service_area": "search",
+    "id": "v7-010"
+  },
+  {
+    "repo": "azure-ai-docs-pr",
+    "article": "articles/foundry-classic/what-is-foundry.md",
+    "source": "media/how-to/projects/all-resources.png",
+    "alt_text": "Screenshot shows both a Foundry and hub-based project in the All Resources page.",
+    "context": "* A [!INCLUDE [fdp-project-name](../foundry/includes/fdp-project-name.md)] displays **(Foundry)** as the parent resource * A [!INCLUDE [hub-project-name](includes/hub-project-name.md)] displays **(Hub)** as the parent resource ## Pricing and billing",
+    "portal": "ai-foundry",
+    "service_area": "foundry-classic",
+    "id": "v7-011"
+  },
+  {
+    "repo": "azure-ai-docs-pr",
+    "article": "articles/ai-services/anomaly-detector/tutorials/azure-data-explorer.md",
+    "source": "../media/data-explorer/project.png",
+    "alt_text": "Screenshot of Kusto query with sample data.",
+    "context": "Once ingested, your data should look as follows: ## Detect anomalies in an entire time series",
+    "portal": "azure",
+    "service_area": "ai-services",
+    "id": "v7-012"
+  },
+  {
+    "repo": "azure-ai-docs-pr",
+    "article": "articles/machine-learning/apache-spark-environment-configuration.md",
+    "source": "media/apache-spark-environment-configuration/storage-account-access-keys.png",
+    "alt_text": "Screenshot that shows the Azure access key and connection string values screen.",
+    "context": "1. At the **Create a secret** screen, enter a **Name** for the secret you want to create 1. Navigate to Azure Blob Storage Account, in the Azure portal, as shown in this image: 1. Select **Access keys** from the Azure Blob Storage Account page left panel 1. Select **Show** next to **Key 1**, and then **Copy to clipboard** to get the storage account access key",
+    "portal": "azure",
+    "service_area": "machine-learning",
+    "id": "v7-013"
+  },
+  {
+    "repo": "azure-ai-docs-pr",
+    "article": "articles/open-datasets/how-to-create-azure-machine-learning-dataset-from-open-dataset.md",
+    "source": "./media/how-to-create-dataset-from-open-dataset/select-from-azure-open-datasets.png",
+    "alt_text": "Screenshot showing selection of the From Azure Open Datasets option.",
+    "context": "1. At the next screen, select **From Azure Open Datasets**, and then select **Next**, as shown in this screenshot: 1. At the next screen, select an available Azure Open Dataset. In this screenshot, we selected the **San Francisco Safety Data** Dataset:",
+    "portal": "azure",
+    "service_area": "open-datasets",
+    "id": "v7-014"
+  },
+  {
+    "repo": "azure-ai-docs-pr",
+    "article": "articles/foundry/agents/concepts/tool-catalog.md",
+    "source": "../media/tool-catalog/tool-example.png",
+    "alt_text": "Screenshot of a tool details page in the Foundry portal showing configuration and setup information.",
+    "context": "| Registry | **Public**: Public remote and local MCP servers in the catalog.<br>**Logic Apps connectors**: Azure Logic Apps connectors that you convert to remote MCP servers for use in a private tool catalog. | | Supported authentication | Authentication method an MCP server supports. For more information, see [Authentication methods](https://aka.ms/FoundryMCPAuth). | When you select a tool, Foundry Tools shows the setup details you need to configure it.",
+    "portal": "ai-foundry",
+    "service_area": "foundry",
+    "id": "v7-015"
+  },
+  {
+    "repo": "azure-ai-docs-pr",
+    "article": "articles/search/cognitive-search-attach-cognitive-services.md",
+    "source": "media/cognitive-search-attach-cognitive-services/select-skillset.png",
+    "alt_text": "Screenshot of the skillset page.",
+    "context": "1. Under **Search management > Skillsets**, select a skillset from the list. 1. Scroll to the `\"cognitiveServices\"` section in the file.",
+    "portal": "azure",
+    "service_area": "search",
+    "id": "v7-016"
+  },
+  {
+    "repo": "azure-ai-docs-pr",
+    "article": "articles/foundry-classic/agents/how-to/connected-agents.md",
+    "source": "../media/connected-agents/connected-agents-foundry.png",
+    "alt_text": "A screenshot of the agents page in the Microsoft Foundry.",
+    "context": "2. Select an existing agent from the list or create a new one. 3. Scroll down to the **Connected agents** section in the agent's set up panel and select **Add +**. 4. In the dialog that appears, choose an agent for the main agent to delegate tasks to, and describe:",
+    "portal": "ai-foundry",
+    "service_area": "foundry-classic",
+    "id": "v7-017"
+  },
+  {
+    "repo": "azure-ai-docs-pr",
+    "article": "articles/ai-services/anomaly-detector/tutorials/azure-data-explorer.md",
+    "source": "../media/data-explorer/anomaly.png",
+    "alt_text": "Screenshot of line chart of anomalies.",
+    "context": "After you run the code, you'll render a chart like this: ## Next steps",
+    "portal": "azure",
+    "service_area": "ai-services",
+    "id": "v7-018"
+  },
+  {
+    "repo": "azure-ai-docs-pr",
+    "article": "articles/machine-learning/apache-spark-environment-configuration.md",
+    "source": "media/apache-spark-environment-configuration/create-a-secret.png",
+    "alt_text": "Screenshot that shows the Azure secret creation screen.",
+    "context": "1. In the **Secret value** textbox, enter the access key credential for the Azure storage account, which was copied to the clipboard in the earlier step 1. Select **Create** > [!TIP]",
+    "portal": "azure",
+    "service_area": "machine-learning",
+    "id": "v7-019"
+  },
+  {
+    "repo": "azure-ai-docs-pr",
+    "article": "articles/open-datasets/how-to-create-azure-machine-learning-dataset-from-open-dataset.md",
+    "source": "./media/how-to-create-dataset-from-open-dataset/choose-an-azure-open-dataset.png",
+    "alt_text": "Screenshot showing selection of the US Labor Force Statistics dataset.",
+    "context": "1. At the next screen, select an available Azure Open Dataset. In this screenshot, we selected the **San Francisco Safety Data** Dataset: 1. Scroll down if necessary, and select **Next**, as shown in this screenshot:",
+    "portal": "azure",
+    "service_area": "open-datasets",
+    "id": "v7-020"
+  },
+  {
+    "repo": "azure-ai-docs-pr",
+    "article": "articles/foundry/agents/concepts/tool-catalog.md",
+    "source": "../media/tool-catalog/tool-view.png",
+    "alt_text": "A screenshot showing the tools list in the Foundry portal.",
+    "context": "Before you delete a tool, check which agents or workflows use it. Deleting a tool can break runs that depend on it. <!-- -->",
+    "portal": "ai-foundry",
+    "service_area": "foundry",
+    "id": "v7-021"
+  },
+  {
+    "repo": "azure-ai-docs-pr",
+    "article": "articles/search/cognitive-search-attach-cognitive-services.md",
+    "source": "media/cognitive-search-attach-cognitive-services/remove-key-save.png",
+    "alt_text": "Screenshot of the skillset JSON.",
+    "context": "1. Save the skillset. ### [**REST**](#tab/cogkey-rest-remove)",
+    "portal": "azure",
+    "service_area": "search",
+    "id": "v7-022"
+  },
+  {
+    "repo": "azure-ai-docs-pr",
+    "article": "articles/foundry-classic/agents/how-to/connected-agents.md",
+    "source": "../media/connected-agents/connected-agents-foundry-2.png",
+    "alt_text": "A screenshot of the connected agents screen",
+    "context": "The `research_agent` should delegate this request to `stock_price_bot` based on the routing description you defined. ::: zone-end",
+    "portal": "ai-foundry",
+    "service_area": "foundry-classic",
+    "id": "v7-023"
+  },
+  {
+    "repo": "azure-ai-docs-pr",
+    "article": "articles/ai-services/computer-vision/concept-face-detection.md",
+    "source": "media/image-rotation.png",
+    "alt_text": "Screenshot of two face images with and without rotation.",
+    "context": "To properly display the face rectangle and landmarks, you need to make sure the image is rotated correctly. Most of the image visualization tools automatically rotate the image according to its EXIF orientation by default. For other tools, you might need to apply the rotation using your own code. The following examples show a face rectangle on a rotated image (left) and a non-rotated image (right). ### Video input",
+    "portal": "azure",
+    "service_area": "ai-services",
+    "id": "v7-024"
+  },
+  {
+    "repo": "azure-ai-docs-pr",
+    "article": "articles/machine-learning/apache-spark-environment-configuration.md",
+    "source": "media/apache-spark-environment-configuration/find-storage-accounts-service.png",
+    "alt_text": "Expandable screenshot that shows Storage accounts service search and selection in Microsoft Azure portal.",
+    "context": "1. Open the [Microsoft Azure portal](https://portal.azure.com) 1. Search and select the **Storage accounts** service 1. On the **Storage accounts** page, select the Azure Data Lake Storage (ADLS) Gen 2 storage account from the list. A page showing the storage account **Overview** opens",
+    "portal": "azure",
+    "service_area": "machine-learning",
+    "id": "v7-025"
+  },
+  {
+    "repo": "azure-ai-docs-pr",
+    "article": "articles/open-datasets/how-to-create-azure-machine-learning-dataset-from-open-dataset.md",
+    "source": "./media/how-to-create-dataset-from-open-dataset/select-next.png",
+    "alt_text": "Screenshot showing selection of the Next button.",
+    "context": "1. Scroll down if necessary, and select **Next**, as shown in this screenshot: 1. Optionally, filter the data with the available filters, appropriate for the chosen dataset. For the **San Francisco Safety Data** dataset, we set the filtered date range between a start date of **July 1, 2024** and **July 17, 2024**. Select **Next**, as shown in this screenshot:",
+    "portal": "azure",
+    "service_area": "open-datasets",
+    "id": "v7-026"
+  },
+  {
+    "repo": "azure-ai-docs-pr",
+    "article": "articles/foundry/agents/concepts/workflow.md",
+    "source": "../../media/workflows/select-parameters.png",
+    "alt_text": "Screenshot that shows the window for configuring a JSON schema format for output.",
+    "context": "1. Select the parameter icon. 1. For **Text format**, select **JSON Schema**. 1. Copy the desired JSON schema and paste it in the **Add response format** window. The following screenshot shows a math example. Select **Save**.",
+    "portal": "ai-foundry",
+    "service_area": "foundry",
+    "id": "v7-027"
+  },
+  {
+    "repo": "azure-ai-docs-pr",
+    "article": "articles/search/cognitive-search-concept-annotations-syntax.md",
+    "source": "media/cognitive-search-annotations-syntax/content-source-annotation-path.png",
+    "alt_text": "Screenshot of a skillset definition with context and source elements highlighted.",
+    "context": "Paths are specified in the \"context\" and \"source\" properties of a skillset, and in the [output field mappings](cognitive-search-output-field-mapping.md) in an indexer. The example in the screenshot illustrates the path for an item in an Azure Cosmos DB collection.",
+    "portal": "azure",
+    "service_area": "search",
+    "id": "v7-028"
+  },
+  {
+    "repo": "azure-ai-docs-pr",
+    "article": "articles/foundry-classic/agents/how-to/metrics.md",
+    "source": "../../../foundry/agents/media/monitoring/dashboard.png",
+    "alt_text": "Screenshot that shows out-of-the-box dashboards for a resource in the Azure portal.",
+    "context": "To access the monitoring dashboards, sign in to the [Azure portal](https://portal.azure.com), select your Agent Service resource, and then select **Monitoring** > **Metrics**. ## Data collection and routing in Azure Monitor",
+    "portal": "ai-foundry",
+    "service_area": "foundry-classic",
+    "id": "v7-029"
+  },
+  {
+    "repo": "azure-ai-docs-pr",
+    "article": "articles/ai-services/computer-vision/overview-vision-studio.md",
+    "source": "./Images/vision-studio-wizard-1.png",
+    "alt_text": "Screenshot of Vision Studio startup wizard.",
+    "context": "1. Go to the [Vision Studio website](https://portal.vision.cognitive.azure.com). If it's your first visit, a popup window prompts you to sign in to Azure and then choose or create a Vision resource. You can skip this step and do it later. 1. Select **Choose resource**, then select an existing resource within your subscription. If you want to create a new one, select **Create a new resource**. Then enter information for your new resource, such as a name, location, and resource group.",
+    "portal": "azure",
+    "service_area": "ai-services",
+    "id": "v7-030"
+  },
+  {
+    "repo": "azure-ai-docs-pr",
+    "article": "articles/machine-learning/apache-spark-environment-configuration.md",
+    "source": "media/apache-spark-environment-configuration/storage-accounts-list.png",
+    "alt_text": "Expandable screenshot that shows selection of the Azure Data Lake Storage (ADLS) Gen 2 storage account Storage account.",
+    "context": "1. On the **Storage accounts** page, select the Azure Data Lake Storage (ADLS) Gen 2 storage account from the list. A page showing the storage account **Overview** opens 1. Select **Access Control (IAM)** from the left panel",
+    "portal": "azure",
+    "service_area": "machine-learning",
+    "id": "v7-031"
+  },
+  {
+    "repo": "azure-ai-docs-pr",
+    "article": "articles/open-datasets/how-to-create-azure-machine-learning-dataset-from-open-dataset.md",
+    "source": "./media/how-to-create-dataset-from-open-dataset/data-asset-filter-example.png",
+    "alt_text": "Screenshot showing selection of filter values and selection of the Next button.",
+    "context": "1. Optionally, filter the data with the available filters, appropriate for the chosen dataset. For the **San Francisco Safety Data** dataset, we set the filtered date range between a start date of **July 1, 2024** and **July 17, 2024**. Select **Next**, as shown in this screenshot: 1. At the next screen, review the settings for the new data asset, and make any necessary changes. When it seems good, select **Create** as shown in this screenshot:",
+    "portal": "azure",
+    "service_area": "open-datasets",
+    "id": "v7-032"
+  },
+  {
+    "repo": "azure-ai-docs-pr",
+    "article": "articles/foundry/agents/concepts/workflow.md",
+    "source": "../../media/workflows/response-format.png",
+    "alt_text": "Screenshot that shows the addition of a response format in JSON.",
+    "context": "1. Copy the desired JSON schema and paste it in the **Add response format** window. The following screenshot shows a math example. Select **Save**. > [!IMPORTANT]",
+    "portal": "ai-foundry",
+    "service_area": "foundry",
+    "id": "v7-033"
+  },
+  {
+    "repo": "azure-ai-docs-pr",
+    "article": "articles/search/cognitive-search-concept-image-scenarios.md",
+    "source": "media/cognitive-search-concept-image-scenarios/state-of-birds-screenshot.png",
+    "alt_text": "Screenshot of three images in a PDF.",
+    "context": "The following screenshot is an illustration of a PDF that includes text and embedded images. Document cracking detected three embedded images: flock of seagulls, map, eagle. Other text in the example (including titles, headings, and body text) was extracted as text and excluded from image processing. Image analysis output is illustrated in the following JSON (search result). The skill definition allows you to specify which [visual features](cognitive-search-skill-image-analysis.md#skill-paramete",
+    "portal": "azure",
+    "service_area": "search",
+    "id": "v7-034"
+  },
+  {
+    "repo": "azure-ai-docs-pr",
+    "article": "articles/foundry-classic/agents/how-to/triggers.md",
+    "source": "../media/triggers/connectors.png",
+    "alt_text": "Screenshot of actions added to a workflow.",
+    "context": "1. Select **Add an action**, and then search for **Agent Service**. 1. Depending on your use case, choose the actions that you need.",
+    "portal": "ai-foundry",
+    "service_area": "foundry-classic",
+    "id": "v7-035"
+  },
+  {
+    "repo": "azure-docs-pr",
+    "article": "articles/automanage/common-errors.md",
+    "source": "media\\common-errors\\failure-flyout.png",
+    "alt_text": "Screenshot of Automanage failure detail flyout.",
+    "context": "## Troubleshooting deployment failures Onboarding a machine to Automanage will result in an Azure Resource Manager deployment being created. For more information, see the deployment for further details as to why it failed. There are links to the deployments in the failure detail flyout, pictured below. ### Check the deployments for the resource group containing the failed machine",
+    "portal": "azure",
+    "service_area": "automanage",
+    "id": "v7-036"
+  },
+  {
+    "repo": "azure-docs-pr",
+    "article": "articles/cloud-shell/vnet/how-to-use-private-endpoint-storage.md",
+    "source": "./media/how-to-use-private-endpoint-storage/dynamic-ip-address.png",
+    "alt_text": "Screenshot of dynamic IP address selection.",
+    "context": "| Network policy for private endpoints | Select **edit** to apply Network policy for private endpoints. </br> In **Edit subnet network policy**, select the checkbox next to **Network security groups** and **Route Tables** in the **Network policies setting for all private endpoints in this subnet** pull-down. </br> Select **Save**. </br></br>For more information, see [Manage network policies for private endpoints][01] | | **Private IP configuration**         | Select **Dynamically allocate IP add",
+    "portal": "azure",
+    "service_area": "cloud-shell",
+    "id": "v7-037"
+  },
+  {
+    "repo": "azure-docs-pr",
+    "article": "articles/import-export/storage-import-export-data-from-blobs.md",
+    "source": "./media/storage-import-export-data-from-blobs/import-export-order-preview-06-b-export-job.png",
+    "alt_text": "Screenshot showing selected containers and blobs for a new Azure Import/Export export job in the portal.",
+    "context": "|**Add blobs**|Specify individual blobs to export.<br>Select **Add blobs**. Then specify the relative path to the blob, beginning with the container name. Use *$root* to specify the root container.<br>You must provide the blob paths in valid format, as shown in this screenshot, to avoid errors during processing. For more information, see [Examples of valid blob paths](storage-import-export-determine-drives-for-export.md#examples-of-valid-blob-paths).| |**Add prefixes**|Use a prefix to select a s",
+    "portal": "azure",
+    "service_area": "import-export",
+    "id": "v7-038"
+  },
+  {
+    "repo": "azure-docs-pr",
+    "article": "articles/certification/validate-device-edge-secured-core.md",
+    "source": "./media/images/edge-secured-core-enabled.png",
+    "alt_text": "Screenshot of Device Security Status.",
+    "context": "# Validate your Edge Secured-core certified devices To check if your device is Edge Secured-core enabled: 1.\tGo to Windows Icon > Security Settings > Device Security. The \"Secured-core PC\" status is available on the top of the screen. If the status is missing, reach out to the device builder for assistance. 2.\tGo to \"Core isolation\" to ensure that \"Memory integrity\" is on.",
+    "portal": "defender",
+    "service_area": "certification",
+    "id": "v7-039"
+  },
+  {
+    "repo": "azure-docs-pr",
+    "article": "articles/storage-actions/storage-tasks/storage-task-quickstart-dotnet.md",
+    "source": "../media/storage-tasks/storage-quickstart-dotnet/visual-studio-new-console-app.png",
+    "alt_text": "A screenshot showing how to create a new project using Visual Studio.",
+    "context": "1. In the dialog window, enter *console app* into the project template search box and select the first result. Choose **Next** at the bottom of the dialog. 1. For the **Project Name**, enter *StorageTaskQuickstart*. Leave the default values for the rest of the fields and select **Next**.",
+    "portal": "azure",
+    "service_area": "storage-actions",
+    "id": "v7-040"
+  },
+  {
+    "repo": "azure-docs-pr",
+    "article": "articles/firewall-manager/configure-ddos.md",
+    "source": "media/configure-ddos/ddos-protection.png",
+    "alt_text": "Screenshot showing virtual network with DDoS Protection Plan",
+    "context": "You should now see that the virtual network has an associated DDoS Protection Plan. ## Next steps",
+    "portal": "azure",
+    "service_area": "firewall-manager",
+    "id": "v7-041"
+  },
+  {
+    "repo": "azure-docs-pr",
+    "article": "articles/cloud-services-extended-support/deploy-portal.md",
+    "source": "media/deploy-portal-1.png",
+    "alt_text": "Screenshot that shows a Cloud Services (extended support) search in the Azure portal, and selecting the result.",
+    "context": "1. In the search bar, enter **Cloud Services (extended support)**, and then select it in the search results. 1. On the **Cloud services (extended support)** services pane, select **Create**.",
+    "portal": "azure",
+    "service_area": "cloud-services-extended-support",
+    "id": "v7-042"
+  },
+  {
+    "repo": "azure-docs-pr",
+    "article": "articles/databox-online/azure-stack-edge-gpu-deploy-configure-network-compute-web-proxy.md",
+    "source": "./media/azure-stack-edge-gpu-deploy-configure-network-compute-web-proxy/setup-type-single-node-1.png",
+    "alt_text": "Screenshot of local web UI 'Get started' page for one node.",
+    "context": "1. Go to the **Get started** page. 1. In the **Set up a single node device** tile, select **Start**. ## Configure network",
+    "portal": "azure",
+    "service_area": "databox-online",
+    "id": "v7-043"
+  },
+  {
+    "repo": "azure-docs-pr",
+    "article": "articles/baremetal-infrastructure/connect-baremetal-infrastructure.md",
+    "source": "media/connect-baremetal-infrastructure/register-resource-provider-azure-portal.png",
+    "alt_text": "Screenshot showing the BareMetal instances registered.",
+    "context": ">[!NOTE] >If the resource provider isn't registered, select **Register**. ### [Azure CLI](#tab/azure-cli)",
+    "portal": "azure",
+    "service_area": "baremetal-infrastructure",
+    "id": "v7-044"
+  },
+  {
+    "repo": "azure-docs-pr",
+    "article": "articles/external-attack-surface-management/overview.md",
+    "source": "media/overview.png",
+    "alt_text": "Screenshot that shows the Overview dashboard in Defender EASM.",
+    "context": "Defender EASM gives your security and IT teams essential visibility to help them identify unknowns, prioritize risk, eliminate threats, and extend control of vulnerabilities and exposure beyond the firewall. Attack surface insights are generated by using vulnerability and infrastructure data to showcase key areas of concern for your organization. ## Discovery and inventory",
+    "portal": "defender",
+    "service_area": "external-attack-surface-management",
+    "id": "v7-045"
+  },
+  {
+    "repo": "azure-docs-pr",
+    "article": "articles/peering-service/azure-portal.md",
+    "source": "./media/peering-services-portal-search.png",
+    "alt_text": "Screenshot shows how to search for Peering Service in the Azure portal.",
+    "context": "1. In the search box at the top of the portal, enter *Peering Service*. Select **Peering Services** in the search results. 1. Select **+ Create**.",
+    "portal": "azure",
+    "service_area": "peering-service",
+    "id": "v7-046"
+  },
+  {
+    "repo": "azure-docs-pr",
+    "article": "articles/azure-fluid-relay/how-tos/provision-fluid-azure-portal.md",
+    "source": "../images/add-resource-group.png",
+    "alt_text": "A screenshot of the Resource Groups page on the Azure portal.",
+    "context": "1. Sign in to the [Azure portal](https://portal.azure.com/). 2. In the left navigation, select **Resource groups**. Then select **Add**. 3. For Subscription, select the name of the Azure subscription in which you want to create the [resource group](../../azure-resource-manager/management/manage-resource-groups-portal.md#what-is-a-resource-group). For more information about subscriptions, see [Describe core Azure architectural components](/training/modules/azure-architecture-fundamentals).",
+    "portal": "azure",
+    "service_area": "azure-fluid-relay",
+    "id": "v7-047"
+  },
+  {
+    "repo": "azure-docs-pr",
+    "article": "articles/networking/foundations/network-foundations-overview.md",
+    "source": "media/portal-overview.png",
+    "alt_text": "Screenshot of the Azure portal interface showing the network foundation services overview page with navigation options and service links.",
+    "context": "The Azure portal provides a centralized experience for [getting started with network foundation services](https://aka.ms/hubs/networkfoundation). Information and links are provided to help you create an isolated network, manage network services, secure access to resources, manage hybrid name resolution, and troubleshoot network issues. Resource links are also provided in the left-hand service tree to help you understand, create, and view supporting components of the network foundation services.",
+    "portal": "azure",
+    "service_area": "networking",
+    "id": "v7-048"
+  },
+  {
+    "repo": "azure-docs-pr",
+    "article": "articles/storage-discovery/create-workspace.md",
+    "source": "media/create-workspace/create-resource-sml.png",
+    "alt_text": "Screenshot of the Create workspace page.",
+    "context": "Create an Azure Storage Discovery Workspace resource in the Azure portal by selecting **Create** as shown in the following image. Choose the **Subscription** and **Resource group** in which to create the discovery workspace. The following table describes each element.",
+    "portal": "azure",
+    "service_area": "storage-discovery",
+    "id": "v7-049"
+  },
+  {
+    "repo": "azure-docs-pr",
+    "article": "articles/azure-large-instances/configure-azure-service-health-alerts.md",
+    "source": "media/health-alerts-step-2.png",
+    "alt_text": "Screenshot of the health alert dashboard.",
+    "context": "1. Sign in to the [Azure portal](https://portal.azure.com). 2. Search for \u201cservice health\u201d in the search bar and select **Service Health** from the results. 1. In the Service Health Dashboard, select **Health Alerts**.",
+    "portal": "azure",
+    "service_area": "azure-large-instances",
+    "id": "v7-050"
+  },
+  {
+    "repo": "azure-docs-pr",
+    "article": "articles/azure-government/documentation-government-get-started-connect-with-portal.md",
+    "source": "./media/connect-with-portal/azure-gov-portal.png",
+    "alt_text": "Screenshot of Azure Government portal.",
+    "context": "Sign in using your Azure Government credentials. Once you sign in, you should see **Microsoft Azure Government** in the upper left section of the main navigation bar. ## Check out Service health",
+    "portal": "azure",
+    "service_area": "azure-government",
+    "id": "v7-051"
+  },
+  {
+    "repo": "azure-docs-pr",
+    "article": "articles/nat-gateway/monitor-nat-gateway-flow-logs.md",
+    "source": "media/monitor-flow-logs/view-top-talkers-query.png",
+    "alt_text": "Screenshot of query editor with NAT Gateway top talkers kusto query.",
+    "context": "| sort by TotalPacketsSent desc ``` 1. Select **Run** to execute the query.",
+    "portal": "azure",
+    "service_area": "nat-gateway",
+    "id": "v7-052"
+  },
+  {
+    "repo": "azure-docs-pr",
+    "article": "articles/private-link/create-private-endpoint-cli.md",
+    "source": "./media/create-private-endpoint-portal/web-app-default-page.png",
+    "alt_text": "Screenshot of the default web app page on a browser.",
+    "context": "If your web app hasn't been deployed, you get the following default web app page: 1. Close the connection to **vm-1**.",
+    "portal": "azure",
+    "service_area": "private-link",
+    "id": "v7-053"
+  },
+  {
+    "repo": "azure-docs-pr",
+    "article": "articles/integration-environments/create-application-group.md",
+    "source": "media/create-application-group/create-application-group.png",
+    "alt_text": "Screenshot shows Azure portal, integration environment sidebar with Applications selected, and toolbar with Create selected.",
+    "context": "1. On the **Applications** page toolbar, select **Create**. 1. On the **Basics** tab, provide the following information:",
+    "portal": "azure",
+    "service_area": "integration-environments",
+    "id": "v7-054"
+  },
+  {
+    "repo": "azure-docs-pr",
+    "article": "articles/network-function-manager/create-device.md",
+    "source": "./media/create-device/device-settings.png",
+    "alt_text": "Screenshot of device settings.",
+    "context": "1. Sign in to the [Azure portal](https://portal.azure.com) using your Microsoft Azure credentials. 1. On the **Basics** tab, configure **Project details** and **Instance details** with the device settings. When you fill in the fields, a green check mark will appear when characters you add are validated. Some details are auto filled, while others are customizable fields:",
+    "portal": "azure",
+    "service_area": "network-function-manager",
+    "id": "v7-055"
+  },
+  {
+    "repo": "azure-docs-pr",
+    "article": "articles/education-hub/navigate-costs.md",
+    "source": "media/budgets/usage.png",
+    "alt_text": "Screenshot that shows subscription details on the Overview page of the Education Hub.",
+    "context": "You can use the Azure Education Hub to keep track of your usage. The **Overview** page contains details about your Azure for Students subscription, such as monthly and aggregate usage and a countdown until your next renewal. You can also select **View cost details** to open Microsoft Cost Management. With Cost Management, you can explore in more detail your services and the usage that they've accumulated.",
+    "portal": "azure",
+    "service_area": "education-hub",
+    "id": "v7-056"
+  },
+  {
+    "repo": "azure-docs-pr",
+    "article": "articles/data-share/how-to-share-from-sql.md",
+    "source": "./media/share-receive-data.png",
+    "alt_text": "Screenshot showing the data share overview.",
+    "context": "1. Navigate to your Data Share Overview page. 1. Select **Start sharing your data**.",
+    "portal": "azure",
+    "service_area": "data-share",
+    "id": "v7-057"
+  },
+  {
+    "repo": "azure-docs-pr",
+    "article": "articles/notification-hubs/android-sdk.md",
+    "source": "media/android-sdk/notification-hubs-enable-firebase-cloud-messaging-legacy-api.png",
+    "alt_text": "Portal screenshot showing Enable Cloud Messaging API (Legacy).",
+    "context": "1. Go back to your Firebase console project **Cloud Messaging** tab, and refresh the page. 1. See that the Cloud Messaging API header has changed to **Cloud Messaging API (Legacy) Enabled** and now shows a server key. ## Configure a notification hub",
+    "portal": "azure",
+    "service_area": "notification-hubs",
+    "id": "v7-058"
+  },
+  {
+    "repo": "azure-docs-pr",
+    "article": "articles/extended-zones/backup-virtual-machine.md",
+    "source": "./media/backup-virtual-machine/portal-search.png",
+    "alt_text": "Screenshot that shows how to search for Backup center in the Azure portal.",
+    "context": "1. In the search box at the top of the portal, enter ***backup***. Select **Backup center** from the search results. 1. On the **Overview** page, select **+ Vault**.",
+    "portal": "azure",
+    "service_area": "extended-zones",
+    "id": "v7-059"
+  },
+  {
+    "repo": "azure-docs-pr",
+    "article": "articles/route-server/configure-route-server.md",
+    "source": "./media/add-peer.png",
+    "alt_text": "Screenshot that shows how to add the NVA to the route server as a peer.",
+    "context": "1. Select **Add** to save the configuration. Once the peer NVA is successfully added, you can see it in the list of peers with a **Succeeded** provisioning state.",
+    "portal": "azure",
+    "service_area": "route-server",
+    "id": "v7-060"
+  },
+  {
+    "repo": "azure-docs-pr",
+    "article": "articles/azure-relay/ip-firewall-virtual-networks.md",
+    "source": "./media/ip-firewall/selected-networks-trusted-access-disabled.png",
+    "alt_text": "Screenshot showing the Public access tab of the Networking page with the Firewall enabled.",
+    "context": "2. For **address range**, enter a specific IPv4 address or a range of IPv4 address in CIDR notation. 3. If you want to allow Microsoft services trusted by the Azure Relay service to bypass this firewall, select **Yes** for **Allow [trusted Microsoft services](#trusted-microsoft-services) to bypass this firewall?**. 1. Select **Save** on the toolbar to save the settings. Wait for a few minutes for the confirmation to show up on the portal notifications.",
+    "portal": "azure",
+    "service_area": "azure-relay",
+    "id": "v7-061"
+  },
+  {
+    "repo": "azure-docs-pr",
+    "article": "articles/bastion/bastion-connect-vm-rdp-windows.md",
+    "source": "./media/connect-ip-address/ip-address.png",
+    "alt_text": "Screenshot of the Connect using Azure Bastion page.",
+    "context": "1. On the Bastion **Connect** page, for **IP address**, enter the IP address of the target virtual machine. 1. Adjust your connection settings to the desired **Protocol** (RDP) and **Port**.",
+    "portal": "azure",
+    "service_area": "bastion",
+    "id": "v7-062"
+  },
+  {
+    "repo": "azure-docs-pr",
+    "article": "articles/ddos-protection/alerts.md",
+    "source": "./media/ddos-alerts/ddos-alert.png",
+    "alt_text": "Screenshot of a DDoS attack Alert after a DDoS attack.",
+    "context": "1. Select **Review + create** and then select **Create** after validation passes. Within a few minutes of attack detection, you should receive an email from Azure Monitor metrics that looks similar to the following picture: You can also learn more about [configuring webhooks](/azure/azure-monitor/alerts/alerts-webhooks?toc=%2fazure%2fvirtual-network%2ftoc.json) and [logic apps](../logic-apps/logic-apps-overview.md?toc=%2fazure%2fvirtual-network%2ftoc.json) for creating alerts.",
+    "portal": "azure",
+    "service_area": "ddos-protection",
+    "id": "v7-063"
+  },
+  {
+    "repo": "azure-docs-pr",
+    "article": "articles/firmware-analysis/firmware-analysis-rbac.md",
+    "source": "media/firmware-analysis-rbac/workspaces-in-resource-group.png",
+    "alt_text": "Screenshot of the workspaces inside a resource group.",
+    "context": "Navigate to your resource group. Notice that all **workspace** resources have the **Firmware analysis workspace** type. As mentioned earlier, the **workspace** resource directly holds your firmware images, so you may regularly interact with your **workspaces** depending on how you organize your images. Each firmware image that you upload will be represented as a resource and stored here.",
+    "portal": "azure",
+    "service_area": "firmware-analysis",
+    "id": "v7-064"
+  },
+  {
+    "repo": "azure-docs-pr",
+    "article": "articles/security/fundamentals/customer-lockbox-alternative-email.md",
+    "source": "./media/customer-lockbox-overview/customer-lockbox-alternative-email-home.png",
+    "alt_text": "A screenshot of the home screen.",
+    "context": "1. Access the [Azure portal](https://portal.azure.com/). 1. Sign in with the user account with tenant/privileged authentication administrator/User administrator role privileges. 1. Search for Users at the home page: 1. Search for the user to add an alternate email address.",
+    "portal": "defender",
+    "service_area": "security",
+    "id": "v7-065"
+  },
+  {
+    "repo": "azure-docs-pr",
+    "article": "articles/energy-data-services/concepts-manifest-ingestion.md",
+    "source": "media/concepts-manifest-ingestion/concept-manifest-ingestion-sequence.png",
+    "alt_text": "Screenshot of the manifest ingestion sequence.",
+    "context": "### Workflow sequence The following illustration provides the Manifest-based file ingestion workflow: A user submits a manifest to the `Workflow Service` using the manifest ingestion workflow name (\"Osdu_ingest\"). If the request is proper and the user is authorized to run the workflow, the workflow service loads the manifest and initiates the manifest ingestion workflow.",
+    "portal": "azure",
+    "service_area": "energy-data-services",
+    "id": "v7-066"
+  },
+  {
+    "repo": "azure-docs-pr",
+    "article": "articles/oracle/oracle-db/manage-oracle-transparent-data-encryption-azure-key-vault.md",
+    "source": "media/oracle-create-identity-connector.png",
+    "alt_text": "Screenshot that shows the button for creating an identity connector.",
+    "context": "1. On the page for VM cluster details, find the\u202f**Multicloud information**\u202fsection. The **Identity connector** value is likely **None** because you haven't set up the connector yet. Select\u202f**Create**. 1. In the form that appears, the fields for connector\u202fname,\u202fExadata VM cluster, Azure subscription ID, and\u202fAzure resource group name are autofilled. These values come from when the Exadata was provisioned. Oracle knows the Azure subscription and resource group that you used.",
+    "portal": "azure",
+    "service_area": "oracle",
+    "id": "v7-067"
+  },
+  {
+    "repo": "azure-docs-pr",
+    "article": "articles/static-web-apps/add-mongoose.md",
+    "source": "media/add-mongoose/cosmos-db.png",
+    "alt_text": "Screenshot showing form for creating new Cosmos DB instance.",
+    "context": "- Location: **West US 2** - Capacity mode: **Serverless (preview)** - Version: **4.0** 8. Select **Review + create**. 9. Select **Create**.",
+    "portal": "azure",
+    "service_area": "static-web-apps",
+    "id": "v7-068"
+  },
+  {
+    "repo": "azure-docs-pr",
+    "article": "articles/business-process-tracking/create-business-process.md",
+    "source": "media/create-business-process/business-process-stages-complete.png",
+    "alt_text": "Screenshot shows process editor for Azure Business Process Tracking.",
+    "context": "After you create a **Business Process** resource in Azure, you can use the process editor to create a flow chart that visually describes this business process, for example: > [!NOTE]",
+    "portal": "azure",
+    "service_area": "business-process-tracking",
+    "id": "v7-069"
+  },
+  {
+    "repo": "azure-docs-pr",
+    "article": "articles/confidential-computing/how-to-fortanix-confidential-computing-manager-node-agent.md",
+    "source": "media/how-to-fortanix-confidential-computing-manager-node-agent/create-account-latest.png",
+    "alt_text": "Screenshot that shows how to create an account.",
+    "context": "1. Sign in to [Fortanix Confidential Computing Manager (Fortanix CCM)](https://ccm.fortanix.com). 1. Go to the **Accounts** page and select **ADD ACCOUNT** to create a new account: 1. After your account is created, click **SELECT ACCOUNT** to select the newly created account. Click **GO TO ACCOUNT** to enter the account and start enrolling the compute nodes and creating applications.",
+    "portal": "azure",
+    "service_area": "confidential-computing",
+    "id": "v7-070"
+  },
+  {
+    "repo": "fabric-docs-pr",
+    "article": "docs/includes/copilot-explore-data.md",
+    "source": "media/copilot-data-explore/dashboard-select-visual-format.png",
+    "alt_text": "Screenshot of Create a visual.",
+    "context": "If the tile data was tabular, when you go to the Visual tab, select the format you want to use. For this example, select **Pie chart**. The Visual tab shows the pie chart for Texas data only.",
+    "portal": "azure",
+    "service_area": "includes",
+    "id": "v7-071"
+  },
+  {
+    "repo": "fabric-docs-pr",
+    "article": "docs/extensibility-toolkit/how-to-add-custom-item-actions.md",
+    "source": "media/how-to-enable-remote-jobs/monitoring-hub-recent-runs.png",
+    "alt_text": "Screenshot showing context menu with custom actions.",
+    "context": "- Opening external tools - Scheduling operations ## Define context menu items",
+    "portal": "azure",
+    "service_area": "extensibility-toolkit",
+    "id": "v7-072"
+  },
+  {
+    "repo": "fabric-docs-pr",
+    "article": "docs/graph/manage-data.md",
+    "source": "./media/how-to/schedule-option.png",
+    "alt_text": "Screenshot showing how to access the schedule option for a graph.",
+    "context": "1. Select the **...** (More options) menu that appears next to the graph item when you hover over it. 1. Select **Schedule**. 1. Select **Add schedule** in the **Schedules** menu.",
+    "portal": "azure",
+    "service_area": "graph",
+    "id": "v7-073"
+  },
+  {
+    "repo": "fabric-docs-pr",
+    "article": "docs/workload-development-kit/add-item-custom-settings.md",
+    "source": "./media/custom-item-settings/example-custom-item-tabs.png",
+    "alt_text": "Screenshot that shows the iframe for a custom item tab.",
+    "context": "The following screenshot shows an example of adding a custom item tab. The custom item tab is marked as number 1. The iframe that's loaded after selection of this tab is marked as number 2. The preceding image displays two custom tabs, which you can create by using the following code in the `index.worker.ts` file:",
+    "portal": "azure",
+    "service_area": "workload-development-kit",
+    "id": "v7-074"
+  },
+  {
+    "repo": "fabric-docs-pr",
+    "article": "docs/mirroring/azure-cosmos-db-how-to-join-multiple.md",
+    "source": "media/azure-cosmos-db-how-to-join-multiple/switch-experience.png",
+    "alt_text": "Screenshot of the selector to switch between items in the Fabric portal.",
+    "context": "1. Switch from **Mirrored Azure Cosmos DB** to **SQL analytics endpoint**. 1. In the menu, select **+ Warehouses**. Select the SQL analytics endpoint item for the other mirrored database.",
+    "portal": "fabric",
+    "service_area": "mirroring",
+    "id": "v7-075"
+  },
+  {
+    "repo": "fabric-docs-pr",
+    "article": "docs/admin/about-tenant-settings.md",
+    "source": "media/tenant-settings-index/fabric-admin-tenant-settings-disabled-all.png",
+    "alt_text": "Screenshot of disabled all state tenant setting.",
+    "context": "* **Disabled for the entire organization**: No one in your organization can use this feature. * **Enabled for the entire organization**: Everyone in your organization can use this feature.",
+    "portal": "fabric",
+    "service_area": "admin",
+    "id": "v7-076"
+  },
+  {
+    "repo": "fabric-docs-pr",
+    "article": "docs/iq/ontology/how-to-bind-data.md",
+    "source": "media/how-to-bind-data/bind-data-1.png",
+    "alt_text": "Screenshot of the data binding tab in the entity type configuration.",
+    "context": "1. Select the entity to which you want to bind data in the **Entity Types** pane. This selection opens the **Entity type configuration** pane for the entity type. In the **Bindings** tab, select **Add data to entity type**. 1. The data source selection appears. Select a OneLake data source that contains the data to be bound to the entity. Select **Connect**.",
+    "portal": "azure",
+    "service_area": "iq",
+    "id": "v7-077"
+  },
+  {
+    "repo": "fabric-docs-pr",
+    "article": "docs/enterprise/fabric-close-end-cancel.md",
+    "source": "media/fabric-close-end-cancel/power-bi-cancel-trials-new.png",
+    "alt_text": "Screenshot of the Account drop down showing the Cancel trial option.",
+    "context": "If you signed up for a trial of a paid Power BI license, you can cancel that trial. Open your Account manager and select **Cancel trial**. ## Cancel your license account",
+    "portal": "fabric",
+    "service_area": "enterprise",
+    "id": "v7-078"
+  },
+  {
+    "repo": "fabric-docs-pr",
+    "article": "docs/onelake/access-onelake-shortcuts.md",
+    "source": "media\\access-onelake-shortcuts\\open-notebook-ribbon.png",
+    "alt_text": "Screenshot showing where to find the Open notebook option on the ribbon.",
+    "context": "1. From a lakehouse containing shortcuts, select **Open notebook** and then select **New notebook**. 1. Select a shortcut and right-click on a file from the shortcut.",
+    "portal": "azure",
+    "service_area": "onelake",
+    "id": "v7-079"
+  },
+  {
+    "repo": "fabric-docs-pr",
+    "article": "docs/governance/data-loss-prevention-configure.md",
+    "source": "./media/data-loss-prevention-configure/create-policy.png",
+    "alt_text": "Screenshot of D L P create policy page.",
+    "context": "1. Open the [data loss prevention policies page](https://purview.microsoft.com/datalossprevention/policies) in the Microsoft Purview portal and select **+ Create policy**. > [!NOTE]",
+    "portal": "azure",
+    "service_area": "governance",
+    "id": "v7-080"
+  },
+  {
+    "repo": "fabric-docs-pr",
+    "article": "docs/security/experience-specific-guidance.md",
+    "source": "./media/experience-specific-guidance/notebook-connect-sync-ado-repo.png",
+    "alt_text": "Screenshot showing how to connect and sync notebook with ADO repo.",
+    "context": "1. Configure Git Integration for your workspace and select **Connect and sync** with ADO repo. The following image shows the synced notebook.",
+    "portal": "defender",
+    "service_area": "security",
+    "id": "v7-081"
+  },
+  {
+    "repo": "fabric-docs-pr",
+    "article": "docs/database/cosmos-db/how-to-access-data-lakehouse.md",
+    "source": "media/how-to-access-data-lakehouse/endpoint-selection.png",
+    "alt_text": "Screenshot of the endpoint selection option in the menu bar for a database in Cosmos DB in Fabric.",
+    "context": "1. In the menu bar, select the **Cosmos DB** list and then select **SQL Endpoint**. 1. Once you're able to successfully navigate to the SQL analytics endpoint, this navigation step confirms that mirroring ran successfully at least once.",
+    "portal": "fabric",
+    "service_area": "database",
+    "id": "v7-082"
+  },
+  {
+    "repo": "fabric-docs-pr",
+    "article": "docs/fundamentals/apply-sensitivity-labels.md",
+    "source": "./media/apply-sensitivity-labels/apply-sensitivity-label-flyout.png",
+    "alt_text": "Screenshot of the sensitivity label flyout for items in Fabric.",
+    "context": "* From the flyout menu - select the sensitivity indication in the header to display the flyout menu: * In items settings - open the item's settings, find the sensitivity section, and then choose the desired label:",
+    "portal": "fabric",
+    "service_area": "fundamentals",
+    "id": "v7-083"
+  },
+  {
+    "repo": "fabric-docs-pr",
+    "article": "docs/data-warehouse/configure-sql-audit-logs.md",
+    "source": "media/configure-sql-audit-logs/enable.png",
+    "alt_text": "Screenshot from the Fabric portal of the setting to enable.",
+    "context": "1. Select the **SQL audit logs** page. 1. Enable the setting **Save events to SQL audit logs**. By default, all actions are enabled and retained for nine years.",
+    "portal": "fabric",
+    "service_area": "data-warehouse",
+    "id": "v7-084"
+  },
+  {
+    "repo": "fabric-docs-pr",
+    "article": "docs/cicd/cicd-security.md",
+    "source": "media/cicd-security/outbound-1.png",
+    "alt_text": "Screenshot of outbound access protection.",
+    "context": "Similarly, any attempt to call Git APIs (e.g. via automation or PowerShell) for that workspace fails with an error as long as Git is disallowed. This protection ensures that, by default, a secured workspace can\u2019t quietly sync its content to an external repository without awareness. To enable Git integration, an administrator can go to the workspace\u2019s **Outbound security settings** and clicks the **Allow Git integration** toggle. (This box can only be checked after OAP itself is enabled; it\u2019s a s",
+    "portal": "defender",
+    "service_area": "cicd",
+    "id": "v7-085"
+  },
+  {
+    "repo": "fabric-docs-pr",
+    "article": "docs/real-time-hub/add-source-amazon-kinesis-data-streams.md",
+    "source": "media/add-source-amazon-kinesis-data-streams/add-data-amazon.png",
+    "alt_text": "A screenshot of selecting Kinesis Data Streams.",
+    "context": "1. On the **Add data** page, type in the search bar and select **Amazon Kinesis Data Streams**. 1. On the **Connect** screen, to create a connection, select **New connection**.",
+    "portal": "azure",
+    "service_area": "real-time-hub",
+    "id": "v7-086"
+  },
+  {
+    "repo": "fabric-docs-pr",
+    "article": "docs/data-science/customer-churn.md",
+    "source": "./media/customer-churn/select-data-wrangler.png",
+    "alt_text": "Screenshot that shows where to access Data Wrangler.",
+    "context": ">[!NOTE] >Data Wrangler can't be opened while the notebook kernel is busy. The cell execution must finish before you launch Data Wrangler. [Learn more about Data Wrangler](https://aka.ms/fabric/datawrangler). After Data Wrangler launches, it generates a descriptive overview of the data panel, as shown in the following images. The overview includes information about the dimension of the DataFrame, any missing values, and more. You can use Data Wrangler to generate the script to drop the rows with",
+    "portal": "azure",
+    "service_area": "data-science",
+    "id": "v7-087"
+  },
+  {
+    "repo": "fabric-docs-pr",
+    "article": "docs/data-engineering/apache-spark-history-server.md",
+    "source": "media\\apache-spark-history-server\\spark-web-ui-in-the-progress-indicator-notebook.png",
+    "alt_text": "Screenshot showing open the Spark web UI from progress indicator notebook.",
+    "context": "When an Apache Spark job is triggered, the button to open **Spark web UI** is inside the **More action** option in the progress indicator. Select **Spark web UI** and wait for a few seconds, then the Spark UI page appears. ### Open the Spark web UI from Apache Spark application detail page",
+    "portal": "azure",
+    "service_area": "data-engineering",
+    "id": "v7-088"
+  },
+  {
+    "repo": "fabric-docs-pr",
+    "article": "docs/data-factory/access-apache-airflow-job-logs.md",
+    "source": "media/apache-airflow-jobs/create-new-file.png",
+    "alt_text": "Screenshot to create a new Apache Airflow file.",
+    "context": "1. Create a new file in Dags folder. A Dag is initialized consisting of BashOperator that prints \"Hello world\" in Apache Airflow Job logs. 2. Save and Run the DAG within the Apache Airflow UI.",
+    "portal": "azure",
+    "service_area": "data-factory",
+    "id": "v7-089"
+  },
+  {
+    "repo": "fabric-docs-pr",
+    "article": "docs/real-time-intelligence/access-database-copy-uri.md",
+    "source": "media/database-editor/access-existing-database-2.png",
+    "alt_text": "Screenshot of workspace window that shows the dropdown menu of the Filter option. The entry titled KQL Database is highlighted.",
+    "context": "1. In the ribbon, select **Filter** > **KQL Database**. 1. Select the desired database from the list in the main view pane. The main page of the KQL database opens.",
+    "portal": "azure",
+    "service_area": "real-time-intelligence",
+    "id": "v7-090"
+  },
+  {
+    "repo": "fabric-docs-pr",
+    "article": "docs/includes/copilot-explore-data.md",
+    "source": "media/copilot-data-explore/dashboard-data-explore-visual-texas.png",
+    "alt_text": "Screenshot of the visual tab showing a pie chart of the storm event types in Texas.",
+    "context": "The Visual tab shows the pie chart for Texas data only. ### [Table](#tab/table)",
+    "portal": "azure",
+    "service_area": "includes",
+    "id": "v7-091"
+  },
+  {
+    "repo": "fabric-docs-pr",
+    "article": "docs/extensibility-toolkit/how-to-enable-remote-jobs.md",
+    "source": "media/how-to-enable-remote-jobs/monitoring-hub-quick-actions.png",
+    "alt_text": "Screenshot showing jobs quick actions buttons in the monitoring hub.",
+    "context": "The monitoring hub provides quick action buttons for each job, allowing users to perform operations like cancel, retry, and view details directly from the monitoring hub interface. Configure which actions are available for your jobs by adding the `itemJobActionConfig` property to the item frontend manifest:",
+    "portal": "azure",
+    "service_area": "extensibility-toolkit",
+    "id": "v7-092"
+  },
+  {
+    "repo": "fabric-docs-pr",
+    "article": "docs/graph/manage-data.md",
+    "source": "./media/how-to/scheduled-refresh.png",
+    "alt_text": "Screenshot showing a configured scheduled refresh for a graph.",
+    "context": "You can schedule refreshes to run by the minute, hourly, daily, weekly, or monthly. The following image shows an example of a refresh schedule configured to run hourly: To edit or delete a scheduled refresh, select the **Edit** option in the **Schedules** menu.",
+    "portal": "azure",
+    "service_area": "graph",
+    "id": "v7-093"
+  },
+  {
+    "repo": "fabric-docs-pr",
+    "article": "docs/workload-development-kit/add-item-custom-settings.md",
+    "source": "./media/custom-item-settings/example-search.png",
+    "alt_text": "Screenshot that shows an example of search tokens.",
+    "context": "The following example shows that starting to type one of the keyword values (1) triggers the section name as a result option (2). Selecting this option opens the corresponding custom tab (3). This field is aligned with, and can be used for, localization. ## Define the iframe route",
+    "portal": "azure",
+    "service_area": "workload-development-kit",
+    "id": "v7-094"
+  },
+  {
+    "repo": "fabric-docs-pr",
+    "article": "docs/mirroring/azure-cosmos-db-how-to-join-multiple.md",
+    "source": "media/azure-cosmos-db-how-to-join-multiple/multiple-databases.png",
+    "alt_text": "Screenshot of the query editor with multiple mirrored databases available.",
+    "context": "1. Open the context menu for the table and select **New SQL Query**. Write an example query that combines both databases. For example, this query would execute across multiple containers and databases, without any data movement. This example assumes the name of your table and columns. Use your own table and columns when writing your SQL query.",
+    "portal": "azure",
+    "service_area": "mirroring",
+    "id": "v7-095"
+  },
+  {
+    "repo": "fabric-docs-pr",
+    "article": "docs/admin/about-tenant-settings.md",
+    "source": "media/tenant-settings-index/fabric-admin-tenant-settings-enabled-all.png",
+    "alt_text": "Screenshot of enabled all state tenant setting.",
+    "context": "* **Enabled for the entire organization**: Everyone in your organization can use this feature. * **Enabled for the entire organization except for certain groups**: Everyone in your organization can use this feature except for users who belong to the specified groups.",
+    "portal": "fabric",
+    "service_area": "admin",
+    "id": "v7-096"
+  },
+  {
+    "repo": "fabric-docs-pr",
+    "article": "docs/iq/ontology/how-to-bind-data.md",
+    "source": "media/how-to-bind-data/bind-data-2.png",
+    "alt_text": "Screenshot of the source selection screen for lakehouse or eventhouse.",
+    "context": "When the data source loads, choose a specific table from the data source to use as the data binding source table. Select **Next**. 1. For the **Binding type**, select **Static**. Select only one type per data binding. An example of static data is a table with descriptive attributes about stores, like the store ID value, square footage, and location.",
+    "portal": "fabric",
+    "service_area": "iq",
+    "id": "v7-097"
+  },
+  {
+    "repo": "fabric-docs-pr",
+    "article": "docs/enterprise/fabric-close-end-cancel.md",
+    "source": "media/fabric-close-end-cancel/close-account-settings-2.png",
+    "alt_text": "Screenshot showing the Power BI settings menu. General and the close account menu options are highlighted.",
+    "context": "1. On the **General** tab, select **Close Account**. 1. Select a reason for closing the account. You can also provide further information. Then select **Close account**.",
+    "portal": "fabric",
+    "service_area": "enterprise",
+    "id": "v7-098"
+  },
+  {
+    "repo": "fabric-docs-pr",
+    "article": "docs/onelake/access-onelake-shortcuts.md",
+    "source": "media\\access-onelake-shortcuts\\load-data-spark-menu.png",
+    "alt_text": "Screenshot showing where to find the Load data and Spark option in the right-click menu.",
+    "context": "1. In the right-click menu, select **Load data** and then select **Spark**. 1. Run the automatically generated code cell.",
+    "portal": "azure",
+    "service_area": "onelake",
+    "id": "v7-099"
+  },
+  {
+    "repo": "fabric-docs-pr",
+    "article": "docs/governance/data-loss-prevention-configure.md",
+    "source": "./media/data-loss-prevention-configure/choose-custom-policy.png",
+    "alt_text": "Screenshot of D L P choose custom policy page.",
+    "context": "1. Choose the **Custom** category and then the **Custom policy** template. When done, select **Next**. > [!NOTE]",
+    "portal": "azure",
+    "service_area": "governance",
+    "id": "v7-100"
+  }
+]

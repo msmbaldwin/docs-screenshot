@@ -63,6 +63,15 @@ Options can be combined with any scenario. Examples:
 - Text is vertically centered within the callout box
 - Dropdown controls include the full chevron indicator
 - Callout rects never clip through panel borders or graphics
+- Toolbar buttons: walk up to the parent container (li, button, or div with toolbar/command classes) so the bounding box includes the icon element to the left of the text label. Scan children two levels deep to catch icons inside wrapper divs.
+- Copy-to-clipboard buttons: match by proximity to the target field (Subscription ID, Tenant ID, etc.), not just the first copy icon on the page
+- When smart-cropping, ensure at least 10px margin between any callout box edge and the crop boundary
+
+**Capture interaction rules:**
+- Hover cards: when a screenshot needs a hover/tooltip card (e.g., service info card in Favorites), hover over the element, wait 2s for the card to appear, then capture a region that fully includes the card
+- Filtered resource lists: apply the filter (select resource groups, close the filter dropdown), THEN capture the resulting filtered list, not the filter dialog itself
+- Dashboard dialogs (Edit Markdown, Share): find the dialog container element bounds to determine the crop region, never use hardcoded pixel offsets which shift when the dialog position changes
+- Dashboard shared state: when capturing Access Control (IAM) for a shared dashboard, navigate to the resource's IAM page (e.g., subscription or resource group), not the dashboard toolbar
 
 **PII scrubbing:**
 - DOM scrubbing (preferred): replaces PII in the live DOM before capture, including cross-origin iframes

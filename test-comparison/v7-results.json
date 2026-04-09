@@ -1,0 +1,1000 @@
+{
+  "v7-001": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-001.png",
+    "size_kb": 186.0,
+    "page_url": "https://ai.azure.com/?tid=72f988bf-86f1-41af-91ab-2d7cd011db47",
+    "page_title": "Microsoft Foundry",
+    "target_url": "https://ai.azure.com",
+    "repo": "azure-ai-docs-pr",
+    "article_path": "articles/foundry-local/get-started.md"
+  },
+  "v7-002": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-002.png",
+    "size_kb": 70.4,
+    "page_url": "https://portal.azure.com/?feature.customportal=false#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com?feature.customportal=false#home",
+    "repo": "azure-ai-docs-pr",
+    "article_path": "articles/open-datasets/how-to-create-azure-machine-learning-dataset-from-open-dataset.md"
+  },
+  "v7-003": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-003.png",
+    "size_kb": 70.5,
+    "page_url": "https://portal.azure.com/#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com",
+    "repo": "azure-ai-docs-pr",
+    "article_path": "articles/foundry/agents/concepts/agent-identity.md"
+  },
+  "v7-004": {
+    "status": "CAPTURE_SUCCESS",
+    "portal_url": "https://portal.azure.com",
+    "original_path": "F:\\git\\azure-ai-docs-pr\\articles\\search\\media\\cognitive-search-attach-cognitive-services\\ai-services-kind.png",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-004.png",
+    "size_kb": 93.9,
+    "page_url": "https://portal.azure.com/?feature.customportal=false#@MicrosoftCustomerLed.onmicrosoft.com/resource/subscriptions/7c80f223-75b8-44d1-a155-09bd30bd62bd/resourceGroups/contoso-screenshot-rg/providers/Microsoft.CognitiveServices/accounts/contoso-ai-services/overview",
+    "page_title": "contoso-ai-services - Microsoft Azure"
+  },
+  "v7-005": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-005.png",
+    "size_kb": 186.0,
+    "page_url": "https://ai.azure.com/?tid=72f988bf-86f1-41af-91ab-2d7cd011db47",
+    "page_title": "Microsoft Foundry",
+    "target_url": "https://ai.azure.com",
+    "repo": "azure-ai-docs-pr",
+    "article_path": "articles/foundry-classic/what-is-foundry.md"
+  },
+  "v7-006": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-006.png",
+    "size_kb": 70.5,
+    "page_url": "https://portal.azure.com/?feature.customportal=false#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com?feature.customportal=false#home",
+    "repo": "azure-ai-docs-pr",
+    "article_path": "articles/ai-services/autoscale.md"
+  },
+  "v7-007": {
+    "status": "CAPTURE_SUCCESS",
+    "portal_url": "https://portal.azure.com",
+    "original_path": "F:\\git\\azure-ai-docs-pr\\articles\\machine-learning\\media\\apache-spark-environment-configuration\\azure-key-vault-secrets-generate-import.png",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-007.png",
+    "size_kb": 53.4,
+    "page_url": "https://portal.azure.com/?feature.customportal=false#@MicrosoftCustomerLed.onmicrosoft.com/resource/subscriptions/7c80f223-75b8-44d1-a155-09bd30bd62bd/resourceGroups/contoso-screenshot-rg/providers/Microsoft.KeyVault/vaults/contoso-kv-demo/secrets",
+    "page_title": "contoso-kv-demo - Microsoft Azure"
+  },
+  "v7-008": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-008.png",
+    "size_kb": 70.5,
+    "page_url": "https://portal.azure.com/?feature.customportal=false#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com?feature.customportal=false#home",
+    "repo": "azure-ai-docs-pr",
+    "article_path": "articles/open-datasets/how-to-create-azure-machine-learning-dataset-from-open-dataset.md"
+  },
+  "v7-009": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-009.png",
+    "size_kb": 103.3,
+    "page_url": "https://entra.microsoft.com/?Microsoft_AAD_RegisteredApps=stage1&exp.EnableAgentIDUX=true#view/Microsoft_AAD_RegisteredApps/AllAgents.MenuView/~/allAgentIds",
+    "page_title": "Agent ID - Microsoft Entra admin center",
+    "target_url": "https://entra.microsoft.com/?Microsoft_AAD_RegisteredApps=stage1&exp.EnableAgentIDUX=true#view/Microsoft_AAD_RegisteredApps/AllAgents.MenuView/~/allAgentIds",
+    "repo": "azure-ai-docs-pr",
+    "article_path": "articles/foundry/agents/concepts/agent-identity.md"
+  },
+  "v7-010": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-010.png",
+    "size_kb": 67.5,
+    "page_url": "https://portal.azure.com/?feature.customportal=false#@MicrosoftCustomerLed.onmicrosoft.com/resource/subscriptions/7c80f223-75b8-44d1-a155-09bd30bd62bd/resourceGroups/contoso-screenshot-rg/providers/Mi",
+    "page_title": "contoso-ai-services - Microsoft Azure",
+    "target_url": "https://portal.azure.com?feature.customportal=false#@/resource/subscriptions/7c80f223-75b8-44d1-a155-09bd30bd62bd/resourceGroups/contoso-screenshot-rg/providers/Microsoft.CognitiveServices/accounts/co",
+    "repo": "azure-ai-docs-pr",
+    "article_path": "articles/search/cognitive-search-attach-cognitive-services.md"
+  },
+  "v7-011": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-011.png",
+    "size_kb": 186.0,
+    "page_url": "https://ai.azure.com/?tid=72f988bf-86f1-41af-91ab-2d7cd011db47",
+    "page_title": "Microsoft Foundry",
+    "target_url": "https://ai.azure.com",
+    "repo": "azure-ai-docs-pr",
+    "article_path": "articles/foundry-classic/what-is-foundry.md"
+  },
+  "v7-012": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-012.png",
+    "size_kb": 61.1,
+    "page_url": "https://portal.azure.com/#create/microsoft.azurekusto",
+    "page_title": "Create an Azure Data Explorer Cluster - Microsoft Azure",
+    "target_url": "https://portal.azure.com/#create/microsoft.azurekusto",
+    "repo": "azure-ai-docs-pr",
+    "article_path": "articles/ai-services/anomaly-detector/tutorials/azure-data-explorer.md"
+  },
+  "v7-013": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-013.png",
+    "size_kb": 70.7,
+    "page_url": "https://portal.azure.com/#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com",
+    "repo": "azure-ai-docs-pr",
+    "article_path": "articles/machine-learning/apache-spark-environment-configuration.md"
+  },
+  "v7-014": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-014.png",
+    "size_kb": 70.7,
+    "page_url": "https://portal.azure.com/?feature.customportal=false#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com?feature.customportal=false#home",
+    "repo": "azure-ai-docs-pr",
+    "article_path": "articles/open-datasets/how-to-create-azure-machine-learning-dataset-from-open-dataset.md"
+  },
+  "v7-015": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-015.png",
+    "size_kb": 186.0,
+    "page_url": "https://ai.azure.com/?tid=72f988bf-86f1-41af-91ab-2d7cd011db47",
+    "page_title": "Microsoft Foundry",
+    "target_url": "https://ai.azure.com",
+    "repo": "azure-ai-docs-pr",
+    "article_path": "articles/foundry/agents/concepts/tool-catalog.md"
+  },
+  "v7-016": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-016.png",
+    "size_kb": 70.4,
+    "page_url": "https://portal.azure.com/#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com",
+    "repo": "azure-ai-docs-pr",
+    "article_path": "articles/search/cognitive-search-attach-cognitive-services.md"
+  },
+  "v7-017": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-017.png",
+    "size_kb": 186.0,
+    "page_url": "https://ai.azure.com/?tid=72f988bf-86f1-41af-91ab-2d7cd011db47",
+    "page_title": "Microsoft Foundry",
+    "target_url": "https://ai.azure.com",
+    "repo": "azure-ai-docs-pr",
+    "article_path": "articles/foundry-classic/agents/how-to/connected-agents.md"
+  },
+  "v7-018": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-018.png",
+    "size_kb": 61.1,
+    "page_url": "https://portal.azure.com/#create/microsoft.azurekusto",
+    "page_title": "Create an Azure Data Explorer Cluster - Microsoft Azure",
+    "target_url": "https://portal.azure.com/#create/microsoft.azurekusto",
+    "repo": "azure-ai-docs-pr",
+    "article_path": "articles/ai-services/anomaly-detector/tutorials/azure-data-explorer.md"
+  },
+  "v7-019": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-019.png",
+    "size_kb": 70.5,
+    "page_url": "https://portal.azure.com/#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com",
+    "repo": "azure-ai-docs-pr",
+    "article_path": "articles/machine-learning/apache-spark-environment-configuration.md"
+  },
+  "v7-020": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-020.png",
+    "size_kb": 81.8,
+    "page_url": "https://portal.azure.com/?feature.customportal=false#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com?feature.customportal=false#home",
+    "repo": "azure-ai-docs-pr",
+    "article_path": "articles/open-datasets/how-to-create-azure-machine-learning-dataset-from-open-dataset.md"
+  },
+  "v7-021": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-021.png",
+    "size_kb": 186.0,
+    "page_url": "https://ai.azure.com/?tid=72f988bf-86f1-41af-91ab-2d7cd011db47",
+    "page_title": "Microsoft Foundry",
+    "target_url": "https://ai.azure.com",
+    "repo": "azure-ai-docs-pr",
+    "article_path": "articles/foundry/agents/concepts/tool-catalog.md"
+  },
+  "v7-022": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-022.png",
+    "size_kb": 81.8,
+    "page_url": "https://portal.azure.com/#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com",
+    "repo": "azure-ai-docs-pr",
+    "article_path": "articles/search/cognitive-search-attach-cognitive-services.md"
+  },
+  "v7-023": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-023.png",
+    "size_kb": 186.0,
+    "page_url": "https://ai.azure.com/?tid=72f988bf-86f1-41af-91ab-2d7cd011db47",
+    "page_title": "Microsoft Foundry",
+    "target_url": "https://ai.azure.com",
+    "repo": "azure-ai-docs-pr",
+    "article_path": "articles/foundry-classic/agents/how-to/connected-agents.md"
+  },
+  "v7-024": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-024.png",
+    "size_kb": 70.5,
+    "page_url": "https://portal.azure.com/?feature.customportal=false#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com?feature.customportal=false#home",
+    "repo": "azure-ai-docs-pr",
+    "article_path": "articles/ai-services/computer-vision/concept-face-detection.md"
+  },
+  "v7-025": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-025.png",
+    "size_kb": 70.5,
+    "page_url": "https://portal.azure.com/#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com",
+    "repo": "azure-ai-docs-pr",
+    "article_path": "articles/machine-learning/apache-spark-environment-configuration.md"
+  },
+  "v7-026": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-026.png",
+    "size_kb": 70.5,
+    "page_url": "https://portal.azure.com/?feature.customportal=false#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com?feature.customportal=false#home",
+    "repo": "azure-ai-docs-pr",
+    "article_path": "articles/open-datasets/how-to-create-azure-machine-learning-dataset-from-open-dataset.md"
+  },
+  "v7-027": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-027.png",
+    "size_kb": 186.0,
+    "page_url": "https://ai.azure.com/?tid=72f988bf-86f1-41af-91ab-2d7cd011db47",
+    "page_title": "Microsoft Foundry",
+    "target_url": "https://ai.azure.com",
+    "repo": "azure-ai-docs-pr",
+    "article_path": "articles/foundry/agents/concepts/workflow.md"
+  },
+  "v7-028": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-028.png",
+    "size_kb": 52.5,
+    "page_url": "https://portal.azure.com/?feature.customportal=false#view/HubsExtension/BrowseResource.ReactView/resourceType/Microsoft.Search%2FsearchServices",
+    "page_title": "AI Search - Microsoft Azure",
+    "target_url": "https://portal.azure.com?feature.customportal=false#view/HubsExtension/BrowseResource/resourceType/Microsoft.Search%2FsearchServices",
+    "repo": "azure-ai-docs-pr",
+    "article_path": "articles/search/cognitive-search-concept-annotations-syntax.md"
+  },
+  "v7-029": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-029.png",
+    "size_kb": 70.5,
+    "page_url": "https://portal.azure.com/#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com",
+    "repo": "azure-ai-docs-pr",
+    "article_path": "articles/foundry-classic/agents/how-to/metrics.md"
+  },
+  "v7-030": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-030.png",
+    "size_kb": 70.5,
+    "page_url": "https://portal.azure.com/?feature.customportal=false#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com?feature.customportal=false#home",
+    "repo": "azure-ai-docs-pr",
+    "article_path": "articles/ai-services/computer-vision/overview-vision-studio.md"
+  },
+  "v7-031": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-031.png",
+    "size_kb": 70.5,
+    "page_url": "https://portal.azure.com/#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com",
+    "repo": "azure-ai-docs-pr",
+    "article_path": "articles/machine-learning/apache-spark-environment-configuration.md"
+  },
+  "v7-032": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-032.png",
+    "size_kb": 70.5,
+    "page_url": "https://portal.azure.com/?feature.customportal=false#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com?feature.customportal=false#home",
+    "repo": "azure-ai-docs-pr",
+    "article_path": "articles/open-datasets/how-to-create-azure-machine-learning-dataset-from-open-dataset.md"
+  },
+  "v7-033": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-033.png",
+    "size_kb": 186.0,
+    "page_url": "https://ai.azure.com/?tid=72f988bf-86f1-41af-91ab-2d7cd011db47",
+    "page_title": "Microsoft Foundry",
+    "target_url": "https://ai.azure.com",
+    "repo": "azure-ai-docs-pr",
+    "article_path": "articles/foundry/agents/concepts/workflow.md"
+  },
+  "v7-034": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-034.png",
+    "size_kb": 53.1,
+    "page_url": "https://portal.azure.com/?feature.customportal=false#view/HubsExtension/BrowseResource.ReactView/resourceType/Microsoft.Search%2FsearchServices",
+    "page_title": "AI Search - Microsoft Azure",
+    "target_url": "https://portal.azure.com?feature.customportal=false#view/HubsExtension/BrowseResource/resourceType/Microsoft.Search%2FsearchServices",
+    "repo": "azure-ai-docs-pr",
+    "article_path": "articles/search/cognitive-search-concept-image-scenarios.md"
+  },
+  "v7-035": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-035.png",
+    "size_kb": 186.0,
+    "page_url": "https://ai.azure.com/?tid=72f988bf-86f1-41af-91ab-2d7cd011db47",
+    "page_title": "Microsoft Foundry",
+    "target_url": "https://ai.azure.com",
+    "repo": "azure-ai-docs-pr",
+    "article_path": "articles/foundry-classic/agents/how-to/triggers.md"
+  },
+  "v7-036": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-036.png",
+    "size_kb": 70.5,
+    "page_url": "https://portal.azure.com/?feature.customportal=false#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com?feature.customportal=false#home",
+    "repo": "azure-docs-pr",
+    "article_path": "articles/automanage/common-errors.md"
+  },
+  "v7-037": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-037.png",
+    "size_kb": 70.5,
+    "page_url": "https://portal.azure.com/?feature.customportal=false#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com?feature.customportal=false#home",
+    "repo": "azure-docs-pr",
+    "article_path": "articles/cloud-shell/vnet/how-to-use-private-endpoint-storage.md"
+  },
+  "v7-038": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-038.png",
+    "size_kb": 70.5,
+    "page_url": "https://portal.azure.com/#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com",
+    "repo": "azure-docs-pr",
+    "article_path": "articles/import-export/storage-import-export-data-from-blobs.md"
+  },
+  "v7-039": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-039.png",
+    "size_kb": 7.8,
+    "page_url": "https://sip.security.microsoft.com/homepage?tid=72f988bf-86f1-41af-91ab-2d7cd011db47",
+    "page_title": "Security & Compliance",
+    "target_url": "https://security.microsoft.com",
+    "repo": "azure-docs-pr",
+    "article_path": "articles/certification/validate-device-edge-secured-core.md"
+  },
+  "v7-040": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-040.png",
+    "size_kb": 70.5,
+    "page_url": "https://portal.azure.com/?feature.customportal=false#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com?feature.customportal=false#home",
+    "repo": "azure-docs-pr",
+    "article_path": "articles/storage-actions/storage-tasks/storage-task-quickstart-dotnet.md"
+  },
+  "v7-041": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-041.png",
+    "size_kb": 70.5,
+    "page_url": "https://portal.azure.com/#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com",
+    "repo": "azure-docs-pr",
+    "article_path": "articles/firewall-manager/configure-ddos.md"
+  },
+  "v7-042": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-042.png",
+    "size_kb": 70.5,
+    "page_url": "https://portal.azure.com/#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com",
+    "repo": "azure-docs-pr",
+    "article_path": "articles/cloud-services-extended-support/deploy-portal.md"
+  },
+  "v7-043": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-043.png",
+    "size_kb": 70.5,
+    "page_url": "https://portal.azure.com/?feature.customportal=false#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com?feature.customportal=false#home",
+    "repo": "azure-docs-pr",
+    "article_path": "articles/databox-online/azure-stack-edge-gpu-deploy-configure-network-compute-web-proxy.md"
+  },
+  "v7-044": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-044.png",
+    "size_kb": 81.8,
+    "page_url": "https://portal.azure.com/#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com/",
+    "repo": "azure-docs-pr",
+    "article_path": "articles/baremetal-infrastructure/connect-baremetal-infrastructure.md"
+  },
+  "v7-045": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-045.png",
+    "size_kb": 380.6,
+    "page_url": "https://sip.security.microsoft.com/homepage?tid=72f988bf-86f1-41af-91ab-2d7cd011db47",
+    "page_title": "Home - Microsoft Defender",
+    "target_url": "https://security.microsoft.com",
+    "repo": "azure-docs-pr",
+    "article_path": "articles/external-attack-surface-management/overview.md"
+  },
+  "v7-046": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-046.png",
+    "size_kb": 81.8,
+    "page_url": "https://portal.azure.com/#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com",
+    "repo": "azure-docs-pr",
+    "article_path": "articles/peering-service/azure-portal.md"
+  },
+  "v7-047": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-047.png",
+    "size_kb": 70.5,
+    "page_url": "https://portal.azure.com/#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com/",
+    "repo": "azure-docs-pr",
+    "article_path": "articles/azure-fluid-relay/how-tos/provision-fluid-azure-portal.md"
+  },
+  "v7-048": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-048.png",
+    "size_kb": 70.5,
+    "page_url": "https://portal.azure.com/?feature.customportal=false#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com?feature.customportal=false#home",
+    "repo": "azure-docs-pr",
+    "article_path": "articles/networking/foundations/network-foundations-overview.md"
+  },
+  "v7-049": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-049.png",
+    "size_kb": 68.9,
+    "page_url": "https://portal.azure.com/#view/Microsoft_Azure_Support/HelpAndSupportBlade/~/overview",
+    "page_title": "Help + support - Microsoft Azure",
+    "target_url": "https://portal.azure.com/#blade/microsoft_azure_support/helpandsupportblade/overview",
+    "repo": "azure-docs-pr",
+    "article_path": "articles/storage-discovery/create-workspace.md"
+  },
+  "v7-050": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-050.png",
+    "size_kb": 70.5,
+    "page_url": "https://portal.azure.com/#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com",
+    "repo": "azure-docs-pr",
+    "article_path": "articles/azure-large-instances/configure-azure-service-health-alerts.md"
+  },
+  "v7-051": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-051.png",
+    "size_kb": 70.5,
+    "page_url": "https://portal.azure.com/?feature.customportal=false#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com?feature.customportal=false#home",
+    "repo": "azure-docs-pr",
+    "article_path": "articles/azure-government/documentation-government-get-started-connect-with-portal.md"
+  },
+  "v7-052": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-052.png",
+    "size_kb": 70.5,
+    "page_url": "https://portal.azure.com/?feature.customportal=false#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com?feature.customportal=false#home",
+    "repo": "azure-docs-pr",
+    "article_path": "articles/nat-gateway/monitor-nat-gateway-flow-logs.md"
+  },
+  "v7-053": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-053.png",
+    "size_kb": 70.5,
+    "page_url": "https://portal.azure.com/?feature.customportal=false#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com?feature.customportal=false#home",
+    "repo": "azure-docs-pr",
+    "article_path": "articles/private-link/create-private-endpoint-cli.md"
+  },
+  "v7-054": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-054.png",
+    "size_kb": 70.5,
+    "page_url": "https://portal.azure.com/#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com",
+    "repo": "azure-docs-pr",
+    "article_path": "articles/integration-environments/create-application-group.md"
+  },
+  "v7-055": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-055.png",
+    "size_kb": 70.5,
+    "page_url": "https://portal.azure.com/#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com",
+    "repo": "azure-docs-pr",
+    "article_path": "articles/network-function-manager/create-device.md"
+  },
+  "v7-056": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-056.png",
+    "size_kb": 70.5,
+    "page_url": "https://portal.azure.com/?feature.customportal=false#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com?feature.customportal=false#home",
+    "repo": "azure-docs-pr",
+    "article_path": "articles/education-hub/navigate-costs.md"
+  },
+  "v7-057": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-057.png",
+    "size_kb": 70.5,
+    "page_url": "https://portal.azure.com/#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com/",
+    "repo": "azure-docs-pr",
+    "article_path": "articles/data-share/how-to-share-from-sql.md"
+  },
+  "v7-058": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-058.png",
+    "size_kb": 81.8,
+    "page_url": "https://portal.azure.com/#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com/",
+    "repo": "azure-docs-pr",
+    "article_path": "articles/notification-hubs/android-sdk.md"
+  },
+  "v7-059": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-059.png",
+    "size_kb": 70.5,
+    "page_url": "https://portal.azure.com/#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com",
+    "repo": "azure-docs-pr",
+    "article_path": "articles/extended-zones/backup-virtual-machine.md"
+  },
+  "v7-060": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-060.png",
+    "size_kb": 70.5,
+    "page_url": "https://portal.azure.com/?feature.customportal=false#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com?feature.customportal=false#home",
+    "repo": "azure-docs-pr",
+    "article_path": "articles/route-server/configure-route-server.md"
+  },
+  "v7-061": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-061.png",
+    "size_kb": 70.5,
+    "page_url": "https://portal.azure.com/#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com",
+    "repo": "azure-docs-pr",
+    "article_path": "articles/azure-relay/ip-firewall-virtual-networks.md"
+  },
+  "v7-062": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-062.png",
+    "size_kb": 70.5,
+    "page_url": "https://portal.azure.com/#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com",
+    "repo": "azure-docs-pr",
+    "article_path": "articles/bastion/bastion-connect-vm-rdp-windows.md"
+  },
+  "v7-063": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-063.png",
+    "size_kb": 70.5,
+    "page_url": "https://portal.azure.com/#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com/",
+    "repo": "azure-docs-pr",
+    "article_path": "articles/ddos-protection/alerts.md"
+  },
+  "v7-064": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-064.png",
+    "size_kb": 69.3,
+    "page_url": "https://portal.azure.com/?feature.customportal=false#@MicrosoftCustomerLed.onmicrosoft.com/resource/subscriptions/7c80f223-75b8-44d1-a155-09bd30bd62bd/resourceGroups/contoso-screenshot-rg/overview",
+    "page_title": "contoso-screenshot-rg - Microsoft Azure",
+    "target_url": "https://portal.azure.com?feature.customportal=false#@/resource/subscriptions/7c80f223-75b8-44d1-a155-09bd30bd62bd/resourceGroups/contoso-screenshot-rg/overview",
+    "repo": "azure-docs-pr",
+    "article_path": "articles/firmware-analysis/firmware-analysis-rbac.md"
+  },
+  "v7-065": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-065.png",
+    "size_kb": 70.9,
+    "page_url": "https://portal.azure.com/#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com/",
+    "repo": "azure-docs-pr",
+    "article_path": "articles/security/fundamentals/customer-lockbox-alternative-email.md"
+  },
+  "v7-066": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-066.png",
+    "size_kb": 70.9,
+    "page_url": "https://portal.azure.com/?feature.customportal=false#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com?feature.customportal=false#home",
+    "repo": "azure-docs-pr",
+    "article_path": "articles/energy-data-services/concepts-manifest-ingestion.md"
+  },
+  "v7-067": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-067.png",
+    "size_kb": 70.9,
+    "page_url": "https://portal.azure.com/?feature.customportal=false#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com?feature.customportal=false#home",
+    "repo": "azure-docs-pr",
+    "article_path": "articles/oracle/oracle-db/manage-oracle-transparent-data-encryption-azure-key-vault.md"
+  },
+  "v7-068": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-068.png",
+    "size_kb": 70.9,
+    "page_url": "https://portal.azure.com/#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com",
+    "repo": "azure-docs-pr",
+    "article_path": "articles/static-web-apps/add-mongoose.md"
+  },
+  "v7-069": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-069.png",
+    "size_kb": 70.9,
+    "page_url": "https://portal.azure.com/#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com",
+    "repo": "azure-docs-pr",
+    "article_path": "articles/business-process-tracking/create-business-process.md"
+  },
+  "v7-070": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-070.png",
+    "size_kb": 70.6,
+    "page_url": "https://portal.azure.com/?feature.customportal=false#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com?feature.customportal=false#home",
+    "repo": "azure-docs-pr",
+    "article_path": "articles/confidential-computing/how-to-fortanix-confidential-computing-manager-node-agent.md"
+  },
+  "v7-071": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-071.png",
+    "size_kb": 70.6,
+    "page_url": "https://portal.azure.com/?feature.customportal=false#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com?feature.customportal=false#home",
+    "repo": "fabric-docs-pr",
+    "article_path": "docs/includes/copilot-explore-data.md"
+  },
+  "v7-072": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-072.png",
+    "size_kb": 70.6,
+    "page_url": "https://portal.azure.com/?feature.customportal=false#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com?feature.customportal=false#home",
+    "repo": "fabric-docs-pr",
+    "article_path": "docs/extensibility-toolkit/how-to-add-custom-item-actions.md"
+  },
+  "v7-073": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-073.png",
+    "size_kb": 70.6,
+    "page_url": "https://portal.azure.com/?feature.customportal=false#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com?feature.customportal=false#home",
+    "repo": "fabric-docs-pr",
+    "article_path": "docs/graph/manage-data.md"
+  },
+  "v7-074": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-074.png",
+    "size_kb": 70.6,
+    "page_url": "https://portal.azure.com/?feature.customportal=false#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com?feature.customportal=false#home",
+    "repo": "fabric-docs-pr",
+    "article_path": "docs/workload-development-kit/add-item-custom-settings.md"
+  },
+  "v7-075": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-075.png",
+    "size_kb": 281.5,
+    "page_url": "https://msit.powerbi.com/home?experience=power-bi",
+    "page_title": "Power BI",
+    "target_url": "https://app.fabric.microsoft.com",
+    "repo": "fabric-docs-pr",
+    "article_path": "docs/mirroring/azure-cosmos-db-how-to-join-multiple.md"
+  },
+  "v7-076": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-076.png",
+    "size_kb": 304.9,
+    "page_url": "https://msit.powerbi.com/home?experience=power-bi",
+    "page_title": "Power BI",
+    "target_url": "https://app.fabric.microsoft.com",
+    "repo": "fabric-docs-pr",
+    "article_path": "docs/admin/about-tenant-settings.md"
+  },
+  "v7-077": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-077.png",
+    "size_kb": 70.7,
+    "page_url": "https://portal.azure.com/?feature.customportal=false#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com?feature.customportal=false#home",
+    "repo": "fabric-docs-pr",
+    "article_path": "docs/iq/ontology/how-to-bind-data.md"
+  },
+  "v7-078": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-078.png",
+    "size_kb": 304.8,
+    "page_url": "https://msit.powerbi.com/home?experience=power-bi",
+    "page_title": "Power BI",
+    "target_url": "https://app.fabric.microsoft.com",
+    "repo": "fabric-docs-pr",
+    "article_path": "docs/enterprise/fabric-close-end-cancel.md"
+  },
+  "v7-079": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-079.png",
+    "size_kb": 70.7,
+    "page_url": "https://portal.azure.com/?feature.customportal=false#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com?feature.customportal=false#home",
+    "repo": "fabric-docs-pr",
+    "article_path": "docs/onelake/access-onelake-shortcuts.md"
+  },
+  "v7-080": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-080.png",
+    "size_kb": 70.7,
+    "page_url": "https://portal.azure.com/?feature.customportal=false#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com?feature.customportal=false#home",
+    "repo": "fabric-docs-pr",
+    "article_path": "docs/governance/data-loss-prevention-configure.md"
+  },
+  "v7-081": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-081.png",
+    "size_kb": 384.1,
+    "page_url": "https://sip.security.microsoft.com/homepage?tid=72f988bf-86f1-41af-91ab-2d7cd011db47",
+    "page_title": "Home - Microsoft Defender",
+    "target_url": "https://security.microsoft.com",
+    "repo": "fabric-docs-pr",
+    "article_path": "docs/security/experience-specific-guidance.md"
+  },
+  "v7-082": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-082.png",
+    "size_kb": 304.8,
+    "page_url": "https://msit.powerbi.com/home?experience=power-bi",
+    "page_title": "Power BI",
+    "target_url": "https://app.fabric.microsoft.com",
+    "repo": "fabric-docs-pr",
+    "article_path": "docs/database/cosmos-db/how-to-access-data-lakehouse.md"
+  },
+  "v7-083": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-083.png",
+    "size_kb": 304.8,
+    "page_url": "https://msit.powerbi.com/home?experience=power-bi",
+    "page_title": "Power BI",
+    "target_url": "https://app.fabric.microsoft.com",
+    "repo": "fabric-docs-pr",
+    "article_path": "docs/fundamentals/apply-sensitivity-labels.md"
+  },
+  "v7-084": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-084.png",
+    "size_kb": 304.8,
+    "page_url": "https://msit.powerbi.com/home?experience=power-bi",
+    "page_title": "Power BI",
+    "target_url": "https://app.fabric.microsoft.com",
+    "repo": "fabric-docs-pr",
+    "article_path": "docs/data-warehouse/configure-sql-audit-logs.md"
+  },
+  "v7-085": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-085.png",
+    "size_kb": 384.1,
+    "page_url": "https://sip.security.microsoft.com/homepage?tid=72f988bf-86f1-41af-91ab-2d7cd011db47",
+    "page_title": "Home - Microsoft Defender",
+    "target_url": "https://security.microsoft.com",
+    "repo": "fabric-docs-pr",
+    "article_path": "docs/cicd/cicd-security.md"
+  },
+  "v7-086": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-086.png",
+    "size_kb": 70.8,
+    "page_url": "https://portal.azure.com/?feature.customportal=false#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com?feature.customportal=false#home",
+    "repo": "fabric-docs-pr",
+    "article_path": "docs/real-time-hub/add-source-amazon-kinesis-data-streams.md"
+  },
+  "v7-087": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-087.png",
+    "size_kb": 70.8,
+    "page_url": "https://portal.azure.com/?feature.customportal=false#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com?feature.customportal=false#home",
+    "repo": "fabric-docs-pr",
+    "article_path": "docs/data-science/customer-churn.md"
+  },
+  "v7-088": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-088.png",
+    "size_kb": 70.8,
+    "page_url": "https://portal.azure.com/?feature.customportal=false#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com?feature.customportal=false#home",
+    "repo": "fabric-docs-pr",
+    "article_path": "docs/data-engineering/apache-spark-history-server.md"
+  },
+  "v7-089": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-089.png",
+    "size_kb": 70.8,
+    "page_url": "https://portal.azure.com/?feature.customportal=false#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com?feature.customportal=false#home",
+    "repo": "fabric-docs-pr",
+    "article_path": "docs/data-factory/access-apache-airflow-job-logs.md"
+  },
+  "v7-090": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-090.png",
+    "size_kb": 70.8,
+    "page_url": "https://portal.azure.com/?feature.customportal=false#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com?feature.customportal=false#home",
+    "repo": "fabric-docs-pr",
+    "article_path": "docs/real-time-intelligence/access-database-copy-uri.md"
+  },
+  "v7-091": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-091.png",
+    "size_kb": 70.8,
+    "page_url": "https://portal.azure.com/?feature.customportal=false#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com?feature.customportal=false#home",
+    "repo": "fabric-docs-pr",
+    "article_path": "docs/includes/copilot-explore-data.md"
+  },
+  "v7-092": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-092.png",
+    "size_kb": 70.8,
+    "page_url": "https://portal.azure.com/?feature.customportal=false#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com?feature.customportal=false#home",
+    "repo": "fabric-docs-pr",
+    "article_path": "docs/extensibility-toolkit/how-to-enable-remote-jobs.md"
+  },
+  "v7-093": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-093.png",
+    "size_kb": 70.8,
+    "page_url": "https://portal.azure.com/?feature.customportal=false#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com?feature.customportal=false#home",
+    "repo": "fabric-docs-pr",
+    "article_path": "docs/graph/manage-data.md"
+  },
+  "v7-094": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-094.png",
+    "size_kb": 70.8,
+    "page_url": "https://portal.azure.com/?feature.customportal=false#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com?feature.customportal=false#home",
+    "repo": "fabric-docs-pr",
+    "article_path": "docs/workload-development-kit/add-item-custom-settings.md"
+  },
+  "v7-095": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-095.png",
+    "size_kb": 70.8,
+    "page_url": "https://portal.azure.com/?feature.customportal=false#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com?feature.customportal=false#home",
+    "repo": "fabric-docs-pr",
+    "article_path": "docs/mirroring/azure-cosmos-db-how-to-join-multiple.md"
+  },
+  "v7-096": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-096.png",
+    "size_kb": 302.4,
+    "page_url": "https://msit.powerbi.com/home?experience=power-bi",
+    "page_title": "Power BI",
+    "target_url": "https://app.fabric.microsoft.com",
+    "repo": "fabric-docs-pr",
+    "article_path": "docs/admin/about-tenant-settings.md"
+  },
+  "v7-097": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-097.png",
+    "size_kb": 304.8,
+    "page_url": "https://msit.powerbi.com/home?experience=power-bi",
+    "page_title": "Power BI",
+    "target_url": "https://app.fabric.microsoft.com",
+    "repo": "fabric-docs-pr",
+    "article_path": "docs/iq/ontology/how-to-bind-data.md"
+  },
+  "v7-098": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-098.png",
+    "size_kb": 304.9,
+    "page_url": "https://msit.powerbi.com/home?experience=power-bi",
+    "page_title": "Power BI",
+    "target_url": "https://app.fabric.microsoft.com",
+    "repo": "fabric-docs-pr",
+    "article_path": "docs/enterprise/fabric-close-end-cancel.md"
+  },
+  "v7-099": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-099.png",
+    "size_kb": 70.8,
+    "page_url": "https://portal.azure.com/?feature.customportal=false#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com?feature.customportal=false#home",
+    "repo": "fabric-docs-pr",
+    "article_path": "docs/onelake/access-onelake-shortcuts.md"
+  },
+  "v7-100": {
+    "status": "CAPTURE_SUCCESS",
+    "captured_path": "F:\\home\\docs-screenshot\\test-comparison\\captured-v7\\v7-100.png",
+    "size_kb": 70.8,
+    "page_url": "https://portal.azure.com/?feature.customportal=false#home",
+    "page_title": "Home - Microsoft Azure",
+    "target_url": "https://portal.azure.com?feature.customportal=false#home",
+    "repo": "fabric-docs-pr",
+    "article_path": "docs/governance/data-loss-prevention-configure.md"
+  }
+}
