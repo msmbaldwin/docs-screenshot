@@ -60,6 +60,9 @@ def generate_gist_comparison(
     gh_base = github_base_url or os.environ.get("GITHUB_BASE_URL", "https://github.com")
     pr_number_js = pr_number if pr_number else "null"
 
+    from . import github_integration as _gh_mod
+    skill_version = _gh_mod.get_skill_version()
+
     fix_rows = []
     for i, fix in enumerate(fixes):
         before_src = f"data:image/png;base64,{_encode_image(fix['before_path'])}" if os.path.exists(fix.get("before_path", "")) else ""
@@ -196,6 +199,7 @@ const LABEL = "{FEEDBACK_LABEL}";
 const PARENT_ISSUE = {issue_number};
 const PR_BRANCH = "{pr_branch}";
 const PR_NUMBER = {pr_number_js};
+const SKILL_VERSION = "{skill_version}";
 const CLIENT_ID = "{client_id}";
 const GH_BASE = "{gh_base}";
 
@@ -293,6 +297,7 @@ async function submitIteration() {{
       `pr_number: ${{PR_NUMBER}}`,
       `pr_branch: ${{PR_BRANCH}}`,
       `parent_issue: ${{PARENT_ISSUE}}`,
+      `skill_version: ${{SKILL_VERSION}}`,
       '```',
       '',
       '### Issues',

@@ -194,6 +194,20 @@ def create_gist(filename: str, content: str, description: str = "", public: bool
 # Helpers
 # ---------------------------------------------------------------------------
 
+def get_skill_version() -> str:
+    """Return the current skill commit SHA (short hash)."""
+    try:
+        result = subprocess.run(
+            ["git", "rev-parse", "--short", "HEAD"],
+            capture_output=True, text=True, cwd=_repo_dir(), timeout=10,
+        )
+        if result.returncode == 0:
+            return result.stdout.strip()
+    except Exception:
+        pass
+    return "unknown"
+
+
 def _repo_dir() -> str:
     """Return the local repo directory."""
     # Check env var first, then common locations

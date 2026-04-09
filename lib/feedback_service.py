@@ -65,6 +65,17 @@ def process_issue(issue: dict) -> None:
 
         log.info(f"  Found {len(items)} feedback items")
 
+        # Check if screenshots were generated with an older skill version
+        report_version = _parse_skill_version(body)
+        current_version = gh.get_skill_version()
+        if report_version and report_version != "unknown" and report_version != current_version:
+            log.info(f"  Report was generated with skill version {report_version}, current is {current_version}")
+            log.info(f"  Checking if reported issues still reproduce on current version...")
+            gh.comment_on_issue(number,
+                f"**Note:** This feedback was generated with skill version `{report_version}`, "
+                f"but the current version is `{current_version}`. Some issues may already be fixed. "
+                f"The service will verify each reported problem still reproduces before applying fixes.")
+
         # Check if this is an iteration on an existing PR
         pr_context = _parse_pr_context(body)
         is_iteration = pr_context.get("pr_branch") and pr_context.get("pr_number")
@@ -346,6 +357,13 @@ def _parse_pr_context(body: str) -> dict:
     if parent:
         ctx["parent_issue"] = int(parent.group(1))
     return ctx
+
+
+def _parse_skill_version(body: str) -> str | None:
+    """Extract the skill_version from an issue body."""
+    import re
+    match = re.search(r"skill_version:\s*(\S+)", body)
+    return match.group(1) if match else None
 
 
 def _checkout_branch(branch: str) -> None:

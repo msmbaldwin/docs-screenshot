@@ -61,6 +61,10 @@ def generate_comparison_report(
     client_id = github_client_id or os.environ.get("GITHUB_OAUTH_CLIENT_ID", "")
     gh_base = github_base_url or os.environ.get("GITHUB_BASE_URL", "https://github.com")
 
+    # Embed skill version so the service can check staleness
+    from . import github_integration as _gh_mod
+    skill_version = _gh_mod.get_skill_version()
+
     articles: dict[str, list[dict]] = {}
     for p in pairs:
         group = p.get("article_group", "Ungrouped")
@@ -209,6 +213,7 @@ def generate_comparison_report(
 <script>
 const REPO = "{GITHUB_REPO}";
 const LABEL = "{FEEDBACK_LABEL}";
+const SKILL_VERSION = "{skill_version}";
 // OAuth App client ID. Register at https://github.com/settings/applications/new
 // or set via environment when generating the report.
 const CLIENT_ID = "{client_id}";
@@ -321,6 +326,12 @@ async function submitFeedback() {{
       '## Screenshot Feedback',
       '',
       `Submitted from comparison report. ${{feedbackItems.length}} screenshot(s) flagged for improvement.`,
+      '',
+      '### Skill Version',
+      '',
+      '```',
+      `skill_version: ${{SKILL_VERSION}}`,
+      '```',
       '',
       '### Issues',
       '',
