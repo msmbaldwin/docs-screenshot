@@ -89,6 +89,12 @@ Options can be combined with any scenario. Examples:
 5. PNG optimization (target < 200 KB, max 1200px width)
 6. Open in GIMP (unless `nogimp`)
 
+**Comparison reports:**
+- Scenario 2 (article refresh) generates a side-by-side HTML comparison report
+- Reports are automatically published as a GitHub Gist and the preview URL is printed
+- Each screenshot pair includes a feedback textbox; a Submit button creates a GitHub issue via OAuth device flow
+- The feedback service (`runservice.cmd`) picks up issues and processes fixes automatically
+
 **Failure categories:** ✅ Success | ⚠️ UI Mismatch | ❌ Navigation Failed | 🔒 Privilege Issue | 🚨 PII Leak | 📄 Doc Gap | 🔍 Element Missing
 
 **Prerequisites:** Windows + Edge + Node.js 18+, Python 3.10+, Azure CLI. Playwright MCP and Pillow are auto-installed on first run. GIMP is optional.

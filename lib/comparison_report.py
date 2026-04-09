@@ -378,3 +378,58 @@ async function submitFeedback() {{
             f.write(report_html)
 
     return report_html
+
+
+def generate_and_publish(
+    pairs: list[dict],
+    title: str = "Screenshot Comparison",
+    subtitle: str = "",
+    output_path: str | None = None,
+    embed_images: bool = True,
+    github_client_id: str = "",
+    github_base_url: str = "https://github.com",
+    public_gist: bool = True,
+) -> tuple[str, str]:
+    """
+    Generate a comparison report and publish it as a GitHub Gist.
+
+    This is the standard entry point for comparison workflows. It produces
+    a self-contained HTML file, saves it locally (if output_path given),
+    and uploads it as a gist viewable via htmlpreview.github.io.
+
+    Returns:
+        (gist_url, preview_url) tuple
+    """
+    from . import github_integration as gh
+
+    report_html = generate_comparison_report(
+        pairs=pairs,
+        title=title,
+        subtitle=subtitle,
+        output_path=output_path,
+        embed_images=embed_images,
+        github_client_id=github_client_id,
+        github_base_url=github_base_url,
+    )
+
+    # Derive a filename from the title
+    safe_name = "".join(c if c.isalnum() or c in "-_ " else "" for c in title)
+    safe_name = safe_name.strip().replace(" ", "-").lower()[:60] or "comparison"
+    filename = f"{safe_name}.html"
+
+    gist_url = gh.create_gist(
+        filename=filename,
+        content=report_html,
+        description=title,
+        public=public_gist,
+    )
+
+    # Build the htmlpreview URL for direct browser viewing
+    # Gist URL format: https://gist.github.com/USER/HASH
+    # Raw URL: https://gist.github.com/USER/HASH/raw/FILENAME
+    preview_url = ""
+    if gist_url and "gist.github.com" in gist_url:
+        raw_url = f"{gist_url}/raw/{filename}"
+        preview_url = f"https://htmlpreview.github.io/?{raw_url}"
+
+    return gist_url, preview_url
