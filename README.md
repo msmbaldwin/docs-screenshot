@@ -349,9 +349,17 @@ The skill includes a closed-loop system for iteratively improving screenshot qua
 │  3. PR Review (Gist-hosted comparison page)                 │
 │     - Shows before/after for each fix                       │
 │     - Includes feedback textboxes for further refinement    │
-│     - "Submit Further Feedback" → new issue → loop repeats  │
+│     - "Submit Further Feedback" → new commit on same PR     │
+│       (service pushes to the existing branch, not a new PR) │
+│     - Reviewer keeps iterating until satisfied, then merges │
 └─────────────────────────────────────────────────────────────┘
 ```
+
+> **Key design:** Iterations stay on the same PR. When a reviewer submits
+> further feedback from the PR's comparison page, the service detects the
+> PR context (branch name, PR number) and pushes a new commit to the
+> existing branch. This keeps the full review history in a single PR
+> that the reviewer merges only when all fixes are correct.
 
 ### Starting the feedback service
 
