@@ -32,6 +32,8 @@ def generate_gist_comparison(
     fixes: list[dict],
     issue_number: int,
     pr_url: str = "",
+    pr_branch: str = "",
+    pr_number: int | None = None,
     github_client_id: str = "",
     github_base_url: str = "https://github.com",
 ) -> str:
@@ -56,6 +58,7 @@ def generate_gist_comparison(
     """
     client_id = github_client_id or os.environ.get("GITHUB_OAUTH_CLIENT_ID", "")
     gh_base = github_base_url or os.environ.get("GITHUB_BASE_URL", "https://github.com")
+    pr_number_js = pr_number if pr_number else "null"
 
     fix_rows = []
     for i, fix in enumerate(fixes):
@@ -191,6 +194,8 @@ def generate_gist_comparison(
 const REPO = "{GITHUB_REPO}";
 const LABEL = "{FEEDBACK_LABEL}";
 const PARENT_ISSUE = {issue_number};
+const PR_BRANCH = "{pr_branch}";
+const PR_NUMBER = {pr_number_js};
 const CLIENT_ID = "{client_id}";
 const GH_BASE = "{gh_base}";
 
@@ -275,11 +280,20 @@ async function submitIteration() {{
   status.textContent = 'Submitting...';
 
   try {{
-    const title = `Screenshot feedback (iteration from #${{PARENT_ISSUE}}): ${{items.length}} item(s)`;
+    const title = `Screenshot feedback (iteration on PR #${{PR_NUMBER}}): ${{items.length}} item(s)`;
     const body = [
       '## Screenshot Feedback (Iteration)',
       '',
-      `Follow-up from Issue #${{PARENT_ISSUE}}. ${{items.length}} screenshot(s) still need improvement.`,
+      `Follow-up on PR #${{PR_NUMBER}} (branch: \\`${{PR_BRANCH}}\\`), originally from Issue #${{PARENT_ISSUE}}.`,
+      `${{items.length}} screenshot(s) still need improvement.`,
+      '',
+      '### PR Context',
+      '',
+      '```',
+      `pr_number: ${{PR_NUMBER}}`,
+      `pr_branch: ${{PR_BRANCH}}`,
+      `parent_issue: ${{PARENT_ISSUE}}`,
+      '```',
       '',
       '### Issues',
       '',
@@ -334,9 +348,14 @@ def publish_gist_comparison(
     fixes: list[dict],
     issue_number: int,
     pr_url: str = "",
+    pr_branch: str = "",
+    pr_number: int | None = None,
 ) -> str:
     """Generate and publish a gist comparison page. Returns the gist URL."""
-    page_html = generate_gist_comparison(fixes, issue_number, pr_url)
+    page_html = generate_gist_comparison(
+        fixes, issue_number, pr_url,
+        pr_branch=pr_branch, pr_number=pr_number,
+    )
     gist_url = gh.create_gist(
         filename=f"pr-review-issue-{issue_number}.html",
         content=page_html,

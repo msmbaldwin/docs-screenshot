@@ -65,14 +65,23 @@ def process_issue(issue: dict) -> None:
 
         log.info(f"  Found {len(items)} feedback items")
 
+        # Check if this is an iteration on an existing PR
+        pr_context = _parse_pr_context(body)
+        is_iteration = pr_context.get("pr_branch") and pr_context.get("pr_number")
+
         # Create working directory
         work = os.path.join(WORK_DIR, f"issue-{number}")
         os.makedirs(os.path.join(work, "before"), exist_ok=True)
         os.makedirs(os.path.join(work, "after"), exist_ok=True)
 
-        # Create branch
-        branch = f"fix/screenshot-feedback-{number}"
-        gh.create_branch(branch)
+        # Use existing branch for iterations, or create new branch
+        if is_iteration:
+            branch = pr_context["pr_branch"]
+            log.info(f"  Iteration: pushing to existing branch {branch} (PR #{pr_context['pr_number']})")
+            _checkout_branch(branch)
+        else:
+            branch = f"fix/screenshot-feedback-{number}"
+            gh.create_branch(branch)
 
         # Process each feedback item
         fixes = []
@@ -137,34 +146,49 @@ def process_issue(issue: dict) -> None:
 
         # Commit skill changes and images
         all_changed = files_to_commit + _get_changed_skill_files()
-        if all_changed:
-            gh.commit_and_push(
-                branch,
-                f"Fix screenshots from feedback issue #{number}\n\n"
-                + "\n".join(f"- {f['image']}: {f['suggestion'][:60]}" for f in fixes)
-                + f"\n\nCo-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>",
-                all_changed,
-            )
-
-        # Create PR
-        pr_body = _build_pr_body(number, fixes)
-        pr_url = gh.create_pull_request(
-            branch=branch,
-            title=f"Fix {len(fixes)} screenshot(s) from feedback #{number}",
-            body=pr_body,
-            issue_number=number,
+        commit_msg = (
+            f"{'Iteration fix' if is_iteration else 'Fix'} screenshots from feedback #{number}\n\n"
+            + "\n".join(f"- {f['image']}: {f['suggestion'][:60]}" for f in fixes)
+            + f"\n\nCo-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>"
         )
+        if all_changed:
+            gh.commit_and_push(branch, commit_msg, all_changed)
 
-        # Publish gist comparison page
+        # Create PR only for new feedback; iterations push to the existing PR's branch
+        if is_iteration:
+            pr_url = pr_context.get("pr_url", "")
+            pr_number_val = pr_context["pr_number"]
+            # Comment on the existing PR about this iteration
+            try:
+                gh.comment_on_issue(pr_number_val,
+                    f"New iteration commit pushed from Issue #{number}.\n\n"
+                    + "\n".join(f"- `{f['image']}`: {f['suggestion'][:80]}" for f in fixes))
+            except Exception:
+                pass
+        else:
+            pr_body = _build_pr_body(number, fixes)
+            pr_url = gh.create_pull_request(
+                branch=branch,
+                title=f"Fix {len(fixes)} screenshot(s) from feedback #{number}",
+                body=pr_body,
+                issue_number=number,
+            )
+            pr_number_val = _extract_pr_number(pr_url)
+
+        # Publish gist comparison page (with PR context for further iterations)
         gist_url = ""
         try:
-            gist_url = publish_gist_comparison(fixes, number, pr_url)
+            gist_url = publish_gist_comparison(
+                fixes, number, pr_url,
+                pr_branch=branch,
+                pr_number=pr_number_val,
+            )
             log.info(f"  Gist published: {gist_url}")
         except Exception as e:
             log.warning(f"  Gist creation failed: {e}")
 
         # Comment on issue with results
-        comment = _build_result_comment(number, fixes, pr_url, gist_url)
+        comment = _build_result_comment(number, fixes, pr_url, gist_url, is_iteration)
         gh.comment_on_issue(number, comment)
 
         # Mark completed
@@ -270,16 +294,24 @@ def _build_result_comment(
     fixes: list[dict],
     pr_url: str,
     gist_url: str,
+    is_iteration: bool = False,
 ) -> str:
     """Build the issue comment summarizing results."""
-    lines = [
-        "## Processing Complete",
-        "",
-        f"Created PR: {pr_url}",
-    ]
+    if is_iteration:
+        lines = [
+            "## Iteration Complete",
+            "",
+            f"Pushed new commit to existing PR: {pr_url}",
+        ]
+    else:
+        lines = [
+            "## Processing Complete",
+            "",
+            f"Created PR: {pr_url}",
+        ]
     if gist_url:
         lines.append(f"Review comparison: {gist_url}")
-        lines.append("(Use the review page to submit further feedback if needed)")
+        lines.append("(Use the review page to submit further feedback; it will push to the same PR)")
     lines.append("")
     lines.append("### Summary")
     lines.append("")
@@ -289,6 +321,49 @@ def _build_result_comment(
         lines.append(f"- **{fix['image']}**: {fix['changes_made'][:100]} [{status}]")
 
     return "\n".join(lines)
+
+
+def _parse_pr_context(body: str) -> dict:
+    """
+    Extract PR context from an iteration issue body.
+
+    Looks for a block like:
+    ```
+    pr_number: 42
+    pr_branch: fix/screenshot-feedback-7
+    parent_issue: 7
+    ```
+    """
+    import re
+    ctx = {}
+    pr_num = re.search(r"pr_number:\s*(\d+)", body)
+    pr_branch = re.search(r"pr_branch:\s*(\S+)", body)
+    parent = re.search(r"parent_issue:\s*(\d+)", body)
+    if pr_num:
+        ctx["pr_number"] = int(pr_num.group(1))
+    if pr_branch:
+        ctx["pr_branch"] = pr_branch.group(1)
+    if parent:
+        ctx["parent_issue"] = int(parent.group(1))
+    return ctx
+
+
+def _checkout_branch(branch: str) -> None:
+    """Check out an existing remote branch."""
+    repo = REPO_DIR
+    subprocess.run(["git", "fetch", "origin", branch], capture_output=True, cwd=repo)
+    subprocess.run(["git", "checkout", branch], capture_output=True, cwd=repo)
+    subprocess.run(["git", "pull", "origin", branch], capture_output=True, cwd=repo)
+
+
+def _extract_pr_number(pr_url: str) -> int | None:
+    """Extract PR number from a URL like https://github.com/owner/repo/pull/42."""
+    if not pr_url:
+        return None
+    try:
+        return int(pr_url.rstrip("/").split("/")[-1])
+    except (ValueError, IndexError):
+        return None
 
 
 def main():
