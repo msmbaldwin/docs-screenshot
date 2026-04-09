@@ -32,6 +32,8 @@ def generate_comparison_report(
     subtitle: str = "",
     output_path: str | None = None,
     embed_images: bool = True,
+    github_client_id: str = "",
+    github_base_url: str = "https://github.com",
 ) -> str:
     """
     Generate a comparison report HTML with feedback UI.
@@ -55,6 +57,10 @@ def generate_comparison_report(
     Returns:
         The HTML string
     """
+    # Resolve OAuth config
+    client_id = github_client_id or os.environ.get("GITHUB_OAUTH_CLIENT_ID", "")
+    gh_base = github_base_url or os.environ.get("GITHUB_BASE_URL", "https://github.com")
+
     articles: dict[str, list[dict]] = {}
     for p in pairs:
         group = p.get("article_group", "Ungrouped")
@@ -154,9 +160,14 @@ def generate_comparison_report(
   .submit-status.success {{ color: #155724; }}
   .submit-status.error {{ color: #721c24; }}
 
-  /* GitHub token input */
-  .token-section {{ text-align: center; margin: 20px 0; padding: 16px; background: #fff8e1; border: 1px solid #ffe082; border-radius: 6px; }}
-  .token-input {{ padding: 8px 12px; width: 400px; max-width: 90%; border: 1px solid #ccc; border-radius: 4px; font-family: monospace; }}
+  /* GitHub auth */
+  .auth-section {{ text-align: center; margin: 20px 0; padding: 16px; background: #f0f6fc; border: 1px solid #d0d7de; border-radius: 6px; }}
+  .auth-btn {{ background: #24292f; color: #fff; border: none; padding: 10px 24px; font-size: 14px; font-weight: 600; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }}
+  .auth-btn:hover {{ background: #32383f; }}
+  .auth-btn:disabled {{ background: #999; cursor: not-allowed; }}
+  .auth-status {{ margin-top: 8px; font-size: 13px; color: #555; }}
+  .auth-status.authed {{ color: #155724; }}
+  .auth-code-display {{ font-family: monospace; font-size: 28px; font-weight: 700; letter-spacing: 4px; color: #0078d4; margin: 12px 0; }}
 
   @media (max-width: 900px) {{ .pair-container {{ grid-template-columns: 1fr; }} }}
 </style>
@@ -168,10 +179,24 @@ def generate_comparison_report(
 
 {"".join(screenshot_rows)}
 
-<div class="token-section">
-  <p style="margin-bottom: 8px; font-weight: 600;">GitHub Personal Access Token (required for submission)</p>
-  <p style="margin-bottom: 8px; font-size: 13px; color: #666;">Token needs <code>repo</code> scope. It is only sent to GitHub's API, never stored.</p>
-  <input type="password" class="token-input" id="gh-token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
+<div class="auth-section" id="auth-section">
+  <div id="auth-initial">
+    <p style="margin-bottom: 8px; font-weight: 600;">Sign in to GitHub to submit feedback</p>
+    <button class="auth-btn" id="auth-btn" onclick="startAuth()">
+      <svg height="20" width="20" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
+      Sign in with GitHub
+    </button>
+    <p style="margin-top: 8px; font-size: 12px; color: #888;">Uses GitHub's secure device flow. No passwords or tokens needed.</p>
+  </div>
+  <div id="auth-pending" style="display:none;">
+    <p style="margin-bottom: 4px;">Enter this code on GitHub:</p>
+    <div class="auth-code-display" id="auth-code"></div>
+    <p><a id="auth-link" href="#" target="_blank" style="font-size: 14px;">Click here to open GitHub</a></p>
+    <p class="auth-status" id="auth-poll-status">Waiting for authorization...</p>
+  </div>
+  <div id="auth-done" style="display:none;">
+    <p class="auth-status authed">&#10003; Signed in to GitHub. Ready to submit feedback.</p>
+  </div>
 </div>
 
 <div class="submit-section">
@@ -184,19 +209,89 @@ def generate_comparison_report(
 <script>
 const REPO = "{GITHUB_REPO}";
 const LABEL = "{FEEDBACK_LABEL}";
+// OAuth App client ID. Register at https://github.com/settings/applications/new
+// or set via environment when generating the report.
+const CLIENT_ID = "{client_id}";
+const GH_BASE = "{gh_base}";  // e.g. https://github.com or GHE URL
+
+let ghToken = sessionStorage.getItem('gh_oauth_token') || '';
+
+// Show correct auth state on load
+if (ghToken) {{
+  document.getElementById('auth-initial').style.display = 'none';
+  document.getElementById('auth-done').style.display = 'block';
+}}
+
+async function startAuth() {{
+  const btn = document.getElementById('auth-btn');
+  btn.disabled = true;
+
+  try {{
+    // Step 1: Request device code
+    const codeResp = await fetch(`${{GH_BASE}}/login/device/code`, {{
+      method: 'POST',
+      headers: {{ 'Accept': 'application/json', 'Content-Type': 'application/json' }},
+      body: JSON.stringify({{ client_id: CLIENT_ID, scope: 'repo' }}),
+    }});
+    if (!codeResp.ok) throw new Error('Failed to start device flow. Is the OAuth App Client ID configured?');
+    const codeData = await codeResp.json();
+
+    // Step 2: Show the user code
+    document.getElementById('auth-initial').style.display = 'none';
+    document.getElementById('auth-pending').style.display = 'block';
+    document.getElementById('auth-code').textContent = codeData.user_code;
+    const link = document.getElementById('auth-link');
+    link.href = codeData.verification_uri;
+    link.textContent = codeData.verification_uri;
+    window.open(codeData.verification_uri, '_blank');
+
+    // Step 3: Poll for token
+    const interval = (codeData.interval || 5) * 1000;
+    const expires = Date.now() + (codeData.expires_in || 900) * 1000;
+
+    while (Date.now() < expires) {{
+      await new Promise(r => setTimeout(r, interval));
+      const tokenResp = await fetch(`${{GH_BASE}}/login/oauth/access_token`, {{
+        method: 'POST',
+        headers: {{ 'Accept': 'application/json', 'Content-Type': 'application/json' }},
+        body: JSON.stringify({{
+          client_id: CLIENT_ID,
+          device_code: codeData.device_code,
+          grant_type: 'urn:ietf:params:oauth:grant-type:device_code',
+        }}),
+      }});
+      const tokenData = await tokenResp.json();
+
+      if (tokenData.access_token) {{
+        ghToken = tokenData.access_token;
+        sessionStorage.setItem('gh_oauth_token', ghToken);
+        document.getElementById('auth-pending').style.display = 'none';
+        document.getElementById('auth-done').style.display = 'block';
+        return;
+      }}
+      if (tokenData.error === 'authorization_pending') continue;
+      if (tokenData.error === 'slow_down') {{ await new Promise(r => setTimeout(r, 5000)); continue; }}
+      throw new Error(tokenData.error_description || tokenData.error || 'Auth failed');
+    }}
+    throw new Error('Authorization timed out. Please try again.');
+  }} catch (e) {{
+    document.getElementById('auth-pending').style.display = 'none';
+    document.getElementById('auth-initial').style.display = 'block';
+    btn.disabled = false;
+    alert('Auth error: ' + e.message);
+  }}
+}}
 
 async function submitFeedback() {{
   const btn = document.getElementById('submit-feedback');
   const status = document.getElementById('submit-status');
-  const token = document.getElementById('gh-token').value.trim();
 
-  if (!token) {{
+  if (!ghToken) {{
     status.className = 'submit-status error';
-    status.textContent = 'Please enter a GitHub token above.';
+    status.textContent = 'Please sign in to GitHub first.';
     return;
   }}
 
-  // Collect feedback from all textboxes
   const feedbackItems = [];
   document.querySelectorAll('.feedback-input').forEach(ta => {{
     const text = ta.value.trim();
@@ -243,18 +338,19 @@ async function submitFeedback() {{
       '```',
     ].join('\\n');
 
-    const resp = await fetch(`https://api.github.com/repos/${{REPO}}/issues`, {{
+    const apiBase = GH_BASE.replace('github.com', 'api.github.com');
+    const apiUrl = GH_BASE.includes('github.com')
+      ? `https://api.github.com/repos/${{REPO}}/issues`
+      : `${{GH_BASE}}/api/v3/repos/${{REPO}}/issues`;
+
+    const resp = await fetch(apiUrl, {{
       method: 'POST',
       headers: {{
-        'Authorization': `token ${{token}}`,
+        'Authorization': `token ${{ghToken}}`,
         'Accept': 'application/vnd.github.v3+json',
         'Content-Type': 'application/json',
       }},
-      body: JSON.stringify({{
-        title,
-        body,
-        labels: [LABEL],
-      }}),
+      body: JSON.stringify({{ title, body, labels: [LABEL] }}),
     }});
 
     if (!resp.ok) {{
