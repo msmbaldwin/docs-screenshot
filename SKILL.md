@@ -22,6 +22,7 @@ When invoked as `/docs-screenshot`, the skill prefix is stripped. Match the rema
 | `help` | Display the Detailed Help section (see below) and stop |
 | `<article-path>` | **Scenario 2**: Refresh all screenshots in the given markdown article |
 | `<description of what to capture>` | **Scenario 1/3**: Capture a new screenshot based on the description |
+| `compare` (anywhere in text) | Enable interactive comparison review with local feedback loop (Scenario 2 only) |
 | `nocallouts` (anywhere in text) | Skip all callout box drawing |
 | `nogimp` (anywhere in text) | Skip opening result in GIMP |
 | `nopii` (anywhere in text) | Skip PII detection and redaction (use when PII is already scrubbed via DOM) |
@@ -31,6 +32,7 @@ Options can be combined with any scenario. Examples:
 ```
 /docs-screenshot help
 /docs-screenshot F:\git\azure-docs\articles\storage\files\storage-how-to-use-files-windows.md
+/docs-screenshot F:\git\azure-docs\articles\storage\files\storage-how-to-use-files-windows.md compare
 /docs-screenshot Take a screenshot of the Azure Key Vault secrets page. nocallouts
 /docs-screenshot Capture the VM creation blade with size B2s selected. Add callouts on the Size dropdown and the Review+Create button.
 /docs-screenshot F:\git\azure-docs\articles\storage\files\soft-delete.md nogimp
@@ -52,6 +54,7 @@ Options can be combined with any scenario. Examples:
 
 | Option | Effect |
 |---|---|
+| `compare` | Enable interactive comparison review. After capturing, starts a local server with side-by-side comparison report. Submit corrections to iterate, or approve all to create a PR. Only applies to Scenario 2 (article refresh). |
 | `nocallouts` | Skip callout box drawing entirely. Use when callout positions are unreliable, or when you want a clean base image to annotate manually. |
 | `nogimp` | Skip opening the processed screenshot in GIMP. The image is still saved to disk. |
 | `nopii` | Skip PII detection and pixel-level redaction. Use when you have already scrubbed PII from the DOM before capture (the preferred approach). |
@@ -90,10 +93,11 @@ Options can be combined with any scenario. Examples:
 6. Open in GIMP (unless `nogimp`)
 
 **Comparison reports:**
-- Scenario 2 (article refresh) generates a side-by-side HTML comparison report
-- Reports are automatically published as a GitHub Gist and the preview URL is printed
-- Each screenshot pair includes a feedback textbox; a Submit button creates a GitHub issue via OAuth device flow
-- The feedback service (`runservice.cmd`) picks up issues and processes fixes automatically
+- Scenario 2 (article refresh) with the `compare` flag generates an interactive comparison report
+- A local HTTP server starts and serves the report in your browser
+- Each screenshot pair includes a feedback textbox for corrections
+- Submit with corrections: the skill processes fixes and regenerates the report (iterate until satisfied)
+- Submit with no corrections: creates a PR with before/after comparison images for reviewer validation
 
 **Failure categories:** ✅ Success | ⚠️ UI Mismatch | ❌ Navigation Failed | 🔒 Privilege Issue | 🚨 PII Leak | 📄 Doc Gap | 🔍 Element Missing
 
@@ -1099,6 +1103,9 @@ All Python modules are at `lib/` (relative to the skill root):
 - **`dom_scrubber.py`**: Frame-aware DOM PII replacement. Generates JS that uses `page.frames()` to scrub ALL frames including cross-origin Azure portal iframes. **This is the preferred pre-screenshot approach.**
 - **`gimp_bridge.py`**: GIMP integration (detect running instance, open images).
 - **`extract_dom_info.js`**: JavaScript payload for `playwright-cli run-code` DOM extraction (Shadow DOM aware).
+- **`comparison_report.py`**: Generates comparison HTML with interactive feedback UI. In `compare` mode, posts corrections to a local HTTP server for iterative review.
+- **`local_server.py`**: Lightweight HTTP server for the interactive comparison workflow. Serves reports, accepts feedback submissions, and coordinates PR creation.
+- **`github_integration.py`**: GitHub API helpers (PRs, branches, gists via `gh` CLI). Includes `create_comparison_pr()` for building PRs with before/after images.
 - **`repo_config.py`**: Repo-specific customization system. Embeds knowledge about supported repos (path rules, service renames, nav hints, portal privilege notes). Use `detect_repo_from_path()` to auto-detect the repo and `get_path_rules()` for doc-specific behavior.
 - **`doc_analyzer.py`**: Doc-driven interaction analyzer. Parses markdown to extract image references, interaction steps, flyout requirements, and data requirements. Used in Phase 2.5 to understand what each screenshot should show.
 - **`page_change_analyzer.py`**: Detects significant page changes by comparing titles, service names, and layout. Flags cases where docs need updating beyond screenshot replacement.

@@ -34,8 +34,10 @@ The skill will:
 - Provision any required resources
 - Recapture each screenshot at the correct portal page
 - Save to the correct `media/` path with the original filename
-- Generate a comparison report (old vs. new dimensions, changes detected)
+- Generate a summary report (old vs. new dimensions, changes detected)
 - Open all screenshots in GIMP for final review
+
+Add `compare` to enable an interactive side-by-side comparison review (see [Interactive Comparison Review](#interactive-comparison-review)).
 
 ### 3. Description-Only (No Existing Screenshot)
 
@@ -99,6 +101,24 @@ The `nocallouts` keyword tells the skill to skip all callout box drawing. Useful
 > *"Set up an Azure Storage account with soft delete enabled. Navigate to the file shares blade, create a share named 'myfileshare', and capture the page. Add callouts around: 1) the 'File shares' nav item, 2) the share name in the list."*
 
 This works even without an existing article or screenshot to reference. The skill provisions resources, navigates, and captures based entirely on your description.
+
+### Interactive comparison review (compare flag)
+
+> *"Refresh the screenshots in F:\git\azure-docs\articles\storage\files\storage-how-to-use-files-windows.md compare"*
+
+The `compare` flag enables an interactive review workflow:
+1. The skill recaptures all screenshots and generates a side-by-side comparison report
+2. A local HTTP server starts and opens the report in your browser
+3. For each screenshot pair, you see the original (left) and new capture (right)
+4. Type corrections in the feedback textbox under any screenshot that needs improvement
+5. Click **Submit Corrections** to have the skill reprocess those screenshots
+6. The page auto-refreshes with the updated comparison; iterate until satisfied
+7. When all screenshots look good, leave all textboxes empty and click **Submit & Create PR**
+8. A PR is created with before/after comparison images for reviewer validation
+
+> *"Refresh the screenshots in F:\git\azure-ai-docs-pr\articles\ai-services\content-safety\. compare nogimp"*
+
+Combines `compare` with `nogimp` to skip opening GIMP (useful for batch operations where you only want the comparison report, not per-image GIMP windows).
 
 ## Supported Portals
 
@@ -279,19 +299,17 @@ To add your repo: add an entry to `REPO_CONFIGS` in `lib/repo_config.py`.
 docs-screenshot/
 ├── SKILL.md                    # Copilot CLI skill definition (the brain)
 ├── README.md                   # This file
-├── runservice.cmd              # Feedback processing service entry point
 ├── lib/
 │   ├── callout_finder.js       # DOM element finder for callout box placement
-│   ├── comparison_report.py    # Comparison HTML generator with feedback UI + gist publishing
+│   ├── comparison_report.py    # Comparison HTML generator with interactive feedback UI
 │   ├── doc_analyzer.py         # Doc-driven interaction analyzer
 │   ├── dom_scrubber.py         # Frame-aware DOM PII + avatar replacement (preferred)
 │   ├── extract_dom_info.js     # DOM text extraction (Shadow DOM aware)
 │   ├── failure_analyzer.py     # Capture failure classification and reporting
-│   ├── feedback_service.py     # Polling service: issues → analysis → fixes → PRs
 │   ├── gimp_bridge.py          # GIMP integration
-│   ├── gist_comparison.py      # PR review comparison pages (gist-hosted, iterative)
-│   ├── github_integration.py   # GitHub API helpers (issues, PRs, gists via gh CLI)
+│   ├── github_integration.py   # GitHub API helpers (PRs, branches, gists via gh CLI)
 │   ├── image_editor.py         # Crop, redact, callout, border, optimize
+│   ├── local_server.py         # Local HTTP server for interactive comparison workflow
 │   ├── page_change_analyzer.py # Detects significant page/service changes
 │   ├── pii_detector.py         # PII pattern matching + approved replacements
 │   ├── repo_config.py          # Repo-specific customization system
@@ -312,105 +330,62 @@ docs-screenshot/
 7. **Post-processing**: callout boxes (RGB 233,28,28 / 3px), smart crop, gray border, PNG optimization to <200KB
 8. **Post-capture validation** runs a pipeline checking for PII leaks, navigation failures, privilege issues, page changes, and missing UI elements. Failures are classified and explained using `lib/failure_analyzer.py`
 9. **GIMP handoff**: opens processed images in running GIMP instance for final human review
-10. **Comparison report** generates an HTML report with side-by-side original vs. captured images, failure badges, page change flags, and recommendations
-11. **Auto-publish**: comparison reports are automatically uploaded as GitHub Gists with a viewable preview URL
-12. **Feedback loop**: reports include per-screenshot feedback textboxes and a Submit button; the feedback service processes submissions into PRs
+10. **Interactive comparison** (when `compare` flag is used): serves a local comparison report with feedback textboxes, processes corrections, and creates a PR when all screenshots are approved
 
-## Feedback Loop: Collaborative Skill Improvement
+## Interactive Comparison Review
 
-The skill includes a closed-loop system for iteratively improving screenshot quality across multiple contributors.
+When you add `compare` to a Scenario 2 (article refresh) invocation, the skill enters an interactive review loop that runs entirely on your local machine.
 
 ### How it works
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│  1. Comparison Report (auto-published as GitHub Gist)       │
-│     - Side-by-side before/after for each screenshot         │
-│     - Feedback textbox under each pair                      │
-│     - "Sign in with GitHub" (OAuth device flow)             │
-│     - "Submit Feedback" → creates GitHub Issue               │
+│  1. Capture & Compare                                       │
+│     - Skill recaptures all screenshots for the article      │
+│     - Generates side-by-side comparison report               │
+│     - Starts a local HTTP server (http://localhost:PORT)     │
+│     - Opens the report in your browser                       │
 └──────────────────────────┬──────────────────────────────────┘
                            │
                            ▼
 ┌─────────────────────────────────────────────────────────────┐
-│  2. Feedback Service (runservice.cmd)                       │
-│     - Polls for issues labeled `screenshot-feedback`        │
-│     - Tags issue `processing` while working                 │
-│     - Analyzes each problem via Copilot CLI                 │
-│     - Applies targeted skill fixes                          │
-│     - Recaptures affected screenshots                       │
-│     - Creates PR with before/after images                   │
-│     - Publishes Gist comparison page for the PR             │
-│     - Tags issue `completed` and closes it                  │
+│  2. Review & Correct (iterate until satisfied)              │
+│     - Review each screenshot pair (original vs. new)        │
+│     - Type corrections in the feedback textbox for any      │
+│       screenshots that need improvement                     │
+│     - Click "Submit Corrections"                            │
+│     - Skill reprocesses flagged screenshots locally          │
+│     - Report auto-refreshes with updated comparisons        │
+│     - Repeat until all screenshots look good                │
 └──────────────────────────┬──────────────────────────────────┘
                            │
                            ▼
 ┌─────────────────────────────────────────────────────────────┐
-│  3. PR Review (Gist-hosted comparison page)                 │
-│     - Shows before/after for each fix                       │
-│     - Includes feedback textboxes for further refinement    │
-│     - "Submit Further Feedback" → new commit on same PR     │
-│       (service pushes to the existing branch, not a new PR) │
-│     - Reviewer keeps iterating until satisfied, then merges │
+│  3. Finalize & Create PR                                    │
+│     - All textboxes empty = all screenshots approved        │
+│     - Click "Submit & Create PR"                            │
+│     - PR includes before/after comparison images            │
+│       (first-iteration vs. final captures)                  │
+│     - Reviewers see the visual diff and merge               │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-> **Key design:** Iterations stay on the same PR. When a reviewer submits
-> further feedback from the PR's comparison page, the service detects the
-> PR context (branch name, PR number) and pushes a new commit to the
-> existing branch. This keeps the full review history in a single PR
-> that the reviewer merges only when all fixes are correct.
-
-### Starting the feedback service
-
-```cmd
-runservice.cmd
-```
-
-The service polls every 60 seconds (configurable via `POLL_INTERVAL` env var) for new issues labeled `screenshot-feedback` on the configured repo.
+> **Key design:** Everything runs locally. No GitHub Issues, no polling services, no OAuth tokens needed. The person who generated the comparison report is the same person who validates it. Only the final result is pushed as a PR for team review.
 
 ### Environment variables
 
 | Variable | Default | Description |
 |---|---|---|
-| `SCREENSHOT_REPO` | `jonburchel/docs-screenshot` | GitHub repo for issues and PRs |
+| `SCREENSHOT_REPO` | `jonburchel/docs-screenshot` | GitHub repo for PRs |
 | `SCREENSHOT_REPO_DIR` | Auto-detected | Local path to the skill repo |
-| `POLL_INTERVAL` | `60` | Seconds between issue polls |
-| `GITHUB_OAUTH_CLIENT_ID` | *(required for auth)* | OAuth App client ID for device flow |
-| `GITHUB_BASE_URL` | `https://github.com` | GitHub base URL (set for GHE) |
-
-### Setting up OAuth
-
-The comparison reports use GitHub's OAuth device flow so users can sign in interactively without managing PATs.
-
-1. Go to **GitHub Settings > Developer settings > OAuth Apps > New OAuth App**
-2. Set any homepage URL and callback URL (not used by device flow)
-3. Enable **Device Flow** under the app settings
-4. Copy the **Client ID** and set `GITHUB_OAUTH_CLIENT_ID`
-
-### Generating a comparison report with auto-publish
-
-```python
-from lib.comparison_report import generate_and_publish
-
-gist_url, preview_url = generate_and_publish(
-    pairs=my_pairs,
-    title="Screenshot Comparison: Azure Portal",
-)
-print(f"View report: {preview_url}")
-```
-
-The report is uploaded as a self-contained HTML gist (all images base64-encoded). The `preview_url` opens it directly in a browser via htmlpreview.github.io.
 
 ### Key files
 
 | File | Purpose |
 |---|---|
-| `runservice.cmd` | Entry point for the feedback processing service |
-| `lib/comparison_report.py` | Generates comparison HTML with feedback UI; `generate_and_publish()` auto-uploads as gist |
-| `lib/gist_comparison.py` | Generates PR review pages (gist-hosted) with iterative feedback |
-| `lib/feedback_service.py` | Polling service: watches issues, analyzes, fixes, creates PRs |
-| `lib/github_integration.py` | GitHub API helpers (issues, labels, PRs, gists via `gh` CLI) |
+| `lib/comparison_report.py` | Generates comparison HTML with interactive feedback UI |
+| `lib/local_server.py` | Local HTTP server that serves reports and accepts feedback |
+| `lib/github_integration.py` | GitHub API helpers (PRs, branches, gists via `gh` CLI) |
 
 ## Supported PII patterns
 

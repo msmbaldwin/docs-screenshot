@@ -1,10 +1,9 @@
 """
-GitHub API integration for the screenshot feedback loop.
+GitHub API integration for the screenshot skill.
 
-Provides helpers for creating issues, managing labels, creating branches,
-committing files, opening PRs, and creating gists. All operations use the
-GitHub CLI (`gh`) for authentication, falling back to the REST API with
-a GITHUB_TOKEN env var if gh is unavailable.
+Provides helpers for creating branches, committing files, opening PRs,
+and creating gists. All operations use the GitHub CLI (`gh`) for
+authentication.
 """
 
 from __future__ import annotations
@@ -19,9 +18,6 @@ from typing import Any
 
 
 REPO = os.environ.get("SCREENSHOT_REPO", "jonburchel/docs-screenshot")
-FEEDBACK_LABEL = "screenshot-feedback"
-PROCESSING_LABEL = "processing"
-COMPLETED_LABEL = "completed"
 
 
 def _gh(*args: str, input_data: str | None = None) -> str:
@@ -37,93 +33,6 @@ def _gh(*args: str, input_data: str | None = None) -> str:
     if result.returncode != 0:
         raise RuntimeError(f"gh command failed: {' '.join(cmd)}\n{result.stderr}")
     return result.stdout.strip()
-
-
-# ---------------------------------------------------------------------------
-# Issues
-# ---------------------------------------------------------------------------
-
-def list_feedback_issues() -> list[dict]:
-    """List open issues with the screenshot-feedback label (excluding processing)."""
-    raw = _gh(
-        "issue", "list",
-        "--repo", REPO,
-        "--label", FEEDBACK_LABEL,
-        "--state", "open",
-        "--json", "number,title,body,labels,createdAt",
-        "--limit", "50",
-    )
-    issues = json.loads(raw) if raw else []
-    # Exclude issues already being processed
-    return [
-        i for i in issues
-        if not any(l["name"] == PROCESSING_LABEL for l in i.get("labels", []))
-    ]
-
-
-def create_issue(title: str, body: str, labels: list[str] | None = None) -> int:
-    """Create a GitHub issue and return its number."""
-    cmd = [
-        "issue", "create",
-        "--repo", REPO,
-        "--title", title,
-        "--body", body,
-    ]
-    if labels:
-        for label in labels:
-            cmd.extend(["--label", label])
-    result = _gh(*cmd)
-    # gh issue create prints the URL; extract issue number
-    # e.g., https://github.com/owner/repo/issues/42
-    return int(result.rstrip("/").split("/")[-1])
-
-
-def add_label(issue_number: int, label: str) -> None:
-    """Add a label to an issue."""
-    _gh("issue", "edit", str(issue_number), "--repo", REPO, "--add-label", label)
-
-
-def remove_label(issue_number: int, label: str) -> None:
-    """Remove a label from an issue."""
-    try:
-        _gh("issue", "edit", str(issue_number), "--repo", REPO, "--remove-label", label)
-    except RuntimeError:
-        pass  # label may not exist
-
-
-def close_issue(issue_number: int) -> None:
-    """Close an issue."""
-    _gh("issue", "close", str(issue_number), "--repo", REPO)
-
-
-def comment_on_issue(issue_number: int, body: str) -> None:
-    """Add a comment to an issue."""
-    _gh("issue", "comment", str(issue_number), "--repo", REPO, "--body", body)
-
-
-# ---------------------------------------------------------------------------
-# Labels (ensure they exist)
-# ---------------------------------------------------------------------------
-
-def ensure_labels() -> None:
-    """Create the required labels if they don't exist."""
-    existing_raw = _gh("label", "list", "--repo", REPO, "--json", "name", "--limit", "100")
-    existing = {l["name"] for l in json.loads(existing_raw)} if existing_raw else set()
-
-    label_defs = [
-        (FEEDBACK_LABEL, "Screenshot feedback from comparison report", "0075ca"),
-        (PROCESSING_LABEL, "Being processed by feedback service", "fbca04"),
-        (COMPLETED_LABEL, "Feedback processed and PR created", "0e8a16"),
-    ]
-    for name, desc, color in label_defs:
-        if name not in existing:
-            try:
-                _gh("label", "create", name,
-                     "--repo", REPO,
-                     "--description", desc,
-                     "--color", color)
-            except RuntimeError:
-                pass  # may already exist in a race
 
 
 # ---------------------------------------------------------------------------
@@ -210,7 +119,6 @@ def get_skill_version() -> str:
 
 def _repo_dir() -> str:
     """Return the local repo directory."""
-    # Check env var first, then common locations
     env = os.environ.get("SCREENSHOT_REPO_DIR")
     if env and os.path.isdir(env):
         return env
@@ -225,38 +133,100 @@ def _repo_dir() -> str:
     return os.getcwd()
 
 
-def parse_feedback_body(body: str) -> list[dict]:
+def create_comparison_pr(
+    before_images: dict[str, str],
+    after_images: dict[str, str],
+    changed_files: list[str] | None = None,
+    title: str = "Screenshot skill improvements",
+    base: str = "master",
+) -> str:
     """
-    Parse a GitHub issue body created by the comparison report.
+    Create a PR with before/after comparison images and any skill changes.
 
-    Expected format:
-    ```json
-    [
-      {
-        "image": "copy-subscription-id.png",
-        "article": "get-subscription-tenant-id.md",
-        "suggestion": "Copy button callout is missing",
-        "captured_b64": "...",
-        "original_b64": "..."
-      },
-      ...
+    This is used at the end of an interactive compare session when the user
+    approves all screenshots. The PR includes committed before/after images
+    so reviewers can visually validate the changes.
+
+    Args:
+        before_images: {image_name: file_path} for first-iteration captures
+        after_images: {image_name: file_path} for final captures
+        changed_files: Additional files to include (skill code changes)
+        title: PR title
+        base: Base branch for the PR
+
+    Returns:
+        PR URL string
+    """
+    import shutil
+    from datetime import datetime
+
+    repo = _repo_dir()
+    timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+    branch = f"compare/screenshot-updates-{timestamp}"
+
+    create_branch(branch, base)
+
+    # Copy before/after images into the repo
+    compare_dir = os.path.join(repo, "test-comparison", f"compare-{timestamp}")
+    os.makedirs(os.path.join(compare_dir, "before"), exist_ok=True)
+    os.makedirs(os.path.join(compare_dir, "after"), exist_ok=True)
+
+    files_to_commit = []
+    for name, path in before_images.items():
+        if os.path.exists(path):
+            dst = os.path.join(compare_dir, "before", name)
+            shutil.copy2(path, dst)
+            files_to_commit.append(dst)
+
+    for name, path in after_images.items():
+        if os.path.exists(path):
+            dst = os.path.join(compare_dir, "after", name)
+            shutil.copy2(path, dst)
+            files_to_commit.append(dst)
+
+    if changed_files:
+        files_to_commit.extend(f for f in changed_files if os.path.exists(f))
+
+    # Build PR body with before/after summary
+    body_lines = [
+        "## Screenshot Skill Updates",
+        "",
+        f"Updated {len(after_images)} screenshot(s) through interactive comparison review.",
+        "",
+        "### Before/After Comparison",
+        "",
+        "| Screenshot | Status |",
+        "|---|---|",
     ]
-    ```
+    for name in sorted(set(list(before_images.keys()) + list(after_images.keys()))):
+        has_before = name in before_images and os.path.exists(before_images.get(name, ""))
+        has_after = name in after_images and os.path.exists(after_images.get(name, ""))
+        if has_before and has_after:
+            body_lines.append(f"| `{name}` | Updated |")
+        elif has_after:
+            body_lines.append(f"| `{name}` | New |")
 
-    Returns the parsed list of feedback items.
-    """
-    # Extract JSON block from the issue body
-    start = body.find("```json")
-    if start == -1:
-        start = body.find("[")
-        if start == -1:
-            return []
-        end = body.rfind("]") + 1
-    else:
-        start = body.index("\n", start) + 1
-        end = body.index("```", start)
+    body_lines.extend([
+        "",
+        f"Before/after images are in `test-comparison/compare-{timestamp}/`.",
+        "",
+        "Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>",
+    ])
 
-    try:
-        return json.loads(body[start:end])
-    except (json.JSONDecodeError, ValueError):
-        return []
+    commit_msg = (
+        f"Update {len(after_images)} screenshot(s) via interactive compare\n\n"
+        + "\n".join(f"- {name}" for name in sorted(after_images.keys()))
+        + "\n\nCo-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>"
+    )
+
+    if files_to_commit:
+        commit_and_push(branch, commit_msg, files_to_commit)
+
+    pr_url = create_pull_request(
+        branch=branch,
+        title=title,
+        body="\n".join(body_lines),
+        base=base,
+    )
+
+    return pr_url
