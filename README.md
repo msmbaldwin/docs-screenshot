@@ -293,12 +293,13 @@ You can also just ask: *"Take an Azure screenshot of the resource groups page"* 
 1. **Opens Azure portal** in Edge with your existing Microsoft SSO (persistent profile)
 2. **Navigates** to the target page, dismisses popups/banners
 3. **Provisions Azure resources** if needed (via `az` CLI)
-4. **Scrubs PII** from the live DOM before capture, including cross-origin iframes
-5. **Replaces user avatars** with a generic silhouette (profile photos, persona images)
-6. **Takes the screenshot** at 1200x800 (per contributor guide spec), expanding viewport height if callout targets are below the fold
-7. **Post-processes**: crop, callout boxes, gray border, PNG optimization
-8. **Opens in GIMP** for final human review
-9. **Reports**: lists all PII found, replacements made, image dimensions/size
+4. **Filters out non-screenshots** automatically: diagrams, icons, architecture art, flowcharts, and conceptual images are skipped based on alt text, filenames, context, and visual analysis
+5. **Scrubs PII** from the live DOM before capture, including cross-origin iframes
+6. **Replaces user avatars** with a generic silhouette (profile photos, persona images)
+7. **Takes the screenshot** at 1200x800 (per contributor guide spec), expanding viewport height if callout targets are below the fold
+8. **Post-processes**: crop, callout boxes (with optional numbered circles), gray border, PNG optimization
+9. **Opens in GIMP** for final human review
+10. **Reports**: lists all PII found, replacements made, image dimensions/size, and any skipped non-screenshot images
 
 ## Key innovation: cross-origin iframe scrubbing
 

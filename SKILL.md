@@ -133,16 +133,17 @@ The user has an existing markdown article with screenshots that need to be valid
 
 **Workflow:**
 1. Read the markdown article and parse all image references
-2. For each image, read its alt text and surrounding context to understand what it should show
-3. Determine the portal URL, required resources, and page state for each screenshot
-4. For each screenshot:
+2. **Filter out non-screenshot images** (diagrams, icons, conceptual art, flowcharts, architecture diagrams) using `ImageReference.is_screenshot()`. Report skipped images to the user. Only process images that are actual portal/UI screenshots.
+3. For each screenshot, read its alt text and surrounding context to understand what it should show
+4. Determine the portal URL, required resources, and page state for each screenshot
+5. For each screenshot:
    a. Provision resources if needed
    b. Navigate to the correct page
    c. Scrub PII, capture, process
    d. Compare with the original image (dimensions, rough visual similarity)
    e. Save to the correct media/ path with the correct filename
-5. Generate a report: which screenshots were updated, which matched, which differed
-6. Open all new screenshots in GIMP for final review
+6. Generate a report: which screenshots were updated, which matched, which differed. Include skipped non-screenshot images in the report summary.
+7. Open all new screenshots in GIMP for final review
 
 **Example prompt:** *"Update the screenshots in /docs/azure-sql/create-database.md. The article shows creating an Azure SQL database through the portal."*
 
@@ -977,7 +978,28 @@ Look for image references in either format:
 - `:::image type="content" source="media/article-name/image-name.png" alt-text="Description.":::`
 - `![Description](media/article-name/image-name.png)`
 
-### Step 2: For each image, determine what it shows
+### Step 1.5: Filter out non-screenshot images
+
+Use `DocAnalyzer.filter_screenshots()` to separate portal screenshots from diagrams, icons, conceptual art, and other non-capturable images:
+
+```python
+from lib.doc_analyzer import DocAnalyzer
+
+analyzer = DocAnalyzer()
+all_images = analyzer.parse_markdown_images(content, doc_path, repo_root)
+screenshots, skipped = analyzer.filter_screenshots(all_images, repo_root)
+
+if skipped:
+    print(f"Skipping {len(skipped)} non-screenshot images:")
+    for img in skipped:
+        print(f"  - {img.source_path} (alt: {img.alt_text[:60]})")
+```
+
+The filter checks `image_type` (icons are always skipped), alt text and filename keywords (diagram, architecture, flowchart, etc.), surrounding context signals ("the following diagram"), and optionally inspects the actual image file for diagram-like characteristics (few colors, mostly white background).
+
+**Only process the `screenshots` list from this point forward.**
+
+### Step 2: For each screenshot, determine what it shows
 
 Read the **alt text**, the **surrounding markdown** (especially numbered steps), and the **existing image** (if available) to understand:
 - Which portal and page is shown
