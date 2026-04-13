@@ -1110,6 +1110,7 @@ All Python modules are at `lib/` (relative to the skill root):
 - **`doc_analyzer.py`**: Doc-driven interaction analyzer. Parses markdown to extract image references, interaction steps, flyout requirements, and data requirements. Used in Phase 2.5 to understand what each screenshot should show.
 - **`page_change_analyzer.py`**: Detects significant page changes by comparing titles, service names, and layout. Flags cases where docs need updating beyond screenshot replacement.
 - **`failure_analyzer.py`**: Classifies capture failures into actionable categories (`PRIVILEGE_FAILURE`, `PII_LEAK`, `NAVIGATION_FAILURE`, etc.) with severity, explanation, and recommendation. Generates HTML badges for the comparison report.
+- **`post_process.py`**: Standalone post-capture CLI for image post-processing without the full screenshot pipeline. Applies callout boxes (with optional numbered circles), gray border, and PNG optimization. Useful for re-processing existing screenshots: `python lib/post_process.py input.png output.png --callouts '[{"number":1,"box":{"x":50,"y":50,"width":100,"height":40}}]'`
 
 ---
 
