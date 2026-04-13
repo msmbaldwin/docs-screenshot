@@ -101,7 +101,7 @@ Options can be combined with any scenario. Examples:
 
 **Failure categories:** ✅ Success | ⚠️ UI Mismatch | ❌ Navigation Failed | 🔒 Privilege Issue | 🚨 PII Leak | 📄 Doc Gap | 🔍 Element Missing
 
-**Prerequisites:** Windows + Edge + Node.js 18+, Python 3.10+, Azure CLI. Playwright MCP and Pillow are auto-installed on first run. GIMP is optional.
+**Prerequisites:** Windows + Edge. Everything else (Node.js, Python/Pillow, Azure CLI, GitHub CLI, Playwright MCP) is auto-detected and installed on first run if missing. GIMP is optional.
 
 ---
 
@@ -244,20 +244,40 @@ This skill works with ANY Microsoft web portal that uses Microsoft SSO. Choose t
 
 ### Phase 1: Authentication & Setup
 
-**Browser automation auto-detection:** Before doing anything else, detect which browser automation approach is available. Check in this order and use the first one found:
+**Prerequisite auto-detection:** Before doing anything else, check for required tools and install any that are missing. Do NOT ask the user to install prerequisites manually. If something is missing, install it automatically and inform the user what was installed.
 
-1. **Playwright MCP tools already loaded**: Check if tools like `playwright-browser_navigate`, `playwright-browser_snapshot`, `playwright-browser_click` are in the available tool list. If so, use them directly. No installation needed.
-2. **Playwright MCP server installable**: If Playwright MCP tools are not available, install and configure the Playwright MCP server automatically:
+1. **Python 3.10+**: Check if `python --version` returns 3.10 or higher. Python is the only prerequisite that cannot be reliably auto-installed. If missing, tell the user: *"Python 3.10+ is required but not found. Please install it from https://www.python.org/downloads/ and restart Copilot CLI."* Then stop.
+
+2. **Azure CLI**: Check if `az` is available. If not, install it:
    ```bash
-   npx @playwright/mcp@latest --headless --browser msedge
+   winget install --id Microsoft.AzureCLI --accept-source-agreements --accept-package-agreements
    ```
-   Then use the `configure-copilot` agent (or equivalent) to add the MCP server configuration so the tools become available.
-3. **Python Pillow check**: Verify Pillow is installed (needed for image processing):
+   Then prompt the user to run `az login` if not already authenticated.
+
+3. **GitHub CLI**: Check if `gh` is available. If not, install it:
+   ```bash
+   winget install --id GitHub.cli --accept-source-agreements --accept-package-agreements
+   ```
+   Then check `gh auth status`; if not authenticated, prompt the user to run `gh auth login`.
+
+4. **Node.js 18+**: Check if `node --version` returns 18 or higher. If not, install it:
+   ```bash
+   winget install --id OpenJS.NodeJS.LTS --accept-source-agreements --accept-package-agreements
+   ```
+   Note: a new terminal may be needed for `node` to appear on PATH after install.
+
+5. **Python Pillow**: Verify Pillow is installed (needed for image processing):
    ```bash
    python -c "from PIL import Image; print('Pillow OK')" || pip install Pillow
    ```
 
-**Do NOT ask the user to install prerequisites manually.** If something is missing, install it automatically and inform the user what was installed.
+6. **Playwright MCP tools already loaded**: Check if tools like `playwright-browser_navigate`, `playwright-browser_snapshot`, `playwright-browser_click` are in the available tool list. If so, use them directly. No installation needed.
+
+7. **Playwright MCP server installable**: If Playwright MCP tools are not available, install and configure the Playwright MCP server automatically:
+   ```bash
+   npx @playwright/mcp@latest --headless --browser msedge
+   ```
+   Then use the `configure-copilot` agent (or equivalent) to add the MCP server configuration so the tools become available.
 
 The commands in this skill use `playwright-browser_*` MCP tool calls as the primary interface (e.g., `playwright-browser_navigate`, `playwright-browser_snapshot`, `playwright-browser_click`). Older `playwright-cli` syntax is shown in some examples for reference but the MCP tools are preferred when available.
 

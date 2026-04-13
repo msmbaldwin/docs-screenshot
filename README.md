@@ -14,20 +14,26 @@ This section is for docs writers who want to try the skill on their own articles
 >
 > **Sign into Edge first.** Open Edge, sign into the Microsoft account you use for Azure portal, and close any "Welcome" tabs. The skill reuses your existing Edge profile and SSO session. If MFA or Conditional Access prompts appear, the skill will pause and ask you to complete them manually.
 
-**Required setup** (install these before your first run):
+**You really only need two things to get started:**
 
-| Tool | Check | Install |
-|------|-------|---------|
-| **Copilot CLI** | `copilot --version` | [Install guide](https://docs.github.com/en/copilot/github-copilot-in-the-cli) |
-| **Microsoft Edge** | Already installed on Windows | [Download](https://www.microsoft.com/edge) |
-| **Node.js 18+** | `node --version` | [Download](https://nodejs.org/) |
-| **Python 3.10+** | `python --version` | [Download](https://www.python.org/downloads/) |
-| **Azure CLI** | `az --version` | `winget install Microsoft.AzureCLI` |
-| **GitHub CLI** | `gh --version` | `winget install GitHub.cli`, then `gh auth login` |
+| Requirement | Why |
+|-------------|-----|
+| **Copilot CLI** | The runtime that executes the skill. [Install guide](https://docs.github.com/en/copilot/github-copilot-in-the-cli) |
+| **Microsoft Edge** | Already on Windows. Sign in with your Microsoft account before first run. |
 
-**Auto-installed on first run** (you don't need to do these):
-- Playwright MCP server (`@playwright/mcp`)
-- Pillow (Python imaging library)
+**Everything else is auto-installed on first run.** The skill checks for each tool and installs it via `winget` or `pip` if missing, then tells you what it installed:
+
+| Tool | What it's for | Auto-install method |
+|------|--------------|---------------------|
+| Node.js 18+ | Playwright browser automation | `winget install OpenJS.NodeJS.LTS` |
+| Python 3.10+ | Image processing | Must be pre-installed (no reliable silent install) |
+| Azure CLI | Resource provisioning | `winget install Microsoft.AzureCLI` |
+| GitHub CLI | PR creation from comparison reports | `winget install GitHub.cli` |
+| Playwright MCP | Browser control | `npx @playwright/mcp@latest` |
+| Pillow | Image editing (crop, callouts, optimize) | `pip install Pillow` |
+| GIMP | Final review (optional, skipped if absent) | Not auto-installed |
+
+> **Note:** Python is the one dependency that can't be reliably auto-installed. If you don't have Python 3.10+, install it from [python.org](https://www.python.org/downloads/) before your first run. Check with `python --version`.
 
 ### Install the skill
 
@@ -238,17 +244,18 @@ Works with any Microsoft portal using Microsoft SSO authentication:
 
 > **See [Quick Start for Testers](#quick-start-for-testers) for a streamlined setup guide.**
 
-The skill auto-detects and installs most dependencies on first run. You need:
+The skill auto-detects and installs most dependencies on first run. The only things you truly need pre-installed are:
 
-- **Windows** with [Microsoft Edge](https://www.microsoft.com/edge)
-- **Node.js 18+** (for the Playwright MCP server; check with `node --version`)
-- **Python 3.10+** (for image processing; check with `python --version`)
-- **Azure CLI** (for resource provisioning): `winget install Microsoft.AzureCLI`
-- **GitHub CLI** (for PR creation): `winget install GitHub.cli`, then `gh auth login`
+- **Windows** with [Microsoft Edge](https://www.microsoft.com/edge) (pre-installed on Windows)
+- **Python 3.10+** (check with `python --version`; [download](https://www.python.org/downloads/) if missing)
+- **Copilot CLI** ([install guide](https://docs.github.com/en/copilot/github-copilot-in-the-cli))
 - **Your own Microsoft credentials**: The skill uses your logged-in identity. It will never hardcode or share credentials. If MFA is triggered, you will be asked to complete it manually.
 
-**Auto-installed on first run** (you don't need to do these manually):
-- **Playwright MCP server** (`@playwright/mcp`): detected and configured automatically if not already present
+**Auto-installed on first run** (the skill handles these for you):
+- **Node.js 18+**: installed via `winget install OpenJS.NodeJS.LTS` if missing
+- **Azure CLI**: installed via `winget install Microsoft.AzureCLI` if missing
+- **GitHub CLI**: installed via `winget install GitHub.cli` if missing
+- **Playwright MCP server** (`@playwright/mcp`): detected and configured automatically
 - **Pillow** (Python imaging library): installed via `pip install Pillow` if missing
 - **GIMP** (optional): If not installed, the skill skips the GIMP review step gracefully
 
