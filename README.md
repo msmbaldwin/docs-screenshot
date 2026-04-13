@@ -4,6 +4,81 @@ A Copilot CLI skill that automates screenshot capture across Microsoft web porta
 
 This skill was created in [this Copilot chat session](https://gist.github.com/jonburchel/2a1f0f25b064f7276a45a2aa2e544970).
 
+## Quick Start for Testers
+
+This section is for docs writers who want to try the skill on their own articles and help improve it. You don't need to be a developer.
+
+### Before you start
+
+> **Use a test or non-production Azure subscription.** The skill may provision resources (resource groups, storage accounts, etc.) to recreate what your article describes. It asks before cleaning up, but use a sandbox subscription to be safe.
+>
+> **Sign into Edge first.** Open Edge, sign into the Microsoft account you use for Azure portal, and close any "Welcome" tabs. The skill reuses your existing Edge profile and SSO session. If MFA or Conditional Access prompts appear, the skill will pause and ask you to complete them manually.
+
+**Required setup** (install these before your first run):
+
+| Tool | Check | Install |
+|------|-------|---------|
+| **Copilot CLI** | `copilot --version` | [Install guide](https://docs.github.com/en/copilot/github-copilot-in-the-cli) |
+| **Microsoft Edge** | Already installed on Windows | [Download](https://www.microsoft.com/edge) |
+| **Node.js 18+** | `node --version` | [Download](https://nodejs.org/) |
+| **Python 3.10+** | `python --version` | [Download](https://www.python.org/downloads/) |
+| **Azure CLI** | `az --version` | `winget install Microsoft.AzureCLI` |
+| **GitHub CLI** | `gh --version` | `winget install GitHub.cli`, then `gh auth login` |
+
+**Auto-installed on first run** (you don't need to do these):
+- Playwright MCP server (`@playwright/mcp`)
+- Pillow (Python imaging library)
+
+### Install the skill
+
+```powershell
+git clone https://github.com/jonburchel/docs-screenshot.git
+cd docs-screenshot
+cmd /c mklink /J "%USERPROFILE%\.copilot\skills\docs-screenshot" "%CD%"
+```
+
+Restart Copilot CLI after installing. Verify with `/skills`.
+
+### Find articles to test with
+
+Ask Copilot CLI to find articles you've authored that contain screenshots. Here's a good prompt:
+
+> *"Search for markdown files I've recently modified using `git log --author=<my-alias>` in F:\git\azure-ai-docs-pr. Filter to articles that contain `:::image:::` or `![` references pointing to portal screenshots (not diagrams or conceptual art). Show me the top 5 candidates with their screenshot counts, and let me pick which ones to run."*
+
+Replace `<my-alias>` with your GitHub username or email, and adjust the repo path. The skill works best today with articles in **azure-ai-docs-pr** and **fabric-docs-pr** (these repos have built-in navigation hints and service rename mappings). Other repos will work but may need manual corrections for portal-specific quirks.
+
+### Run a comparison report
+
+Pick an article from the candidates and run with `compare`:
+
+> *"Refresh the screenshots in F:\git\azure-ai-docs-pr\articles\ai-services\document-intelligence\how-to-guides\create-document-intelligence-resource.md compare"*
+
+This captures every screenshot in the article, generates a side-by-side comparison report, and opens it in your browser. See [Interactive Comparison Review](#interactive-comparison-review) for the full workflow.
+
+### Submit improvements from the comparison report
+
+The comparison report has two ways to provide feedback:
+
+**1. Per-screenshot corrections (improves this run)**
+
+Each screenshot pair in the report has a feedback textbox. Type what's wrong ("callout is on the wrong button", "page shows the old service name", "PII visible in the breadcrumb") and click **Submit Corrections**. The skill reprocesses those screenshots and refreshes the report. Repeat until all screenshots look right.
+
+When everything looks good, leave all textboxes empty and click **Submit & Create PR**. This creates a PR in the **docs repo** (e.g., `azure-ai-docs-pr`) with the updated screenshot images and a before/after comparison for reviewers.
+
+**2. Reusable bug reports (improves the skill itself)**
+
+If you notice a pattern the skill consistently gets wrong (missed PII type, portal element it can't find, navigation that always fails), [file an issue](https://github.com/jonburchel/docs-screenshot/issues/new) so we can fix it for everyone. Include:
+
+- **Article path** (e.g., `articles/ai-services/content-safety/quickstart.md`)
+- **Screenshot filename** (e.g., `content-safety-overview.png`)
+- **Portal/service** (e.g., Azure portal > Content Safety)
+- **What went wrong** (e.g., "Callout box covers the entire sidebar instead of just the nav item")
+- **Failure category** if shown (e.g., 🔒 Privilege, ❌ Navigation, 🚨 PII Leak)
+- **The prompt you used**
+- A screenshot or snippet from the comparison report if possible
+
+---
+
 ## Three Usage Scenarios
 
 ### 1. New Documentation Authoring
@@ -161,12 +236,15 @@ Works with any Microsoft portal using Microsoft SSO authentication:
 
 ## Prerequisites
 
-The skill auto-detects and installs most dependencies on first run. You only need:
+> **See [Quick Start for Testers](#quick-start-for-testers) for a streamlined setup guide.**
+
+The skill auto-detects and installs most dependencies on first run. You need:
 
 - **Windows** with [Microsoft Edge](https://www.microsoft.com/edge)
 - **Node.js 18+** (for the Playwright MCP server; check with `node --version`)
 - **Python 3.10+** (for image processing; check with `python --version`)
 - **Azure CLI** (for resource provisioning): `winget install Microsoft.AzureCLI`
+- **GitHub CLI** (for PR creation): `winget install GitHub.cli`, then `gh auth login`
 - **Your own Microsoft credentials**: The skill uses your logged-in identity. It will never hardcode or share credentials. If MFA is triggered, you will be asked to complete it manually.
 
 **Auto-installed on first run** (you don't need to do these manually):
@@ -308,10 +386,11 @@ docs-screenshot/
 │   ├── failure_analyzer.py     # Capture failure classification and reporting
 │   ├── gimp_bridge.py          # GIMP integration
 │   ├── github_integration.py   # GitHub API helpers (PRs, branches, gists via gh CLI)
-│   ├── image_editor.py         # Crop, redact, callout, border, optimize
+│   ├── image_editor.py         # Crop, redact, callout (with numbered circles), border, optimize
 │   ├── local_server.py         # Local HTTP server for interactive comparison workflow
 │   ├── page_change_analyzer.py # Detects significant page/service changes
 │   ├── pii_detector.py         # PII pattern matching + approved replacements
+│   ├── post_process.py         # Standalone post-processing CLI (callouts, border, optimize)
 │   ├── repo_config.py          # Repo-specific customization system
 │   ├── screenshot_processor.py # CLI orchestrator + report generation
 │   └── verify_callouts.py      # Deterministic callout count verification
@@ -399,7 +478,24 @@ When you add `compare` to a Scenario 2 (article refresh) invocation, the skill e
 
 ## Contributing
 
-Found a bug or want to improve detection patterns? Open an issue or PR.
+There are two ways to contribute:
+
+### Report issues from your comparison reports
+
+When you run the skill with `compare` and notice patterns it gets wrong (missed PII, wrong navigation, bad callout placement), [file an issue](https://github.com/jonburchel/docs-screenshot/issues/new) with the details described in [Quick Start for Testers](#submit-improvements-from-the-comparison-report). These reports directly drive skill improvements.
+
+### Contribute code
+
+Found a bug you can fix, or want to add support for a new portal or PII pattern? Open a PR. Key files to know:
+
+- **`lib/callout_finder.js`**: Add CSS selectors for portal-specific UI elements
+- **`lib/dom_scrubber.py`**: Add new PII scrubbing patterns or avatar detection selectors
+- **`lib/pii_detector.py`**: Add new PII regex patterns and approved replacement values
+- **`lib/repo_config.py`**: Add navigation hints, service renames, and path rules for your repo
+
+### Add your repo
+
+To get the best results for articles in your repo, add a config entry to `lib/repo_config.py`. See [Repo-Specific Customizations](#repo-specific-customizations) for details. Currently supported: `azure-ai-docs-pr`, `fabric-docs-pr`. Articles in other repos will work but may need more manual corrections.
 
 ## References
 
