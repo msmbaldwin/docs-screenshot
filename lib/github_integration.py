@@ -187,26 +187,59 @@ def create_comparison_pr(
     if changed_files:
         files_to_commit.extend(f for f in changed_files if os.path.exists(f))
 
-    # Build PR body with before/after summary
+    # Include the comparison report HTML as an artifact
+    report_path = os.path.join(repo, "test-output", "report.html")
+    if os.path.exists(report_path):
+        dst = os.path.join(compare_dir, "comparison-report.html")
+        shutil.copy2(report_path, dst)
+        files_to_commit.append(dst)
+
+    # Build raw.githubusercontent.com base URL for image embedding
+    raw_base = f"https://raw.githubusercontent.com/{REPO}/{branch}"
+
+    # Build PR body with before/after summary and embedded images
     body_lines = [
-        "## Screenshot Skill Updates",
+        "## Screenshot Skill Improvements",
         "",
-        f"Updated {len(after_images)} screenshot(s) through interactive comparison review.",
+        f"The docs-screenshot skill was run against {len(after_images)} screenshot(s) "
+        "and corrections were submitted through interactive comparison review. "
+        "This PR captures the skill improvements made to address those corrections.",
+        "",
+        "See the full side-by-side comparison report linked at the bottom of this description.",
         "",
         "### Before/After Comparison",
         "",
-        "| Screenshot | Status |",
-        "|---|---|",
     ]
     for name in sorted(set(list(before_images.keys()) + list(after_images.keys()))):
         has_before = name in before_images and os.path.exists(before_images.get(name, ""))
         has_after = name in after_images and os.path.exists(after_images.get(name, ""))
         if has_before and has_after:
-            body_lines.append(f"| `{name}` | Updated |")
+            body_lines.append(f"#### `{name}` (Updated)")
+            body_lines.append("")
+            body_lines.append(
+                f'<table><tr>'
+                f'<td width="50%"><strong>Original (before)</strong><br>'
+                f'<img src="{raw_base}/test-comparison/compare-{timestamp}/before/{name}" width="100%"></td>'
+                f'<td width="50%"><strong>Corrected (after)</strong><br>'
+                f'<img src="{raw_base}/test-comparison/compare-{timestamp}/after/{name}" width="100%"></td>'
+                f'</tr></table>'
+            )
+            body_lines.append("")
         elif has_after:
-            body_lines.append(f"| `{name}` | New |")
+            body_lines.append(f"#### `{name}` (New)")
+            body_lines.append("")
+            body_lines.append(f'<img src="{raw_base}/test-comparison/compare-{timestamp}/after/{name}" width="50%">')
+            body_lines.append("")
+
+    report_link = (
+        f"https://htmlpreview.github.io/?"
+        f"https://github.com/{REPO}/blob/{branch}/"
+        f"test-comparison/compare-{timestamp}/comparison-report.html"
+    )
 
     body_lines.extend([
+        "",
+        f"[View full comparison report]({report_link})",
         "",
         f"Before/after images are in `test-comparison/compare-{timestamp}/`.",
         "",
