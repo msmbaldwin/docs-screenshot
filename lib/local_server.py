@@ -37,10 +37,12 @@ import json
 import logging
 import os
 import socket
+import subprocess
+import sys
 import threading
-from functools import partial
 from http import HTTPStatus
 from http.server import HTTPServer, BaseHTTPRequestHandler
+from pathlib import Path
 from typing import Any
 
 log = logging.getLogger("compare-server")
@@ -90,6 +92,9 @@ class _ReportHandler(BaseHTTPRequestHandler):
                 "message": self.server.status_message,
             })
 
+        elif self.path == "/log":
+            self._send_json({"lines": list(self.server.log_lines)})
+
         elif self.path == "/favicon.ico":
             self.send_response(204)
             self.end_headers()
@@ -131,20 +136,23 @@ class _ReportHandler(BaseHTTPRequestHandler):
 
         items = data.get("items", [])
 
-        if not items:
-            # No corrections: treat as finalize
-            self._handle_finalize()
-            return
-
-        # Store feedback for the main thread to pick up
+        # Store feedback for the main thread to pick up (empty list is valid — means "no corrections this round")
         self.server.state = "processing"
-        self.server.status_message = f"Processing {len(items)} correction(s)..."
+        self.server.status_message = f"Processing {len(items)} correction(s)..." if items else "Acknowledged — advancing iteration..."
         self.server._feedback_event_data = items
         self.server._feedback_event.set()
 
+        # Spawn auto-processor if there are corrections and paths are configured
+        if items and self.server.corrections_path and self.server.pairs_path:
+            threading.Thread(
+                target=self.server._spawn_auto_processor,
+                daemon=True,
+            ).start()
+
         self._send_json({
             "status": "processing",
-            "message": f"Processing {len(items)} correction(s). The page will refresh when the updated report is ready.",
+            "message": f"Processing {len(items)} correction(s). Watch the live log below — the page will refresh when updated." if items
+                       else "Acknowledged. Refreshing report...",
         })
 
     def _handle_finalize(self) -> None:
@@ -188,6 +196,13 @@ class CompareServer:
         self.pr_url = ""
         self.status_message = ""
 
+        # Live log lines streamed to the browser
+        self.log_lines: list[str] = []
+
+        # Paths for auto-processor spawning (set by run_compare_server.py)
+        self.corrections_path: str = ""
+        self.pairs_path: str = ""
+
         # Synchronization: the main thread waits on this event
         self._feedback_event = threading.Event()
         self._feedback_event_data: list[dict] | None = None
@@ -205,8 +220,12 @@ class CompareServer:
         self._server.iteration = self.iteration  # type: ignore[attr-defined]
         self._server.pr_url = self.pr_url  # type: ignore[attr-defined]
         self._server.status_message = self.status_message  # type: ignore[attr-defined]
+        self._server.log_lines = self.log_lines  # type: ignore[attr-defined]
+        self._server.corrections_path = self.corrections_path  # type: ignore[attr-defined]
+        self._server.pairs_path = self.pairs_path  # type: ignore[attr-defined]
         self._server._feedback_event = self._feedback_event  # type: ignore[attr-defined]
         self._server._feedback_event_data = self._feedback_event_data  # type: ignore[attr-defined]
+        self._server._spawn_auto_processor = self._spawn_auto_processor  # type: ignore[attr-defined]
 
         self._thread = threading.Thread(target=self._server.serve_forever, daemon=True)
         self._thread.start()
@@ -244,6 +263,7 @@ class CompareServer:
     def update_report(self, new_html: str) -> None:
         """Replace the served report HTML with an updated version."""
         self.report_html = new_html
+        self.log_lines.clear()
         if self._server:
             self._server.report_html = new_html  # type: ignore[attr-defined]
             self.iteration += 1
@@ -252,6 +272,33 @@ class CompareServer:
             self._server.state = "ready"  # type: ignore[attr-defined]
             self.status_message = "Updated report ready for review."
             self._server.status_message = self.status_message  # type: ignore[attr-defined]
+
+    def _spawn_auto_processor(self) -> None:
+        """Spawn lib/auto_process.py as a subprocess and stream its output to log_lines."""
+        _lib = Path(__file__).parent
+        script = str(_lib / "auto_process.py")
+        cmd = [
+            sys.executable, script,
+            "--corrections", self.corrections_path,
+            "--pairs", self.pairs_path,
+        ]
+        self.log_lines.clear()
+        self.log_lines.append("Auto-processor starting...")
+        try:
+            proc = subprocess.Popen(
+                cmd,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+                encoding="utf-8",
+                bufsize=1,
+                env={**os.environ, "PYTHONUTF8": "1"},
+            )
+            for line in proc.stdout:  # type: ignore[union-attr]
+                self.log_lines.append(line.rstrip())
+            proc.wait()
+        except Exception as exc:
+            self.log_lines.append(f"ERROR spawning auto-processor: {exc}")
 
     def set_pr_url(self, url: str) -> None:
         """Set the PR URL after finalization."""
