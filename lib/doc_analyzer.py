@@ -170,6 +170,56 @@ class ImageReference:
     doc_file_path: str = ""
     repo_relative_path: str = ""
 
+    def is_screenshot(self) -> bool:
+        """Classify whether this image is a portal screenshot vs a diagram/icon/art.
+
+        Uses a heuristic chain:
+        1. image_type == "icon" → not a screenshot
+        2. Alt text or filename contains diagram/conceptual keywords → not a screenshot
+        3. Otherwise → assumed to be a screenshot
+
+        Returns:
+            True if this image should be treated as a capturable screenshot.
+        """
+        # Icon type is never a screenshot
+        if self.image_type == "icon":
+            return False
+
+        _NON_SCREENSHOT_KEYWORDS = [
+            "diagram", "architecture", "flowchart", "workflow diagram",
+            "illustration", "conceptual", "logo", "banner", "overview diagram",
+            "infographic", "topology", "schematic", "data flow", "sequence diagram",
+            "decision tree", "state machine", "class diagram", "er diagram",
+            "network diagram", "block diagram", "system design",
+        ]
+
+        # Check alt text
+        alt_lower = self.alt_text.lower()
+        for kw in _NON_SCREENSHOT_KEYWORDS:
+            if kw in alt_lower:
+                return False
+
+        # Check filename
+        filename_lower = os.path.basename(self.source_path).lower()
+        filename_stem = os.path.splitext(filename_lower)[0].replace("-", " ").replace("_", " ")
+        for kw in _NON_SCREENSHOT_KEYWORDS:
+            if kw in filename_stem:
+                return False
+
+        # Check surrounding context for explicit "the following diagram" or similar
+        ctx_lower = self.surrounding_context.lower()
+        _CONTEXT_SIGNALS = [
+            "the following diagram", "this diagram", "as shown in the diagram",
+            "the following illustration", "this illustration",
+            "the following flowchart", "this flowchart",
+            "the architecture diagram", "conceptual overview",
+        ]
+        for signal in _CONTEXT_SIGNALS:
+            if signal in ctx_lower:
+                return False
+
+        return True
+
 
 # ---------------------------------------------------------------------------
 # Regex helpers (compiled once at module load)
@@ -369,6 +419,86 @@ class DocAnalyzer:
                 deduped.append(img)
 
         return deduped
+
+    def filter_screenshots(
+        self,
+        images: list[ImageReference],
+        repo_root: str | None = None,
+    ) -> tuple[list[ImageReference], list[ImageReference]]:
+        """Separate screenshots from non-screenshot images (diagrams, icons, etc.).
+
+        Uses the ``ImageReference.is_screenshot()`` heuristic first. For
+        ambiguous cases where the image file exists on disk, opens the image
+        and checks for visual characteristics of diagrams (very few colors,
+        mostly white background, no photographic content).
+
+        Args:
+            images: All parsed image references.
+            repo_root: Repo root for resolving image file paths. If provided,
+                enables visual inspection fallback for ambiguous images.
+
+        Returns:
+            A tuple of (screenshots, skipped) lists.
+        """
+        screenshots: list[ImageReference] = []
+        skipped: list[ImageReference] = []
+
+        for img in images:
+            if not img.is_screenshot():
+                skipped.append(img)
+                continue
+
+            # If we have the repo root, do a quick visual check on
+            # ambiguous images (e.g., alt text doesn't clearly indicate type)
+            if repo_root and img.source_path:
+                doc_dir = os.path.dirname(img.doc_file_path)
+                img_path = os.path.join(doc_dir, img.source_path)
+                if os.path.isfile(img_path) and self._looks_like_diagram(img_path):
+                    skipped.append(img)
+                    continue
+
+            screenshots.append(img)
+
+        return screenshots, skipped
+
+    @staticmethod
+    def _looks_like_diagram(image_path: str) -> bool:
+        """Quick visual heuristic to detect diagrams/flowcharts.
+
+        Diagrams typically have very few unique colors (under 64),
+        large white/light background areas, and no photographic gradients.
+        Screenshots of portal UIs have many more colors and gradients.
+
+        Returns True if the image looks like a diagram (should be skipped).
+        """
+        try:
+            from PIL import Image
+            img = Image.open(image_path).convert("RGB")
+            # Downsample to speed up analysis
+            thumb = img.resize((100, 100), Image.NEAREST)
+            colors = thumb.getcolors(maxcolors=256)
+            if colors is None:
+                # More than 256 colors; definitely not a simple diagram
+                return False
+
+            unique_colors = len(colors)
+
+            # Very few unique colors strongly suggests a diagram/vector art
+            if unique_colors < 32:
+                return True
+
+            # Check if the background is overwhelmingly white/light
+            total_pixels = 100 * 100
+            white_ish = sum(
+                count for count, (r, g, b) in colors
+                if r > 240 and g > 240 and b > 240
+            )
+            if white_ish > total_pixels * 0.75 and unique_colors < 64:
+                return True
+
+            return False
+        except Exception:
+            return False
 
     def extract_interaction_steps(self, context: str) -> list[InteractionStep]:
         """Extract interaction steps from the text surrounding an image.

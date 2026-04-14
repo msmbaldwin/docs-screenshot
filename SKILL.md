@@ -101,7 +101,7 @@ Options can be combined with any scenario. Examples:
 
 **Failure categories:** ✅ Success | ⚠️ UI Mismatch | ❌ Navigation Failed | 🔒 Privilege Issue | 🚨 PII Leak | 📄 Doc Gap | 🔍 Element Missing
 
-**Prerequisites:** Windows + Edge + Node.js 18+, Python 3.10+, Azure CLI. Playwright MCP and Pillow are auto-installed on first run. GIMP is optional.
+**Prerequisites:** Windows + Edge. Everything else (Node.js, Python/Pillow, Azure CLI, GitHub CLI, Playwright MCP) is auto-detected and installed on first run if missing. GIMP is optional.
 
 ---
 
@@ -133,16 +133,17 @@ The user has an existing markdown article with screenshots that need to be valid
 
 **Workflow:**
 1. Read the markdown article and parse all image references
-2. For each image, read its alt text and surrounding context to understand what it should show
-3. Determine the portal URL, required resources, and page state for each screenshot
-4. For each screenshot:
+2. **Filter out non-screenshot images** (diagrams, icons, conceptual art, flowcharts, architecture diagrams) using `ImageReference.is_screenshot()`. Report skipped images to the user. Only process images that are actual portal/UI screenshots.
+3. For each screenshot, read its alt text and surrounding context to understand what it should show
+4. Determine the portal URL, required resources, and page state for each screenshot
+5. For each screenshot:
    a. Provision resources if needed
    b. Navigate to the correct page
    c. Scrub PII, capture, process
    d. Compare with the original image (dimensions, rough visual similarity)
    e. Save to the correct media/ path with the correct filename
-5. Generate a report: which screenshots were updated, which matched, which differed
-6. Open all new screenshots in GIMP for final review
+6. Generate a report: which screenshots were updated, which matched, which differed. Include skipped non-screenshot images in the report summary.
+7. Open all new screenshots in GIMP for final review
 
 **Example prompt:** *"Update the screenshots in /docs/azure-sql/create-database.md. The article shows creating an Azure SQL database through the portal."*
 
@@ -244,20 +245,40 @@ This skill works with ANY Microsoft web portal that uses Microsoft SSO. Choose t
 
 ### Phase 1: Authentication & Setup
 
-**Browser automation auto-detection:** Before doing anything else, detect which browser automation approach is available. Check in this order and use the first one found:
+**Prerequisite auto-detection:** Before doing anything else, check for required tools and install any that are missing. Do NOT ask the user to install prerequisites manually. If something is missing, install it automatically and inform the user what was installed.
 
-1. **Playwright MCP tools already loaded**: Check if tools like `playwright-browser_navigate`, `playwright-browser_snapshot`, `playwright-browser_click` are in the available tool list. If so, use them directly. No installation needed.
-2. **Playwright MCP server installable**: If Playwright MCP tools are not available, install and configure the Playwright MCP server automatically:
+1. **Python 3.10+**: Check if `python --version` returns 3.10 or higher. Python is the only prerequisite that cannot be reliably auto-installed. If missing, tell the user: *"Python 3.10+ is required but not found. Please install it from https://www.python.org/downloads/ and restart Copilot CLI."* Then stop.
+
+2. **Azure CLI**: Check if `az` is available. If not, install it:
    ```bash
-   npx @playwright/mcp@latest --headless --browser msedge
+   winget install --id Microsoft.AzureCLI --accept-source-agreements --accept-package-agreements
    ```
-   Then use the `configure-copilot` agent (or equivalent) to add the MCP server configuration so the tools become available.
-3. **Python Pillow check**: Verify Pillow is installed (needed for image processing):
+   Then prompt the user to run `az login` if not already authenticated.
+
+3. **GitHub CLI**: Check if `gh` is available. If not, install it:
+   ```bash
+   winget install --id GitHub.cli --accept-source-agreements --accept-package-agreements
+   ```
+   Then check `gh auth status`; if not authenticated, prompt the user to run `gh auth login`.
+
+4. **Node.js 18+**: Check if `node --version` returns 18 or higher. If not, install it:
+   ```bash
+   winget install --id OpenJS.NodeJS.LTS --accept-source-agreements --accept-package-agreements
+   ```
+   Note: a new terminal may be needed for `node` to appear on PATH after install.
+
+5. **Python Pillow**: Verify Pillow is installed (needed for image processing):
    ```bash
    python -c "from PIL import Image; print('Pillow OK')" || pip install Pillow
    ```
 
-**Do NOT ask the user to install prerequisites manually.** If something is missing, install it automatically and inform the user what was installed.
+6. **Playwright MCP tools already loaded**: Check if tools like `playwright-browser_navigate`, `playwright-browser_snapshot`, `playwright-browser_click` are in the available tool list. If so, use them directly. No installation needed.
+
+7. **Playwright MCP server installable**: If Playwright MCP tools are not available, install and configure the Playwright MCP server automatically:
+   ```bash
+   npx @playwright/mcp@latest --headless --browser msedge
+   ```
+   Then use the `configure-copilot` agent (or equivalent) to add the MCP server configuration so the tools become available.
 
 The commands in this skill use `playwright-browser_*` MCP tool calls as the primary interface (e.g., `playwright-browser_navigate`, `playwright-browser_snapshot`, `playwright-browser_click`). Older `playwright-cli` syntax is shown in some examples for reference but the MCP tools are preferred when available.
 
@@ -957,7 +978,28 @@ Look for image references in either format:
 - `:::image type="content" source="media/article-name/image-name.png" alt-text="Description.":::`
 - `![Description](media/article-name/image-name.png)`
 
-### Step 2: For each image, determine what it shows
+### Step 1.5: Filter out non-screenshot images
+
+Use `DocAnalyzer.filter_screenshots()` to separate portal screenshots from diagrams, icons, conceptual art, and other non-capturable images:
+
+```python
+from lib.doc_analyzer import DocAnalyzer
+
+analyzer = DocAnalyzer()
+all_images = analyzer.parse_markdown_images(content, doc_path, repo_root)
+screenshots, skipped = analyzer.filter_screenshots(all_images, repo_root)
+
+if skipped:
+    print(f"Skipping {len(skipped)} non-screenshot images:")
+    for img in skipped:
+        print(f"  - {img.source_path} (alt: {img.alt_text[:60]})")
+```
+
+The filter checks `image_type` (icons are always skipped), alt text and filename keywords (diagram, architecture, flowchart, etc.), surrounding context signals ("the following diagram"), and optionally inspects the actual image file for diagram-like characteristics (few colors, mostly white background).
+
+**Only process the `screenshots` list from this point forward.**
+
+### Step 2: For each screenshot, determine what it shows
 
 Read the **alt text**, the **surrounding markdown** (especially numbered steps), and the **existing image** (if available) to understand:
 - Which portal and page is shown
@@ -1110,6 +1152,7 @@ All Python modules are at `lib/` (relative to the skill root):
 - **`doc_analyzer.py`**: Doc-driven interaction analyzer. Parses markdown to extract image references, interaction steps, flyout requirements, and data requirements. Used in Phase 2.5 to understand what each screenshot should show.
 - **`page_change_analyzer.py`**: Detects significant page changes by comparing titles, service names, and layout. Flags cases where docs need updating beyond screenshot replacement.
 - **`failure_analyzer.py`**: Classifies capture failures into actionable categories (`PRIVILEGE_FAILURE`, `PII_LEAK`, `NAVIGATION_FAILURE`, etc.) with severity, explanation, and recommendation. Generates HTML badges for the comparison report.
+- **`post_process.py`**: Standalone post-capture CLI for image post-processing without the full screenshot pipeline. Applies callout boxes (with optional numbered circles), gray border, and PNG optimization. Useful for re-processing existing screenshots: `python lib/post_process.py input.png output.png --callouts '[{"number":1,"box":{"x":50,"y":50,"width":100,"height":40}}]'`
 
 ---
 

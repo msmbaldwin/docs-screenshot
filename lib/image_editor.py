@@ -127,6 +127,7 @@ class CalloutSpec:
     color: tuple = None    # RGB tuple, defaults to MS red
     thickness: int = CALLOUT_THICKNESS
     padding: int = 4       # Extra padding around the element
+    number: int = 0        # Callout number (0 = plain rectangle, 1+ = numbered circle)
 
 
 def redact_pii(image: Image.Image, specs: list[RedactionSpec]) -> Image.Image:
@@ -187,9 +188,11 @@ def redact_pii(image: Image.Image, specs: list[RedactionSpec]) -> Image.Image:
 
 def draw_callouts(image: Image.Image, specs: list[CalloutSpec]) -> Image.Image:
     """
-    Draw callout rectangles around specified regions.
+    Draw callout rectangles around specified regions, with optional numbered circles.
     
     Per MS contributor guide: 3px red (#E91C1C) border that hugs the element.
+    When a spec has number > 0, a filled red circle with a white number is drawn
+    centered above the callout rectangle.
     
     Args:
         image: PIL Image to modify
@@ -198,7 +201,29 @@ def draw_callouts(image: Image.Image, specs: list[CalloutSpec]) -> Image.Image:
     Returns:
         Modified image
     """
-    draw = ImageDraw.Draw(image)
+    # Use RGBA overlay for clean alpha compositing (prevents artifacts
+    # when callout borders overlap)
+    image = image.convert('RGBA')
+    overlay = Image.new('RGBA', image.size, (0, 0, 0, 0))
+    draw = ImageDraw.Draw(overlay)
+
+    # Numbered circle parameters
+    circle_diameter = 24
+    radius = circle_diameter // 2
+    circle_gap = 4
+
+    # Load a font for numbered circles (only if any spec has a number)
+    has_numbers = any(spec.number > 0 for spec in specs)
+    font = None
+    if has_numbers:
+        for font_name in ['segoeuib.ttf', 'segoeui.ttf', 'arialbd.ttf', 'arial.ttf']:
+            try:
+                font = ImageFont.truetype(font_name, 14)
+                break
+            except (OSError, IOError):
+                continue
+        if font is None:
+            font = ImageFont.load_default()
     
     for spec in specs:
         rect = spec.px_rect
@@ -222,8 +247,37 @@ def draw_callouts(image: Image.Image, specs: list[CalloutSpec]) -> Image.Image:
                 [x + i, y + i, x2 - i, y2 - i],
                 outline=color
             )
-    
-    return image
+
+        # Draw numbered circle above the rectangle if number > 0
+        if spec.number > 0 and font is not None:
+            cx = x + (x2 - x) // 2
+            cy = y - circle_gap - radius
+
+            # Clamp circle position to image bounds
+            cx = max(radius + 1, min(image.width - radius - 1, cx))
+            cy = max(radius + 1, min(image.height - radius - 1, cy))
+
+            # Filled circle
+            draw.ellipse(
+                [cx - radius, cy - radius, cx + radius, cy + radius],
+                fill=color
+            )
+
+            # White number text centered in circle
+            text = str(spec.number)
+            try:
+                draw.text((cx, cy), text, fill=(255, 255, 255), font=font, anchor='mm')
+            except TypeError:
+                text_bbox = draw.textbbox((0, 0), text, font=font)
+                text_w = text_bbox[2] - text_bbox[0]
+                text_h = text_bbox[3] - text_bbox[1]
+                draw.text(
+                    (cx - text_w // 2, cy - text_h // 2),
+                    text, fill=(255, 255, 255), font=font
+                )
+
+    result = Image.alpha_composite(image, overlay).convert('RGB')
+    return result
 
 
 def smart_crop(
