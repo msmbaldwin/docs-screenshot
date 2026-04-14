@@ -265,29 +265,35 @@ const SERVER_BASE = INTERACTIVE ? `http://127.0.0.1:${{SERVER_PORT}}` : '';
 // Update button text/state based on iteration and whether corrections exist
 function updateSubmitButton() {{
   const btn = document.getElementById('submit-btn');
+  const dismissBtn = document.getElementById('dismiss-btn');
   const banner = document.getElementById('no-corrections-banner');
   const hasCorrections = checkForCorrections();
 
   if (ITERATION === 0) {{
     if (hasCorrections) {{
+      btn.style.display = '';
       btn.disabled = false;
       btn.textContent = 'Submit feedback to improve screenshots';
       btn.className = 'submit-btn';
+      dismissBtn.style.display = 'none';
     }} else {{
-      btn.disabled = true;
-      btn.textContent = 'Submit feedback to improve screenshots';
-      btn.className = 'submit-btn';
+      btn.style.display = 'none';
+      dismissBtn.style.display = '';
     }}
     banner.style.display = 'none';
   }} else if (hasCorrections) {{
+    btn.style.display = '';
     btn.disabled = false;
     btn.textContent = 'Submit feedback to improve screenshots';
     btn.className = 'submit-btn';
+    dismissBtn.style.display = 'none';
     banner.style.display = 'none';
   }} else {{
+    btn.style.display = '';
     btn.disabled = false;
     btn.textContent = 'Submit & Create PR';
     btn.className = 'submit-btn finalize';
+    dismissBtn.style.display = '';
     banner.style.display = 'block';
   }}
 }}
