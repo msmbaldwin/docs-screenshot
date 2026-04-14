@@ -32,13 +32,13 @@ def generate_comparison_report(
     embed_images: bool = True,
     server_port: int = 0,
     iteration: int = 0,
+    pr_url: str = "",
 ) -> str:
     """
     Generate a comparison report HTML with local feedback UI.
 
-    The report posts feedback to a local HTTP server instead of creating
-    GitHub issues. When all feedback textboxes are empty, the submit
-    creates a PR directly.
+    When pr_url is set, the report is generated in finalized/read-only mode:
+    no textboxes, no buttons, just a link to the PR at top and bottom.
 
     Args:
         pairs: List of dicts with keys:
@@ -63,6 +63,9 @@ def generate_comparison_report(
     """
     from . import github_integration as _gh_mod
     skill_version = _gh_mod.get_skill_version()
+
+    interactive = server_port > 0 and not pr_url
+    finalized = bool(pr_url)
 
     articles: dict[str, list[dict]] = {}
     for p in pairs:
@@ -89,6 +92,16 @@ def generate_comparison_report(
             if p.get("small"):
                 img_style = ' style="image-rendering: pixelated; width: 60px;"'
 
+            feedback_html = ""
+            if interactive:
+                feedback_html = f"""
+      <div class="feedback-section">
+        <label class="feedback-label" for="fb-{name_escaped}">Feedback for <code>{name_escaped}</code>:</label>
+        <textarea class="feedback-input" id="fb-{name_escaped}" data-image="{name_escaped}"
+                  placeholder="Describe what's wrong with this screenshot (leave blank if it looks good)..."
+                  rows="2"></textarea>
+      </div>"""
+
             rows.append(f"""
     <div class="screenshot-pair" data-image="{name_escaped}" data-article="{html.escape(p.get('article', ''))}">
       <div class="screenshot-name">{name_escaped}</div>
@@ -103,13 +116,7 @@ def generate_comparison_report(
           <div class="pair-label right-label">{right_label}</div><br>
           <img src="{right_src}" alt="{right_label}: {name_escaped}"{img_style}>
         </div>
-      </div>
-      <div class="feedback-section">
-        <label class="feedback-label" for="fb-{name_escaped}">Feedback for <code>{name_escaped}</code>:</label>
-        <textarea class="feedback-input" id="fb-{name_escaped}" data-image="{name_escaped}"
-                  placeholder="Describe what's wrong with this screenshot (leave blank if it looks good)..."
-                  rows="2"></textarea>
-      </div>
+      </div>{feedback_html}
     </div>""")
 
         screenshot_rows.append(f"""
@@ -120,9 +127,7 @@ def generate_comparison_report(
   </div>
 </div>""")
 
-    # Determine if local server is available for interactive mode
-    interactive = server_port > 0
-    iteration_note = f" (Iteration {iteration})" if iteration > 0 else ""
+    iteration_note= f" (Iteration {iteration})" if iteration > 0 else ""
 
     report_html = f"""<!DOCTYPE html>
 <html lang="en">
@@ -170,6 +175,15 @@ def generate_comparison_report(
   .submit-status.error {{ color: #721c24; }}
   .submit-status.processing {{ color: #856404; }}
 
+  .processing-log-wrap {{ display: none; margin: 16px auto 0; max-width: 800px; text-align: left; }}
+  .processing-log-wrap .log-header {{ font-size: 12px; font-weight: 600; color: #555; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; justify-content: space-between; }}
+  .log-copy-btn {{ font-size: 11px; font-weight: 500; color: #0078d4; background: none; border: 1px solid #0078d4; border-radius: 3px; padding: 1px 8px; cursor: pointer; text-transform: none; letter-spacing: 0; }}
+  .log-copy-btn:hover {{ background: #e8f0fb; }}
+  .processing-log {{ background: #1e1e1e; color: #d4d4d4; font-family: 'Cascadia Code', 'Consolas', monospace; font-size: 12px; padding: 10px 14px; border-radius: 6px; height: 200px; overflow-y: auto; white-space: pre-wrap; word-break: break-all; }}
+
+  .static-mode-banner {{ text-align: center; margin: 24px 0; padding: 16px 24px; background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px; font-size: 14px; color: #856404; }}
+  .static-mode-banner code {{ background: #f8f0d0; padding: 1px 5px; border-radius: 3px; }}
+
   .no-corrections-banner {{ text-align: center; margin: 20px 0; padding: 20px; background: #d4edda; border: 1px solid #c3e6cb; border-radius: 6px; }}
   .no-corrections-banner p {{ font-size: 15px; color: #155724; font-weight: 600; margin-bottom: 8px; }}
   .no-corrections-banner .hint {{ font-size: 13px; color: #155724; font-weight: 400; }}
@@ -185,21 +199,40 @@ def generate_comparison_report(
 
 <h1>{html.escape(title)}</h1>
 <p class="subtitle">{html.escape(subtitle)}</p>
-{"<div class='iteration-badge'><span>Iteration " + str(iteration) + "</span></div>" if iteration > 0 else ""}
+<div id="pr-result-top" class="pr-result" style="display:{"block" if finalized else "none"};">
+  <h2>&#10003; Pull Request Created</h2>
+  <p><a id="pr-link-top" href="{html.escape(pr_url) if finalized else '#'}" target="_blank">{"" if not finalized else html.escape(pr_url)}</a></p>
+  <p style="margin-top: 8px; font-size: 13px; color: #155724;">
+    {"This report is finalized. The PR above contains the before/after comparison images." if finalized else "The PR includes before/after comparison images for reviewer validation."}
+  </p>
+</div>
+{"<div class='iteration-badge'><span>Iteration " + str(iteration) + "</span></div>" if iteration > 0 and not finalized else ""}
 
 {"".join(screenshot_rows)}
+
+{"" if interactive or finalized else '''<div class="static-mode-banner">
+  <strong>&#128247; View-only mode</strong> &mdash; This report was generated without a local server.
+  To submit corrections or create a PR, rerun the skill with the <code>compare</code> flag.
+</div>'''}
 
 <div id="no-corrections-banner" class="no-corrections-banner" style="display:none;">
   <p>&#10003; All screenshots look good. No corrections needed.</p>
   <p class="hint">Click <strong>Submit &amp; Create PR</strong> below to finalize and create a pull request with these results.</p>
 </div>
 
-<div class="submit-section">
+{"" if not interactive else '''<div class="submit-section">
   <button class="submit-btn" id="submit-btn" onclick="handleSubmit()">
     Submit
   </button>
   <div class="submit-status" id="submit-status"></div>
-</div>
+  <div class="processing-log-wrap" id="processing-log-wrap">
+    <div class="log-header">
+      <span>&#128257; Processing log &mdash; this can take a while per correction</span>
+      <button class="log-copy-btn" onclick="copyLog()">Copy</button>
+    </div>
+    <div class="processing-log" id="processing-log"></div>
+  </div>
+</div>'''}
 
 <div id="pr-result" class="pr-result" style="display:none;">
   <h2>&#10003; Pull Request Created</h2>
@@ -210,23 +243,44 @@ def generate_comparison_report(
   </p>
 </div>
 
+""" + (f'''<div class="pr-result" style="display:block;">
+  <h2>&#10003; Pull Request Created</h2>
+  <p><a href="{html.escape(pr_url)}" target="_blank">{html.escape(pr_url)}</a></p>
+  <p style="margin-top: 8px; font-size: 13px; color: #155724;">
+    This report is finalized. The PR above contains the before/after comparison images.
+  </p>
+</div>''' if finalized else "") + """
+
 <script>
 const SERVER_PORT = {server_port};
 const ITERATION = {iteration};
 const INTERACTIVE = SERVER_PORT > 0;
 const SERVER_BASE = INTERACTIVE ? `http://127.0.0.1:${{SERVER_PORT}}` : '';
 
-// Update button text based on whether corrections exist
+// Update button text/state based on iteration and whether corrections exist
 function updateSubmitButton() {{
   const btn = document.getElementById('submit-btn');
   const banner = document.getElementById('no-corrections-banner');
   const hasCorrections = checkForCorrections();
 
-  if (hasCorrections) {{
-    btn.textContent = 'Submit Corrections';
+  if (ITERATION === 0) {{
+    if (hasCorrections) {{
+      btn.disabled = false;
+      btn.textContent = 'Submit feedback to improve screenshots';
+      btn.className = 'submit-btn';
+    }} else {{
+      btn.disabled = true;
+      btn.textContent = 'Submit feedback to improve screenshots';
+      btn.className = 'submit-btn';
+    }}
+    banner.style.display = 'none';
+  }} else if (hasCorrections) {{
+    btn.disabled = false;
+    btn.textContent = 'Submit feedback to improve screenshots';
     btn.className = 'submit-btn';
     banner.style.display = 'none';
   }} else {{
+    btn.disabled = false;
     btn.textContent = 'Submit & Create PR';
     btn.className = 'submit-btn finalize';
     banner.style.display = 'block';
@@ -274,16 +328,16 @@ async function handleSubmit() {{
     }}
   }});
 
-  if (feedbackItems.length === 0) {{
-    // No corrections: finalize and create PR
+  if (feedbackItems.length === 0 && ITERATION > 0) {{
+    // No corrections and we've done at least one review round: finalize and create PR
     status.className = 'submit-status processing';
     status.textContent = 'All screenshots approved. Creating PR with before/after comparison images...';
 
     try {{
-      const resp = await fetch(`${{SERVER_BASE}}/submit`, {{
+      const resp = await fetch(`${{SERVER_BASE}}/finalize`, {{
         method: 'POST',
         headers: {{ 'Content-Type': 'application/json' }},
-        body: JSON.stringify({{ items: [] }}),
+        body: '{{}}',
       }});
       const data = await resp.json();
       status.textContent = data.message || 'Creating PR...';
@@ -294,9 +348,12 @@ async function handleSubmit() {{
       btn.disabled = false;
     }}
   }} else {{
-    // Has corrections: submit for reprocessing
+    // Has corrections, OR iteration 0 (always submit for improvement)
+    const correctionCount = feedbackItems.length;
     status.className = 'submit-status processing';
-    status.textContent = `Submitting ${{feedbackItems.length}} correction(s) for reprocessing...`;
+    status.textContent = correctionCount > 0
+      ? `Submitting ${{correctionCount}} correction(s) for reprocessing...`
+      : 'Marking all screenshots as approved for this round...';
 
     try {{
       const resp = await fetch(`${{SERVER_BASE}}/submit`, {{
@@ -316,18 +373,33 @@ async function handleSubmit() {{
 }}
 
 function pollForUpdate() {{
-  // Poll the server until the updated report is ready
+  // Poll the server until the updated report is ready; show live log
   const status = document.getElementById('submit-status');
+  const logWrap = document.getElementById('processing-log-wrap');
+  const logEl = document.getElementById('processing-log');
+  if (logWrap) logWrap.style.display = 'block';
+
   const interval = setInterval(async () => {{
     try {{
-      const resp = await fetch(`${{SERVER_BASE}}/status`);
-      const data = await resp.json();
+      const [statusResp, logResp] = await Promise.all([
+        fetch(`${{SERVER_BASE}}/status`),
+        fetch(`${{SERVER_BASE}}/log`),
+      ]);
+      const data = await statusResp.json();
+      const logData = await logResp.json();
+
+      if (logEl && logData.lines && logData.lines.length) {{
+        logEl.textContent = logData.lines.join('\\n');
+        logEl.scrollTop = logEl.scrollHeight;
+      }}
+
       if (data.status === 'ready') {{
         clearInterval(interval);
         status.className = 'submit-status success';
         status.textContent = 'Updated report ready. Refreshing...';
-        setTimeout(() => window.location.reload(), 500);
+        setTimeout(() => window.location.reload(), 800);
       }} else if (data.status === 'processing') {{
+        status.className = 'submit-status processing';
         status.textContent = data.message || 'Processing corrections...';
       }}
     }} catch (e) {{
@@ -345,21 +417,60 @@ function pollForCompletion() {{
       const data = await resp.json();
       if (data.status === 'done' && data.pr_url) {{
         clearInterval(interval);
+        // Hide all feedback UI
         status.style.display = 'none';
         document.getElementById('submit-btn').style.display = 'none';
         document.getElementById('no-corrections-banner').style.display = 'none';
+        const logWrap = document.getElementById('processing-log-wrap');
+        if (logWrap) logWrap.style.display = 'none';
+        // Hide all feedback textareas
+        document.querySelectorAll('.feedback-section').forEach(el => el.style.display = 'none');
+
+        // Show PR result at bottom
         const prResult = document.getElementById('pr-result');
         const prLink = document.getElementById('pr-link');
         prLink.href = data.pr_url;
         prLink.textContent = data.pr_url;
         prResult.style.display = 'block';
+
+        // Show PR result at top
+        const prResultTop = document.getElementById('pr-result-top');
+        const prLinkTop = document.getElementById('pr-link-top');
+        if (prResultTop && prLinkTop) {{
+          prLinkTop.href = data.pr_url;
+          prLinkTop.textContent = data.pr_url;
+          prResultTop.style.display = 'block';
+        }}
       }} else if (data.status === 'finalizing') {{
         status.textContent = data.message || 'Creating PR...';
+      }} else if (data.status === 'error') {{
+        clearInterval(interval);
+        status.className = 'submit-status error';
+        status.textContent = data.message || 'PR creation failed.';
+        document.getElementById('submit-btn').disabled = false;
       }}
     }} catch (e) {{
       // Server may be busy; keep trying
     }}
   }}, 2000);
+}}
+function copyLog() {{
+  const logEl = document.getElementById('processing-log');
+  if (!logEl || !logEl.textContent.trim()) return;
+  navigator.clipboard.writeText(logEl.textContent).then(() => {{
+    const btn = document.querySelector('.log-copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => {{ btn.textContent = 'Copy'; }}, 2000);
+  }}).catch(() => {{
+    // Fallback for browsers that block clipboard
+    const ta = document.createElement('textarea');
+    ta.value = logEl.textContent;
+    ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+  }});
 }}
 </script>
 
