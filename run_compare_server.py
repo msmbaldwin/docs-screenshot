@@ -45,6 +45,10 @@ def main() -> None:
     parser.add_argument("--output", default=None, help="Save HTML report to this path")
     parser.add_argument("--start-iteration", type=int, default=0,
                         help="Start at this iteration number (e.g. 1 after corrections have been processed offline)")
+    parser.add_argument("--resource-group", default="",
+                        help="Azure resource group to tear down after review (leave empty to skip teardown)")
+    parser.add_argument("--no-teardown", action="store_true",
+                        help="Skip automatic resource teardown after PR creation or dismiss")
     args = parser.parse_args()
 
     pairs = _load_pairs(args.pairs)
@@ -99,7 +103,12 @@ def main() -> None:
             server.stop()
             sys.exit(0)
 
-        if feedback is None:
+        if feedback == "dismiss":
+            # User confirmed no changes needed — tear down resources
+            print("DISMISS_REQUESTED", flush=True)
+            _teardown_resources(server, args)
+            break
+        elif feedback is None:
             # User finalized — create PR
             print("FINALIZE_REQUESTED", flush=True)
             _create_pr(server, pairs, args)
@@ -219,6 +228,11 @@ def _create_pr(server: CompareServer, pairs: list[dict], args: argparse.Namespac
 
         server.set_pr_url(pr_url)
         print(f"PR_CREATED: {pr_url}", flush=True)
+
+        # Tear down resources after PR creation (unless opted out)
+        if not args.no_teardown and args.resource_group:
+            print(f"TEARDOWN: Deleting resource group '{args.resource_group}'...", flush=True)
+            _teardown_resources(server, args)
     except Exception as exc:
         print(f"PR_ERROR: {exc}", flush=True)
         server.state = "error"
@@ -230,6 +244,47 @@ def _create_pr(server: CompareServer, pairs: list[dict], args: argparse.Namespac
     # Keep server alive so the UI can poll and show the result
     import time
     time.sleep(60)
+
+
+def _teardown_resources(server: CompareServer, args: argparse.Namespace) -> None:
+    """Delete the Azure resource group used for screenshot captures."""
+    import subprocess
+    rg = args.resource_group
+    if not rg or args.no_teardown:
+        print("TEARDOWN_SKIPPED: No resource group specified or --no-teardown set.", flush=True)
+        server.state = "dismissed"
+        if server._server:
+            server._server.state = "dismissed"
+        server.status_message = "No changes needed. No resources to tear down."
+        if server._server:
+            server._server.status_message = server.status_message
+        import time
+        time.sleep(30)
+        return
+
+    try:
+        print(f"TEARDOWN: Deleting resource group '{rg}'...", flush=True)
+        result = subprocess.run(
+            ["az", "group", "delete", "--name", rg, "--yes", "--no-wait"],
+            capture_output=True, text=True, timeout=60,
+        )
+        if result.returncode == 0:
+            print(f"TEARDOWN_OK: Resource group '{rg}' deletion initiated.", flush=True)
+            server.status_message = f"No changes needed. Resource group '{rg}' is being deleted."
+        else:
+            print(f"TEARDOWN_WARN: {result.stderr.strip()}", flush=True)
+            server.status_message = f"No changes needed. Warning: resource teardown had issues."
+    except Exception as exc:
+        print(f"TEARDOWN_ERROR: {exc}", flush=True)
+        server.status_message = f"No changes needed. Warning: could not tear down resources: {exc}"
+
+    server.state = "dismissed"
+    if server._server:
+        server._server.state = "dismissed"
+        server._server.status_message = server.status_message
+
+    import time
+    time.sleep(30)
 
 
 if __name__ == "__main__":

@@ -170,6 +170,8 @@ def generate_comparison_report(
   .submit-btn:disabled {{ background: #999; cursor: not-allowed; }}
   .submit-btn.finalize {{ background: #107c10; }}
   .submit-btn.finalize:hover {{ background: #0b6a0b; }}
+  .submit-btn.dismiss {{ background: #6c757d; }}
+  .submit-btn.dismiss:hover {{ background: #565e64; }}
   .submit-status {{ margin-top: 12px; font-size: 14px; }}
   .submit-status.success {{ color: #155724; }}
   .submit-status.error {{ color: #721c24; }}
@@ -223,6 +225,9 @@ def generate_comparison_report(
 {"" if not interactive else '''<div class="submit-section">
   <button class="submit-btn" id="submit-btn" onclick="handleSubmit()">
     Submit
+  </button>
+  <button class="submit-btn dismiss" id="dismiss-btn" onclick="handleDismiss()" style="margin-left: 12px;">
+    No Changes Needed
   </button>
   <div class="submit-status" id="submit-status"></div>
   <div class="processing-log-wrap" id="processing-log-wrap">
@@ -454,6 +459,62 @@ function pollForCompletion() {{
     }}
   }}, 2000);
 }}
+async function handleDismiss() {{
+  if (!INTERACTIVE) return;
+  const btn = document.getElementById('dismiss-btn');
+  const submitBtn = document.getElementById('submit-btn');
+  const status = document.getElementById('submit-status');
+
+  if (!confirm('Are you sure? This will tear down any provisioned Azure resources and close the review. No PR will be created.')) return;
+
+  btn.disabled = true;
+  submitBtn.disabled = true;
+  status.className = 'submit-status processing';
+  status.textContent = 'Tearing down resources...';
+
+  try {{
+    const resp = await fetch(`${{SERVER_BASE}}/dismiss`, {{
+      method: 'POST',
+      headers: {{ 'Content-Type': 'application/json' }},
+      body: '{{}}',
+    }});
+    const data = await resp.json();
+    status.textContent = data.message || 'Tearing down...';
+    pollForDismiss();
+  }} catch (e) {{
+    status.className = 'submit-status error';
+    status.textContent = `Error: ${{e.message}}`;
+    btn.disabled = false;
+    submitBtn.disabled = false;
+  }}
+}}
+
+function pollForDismiss() {{
+  const status = document.getElementById('submit-status');
+  const interval = setInterval(async () => {{
+    try {{
+      const resp = await fetch(`${{SERVER_BASE}}/status`);
+      const data = await resp.json();
+      if (data.status === 'dismissed') {{
+        clearInterval(interval);
+        // Hide all interactive elements
+        document.getElementById('submit-btn').style.display = 'none';
+        document.getElementById('dismiss-btn').style.display = 'none';
+        document.getElementById('no-corrections-banner').style.display = 'none';
+        const logWrap = document.getElementById('processing-log-wrap');
+        if (logWrap) logWrap.style.display = 'none';
+        document.querySelectorAll('.feedback-section').forEach(el => el.style.display = 'none');
+        status.className = 'submit-status success';
+        status.textContent = 'No changes needed. Resources have been torn down. You can close this tab.';
+      }} else if (data.status === 'dismissing') {{
+        status.textContent = data.message || 'Tearing down resources...';
+      }}
+    }} catch (e) {{
+      // Server may be shutting down
+    }}
+  }}, 2000);
+}}
+
 function copyLog() {{
   const logEl = document.getElementById('processing-log');
   if (!logEl || !logEl.textContent.trim()) return;

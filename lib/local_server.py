@@ -110,6 +110,8 @@ class _ReportHandler(BaseHTTPRequestHandler):
         elif self.path == "/shutdown":
             self._send_json({"status": "shutting_down"})
             threading.Thread(target=self.server.shutdown, daemon=True).start()
+        elif self.path == "/dismiss":
+            self._handle_dismiss()
         else:
             self.send_error(HTTPStatus.NOT_FOUND)
 
@@ -165,6 +167,18 @@ class _ReportHandler(BaseHTTPRequestHandler):
         self._send_json({
             "status": "finalizing",
             "message": "Creating PR with before/after comparison images...",
+        })
+
+    def _handle_dismiss(self) -> None:
+        """Handle 'No Changes Needed' — tear down resources, no PR."""
+        self.server.state = "dismissing"
+        self.server.status_message = "No changes needed. Tearing down resources..."
+        self.server._feedback_event_data = "dismiss"  # signals "dismiss"
+        self.server._feedback_event.set()
+
+        self._send_json({
+            "status": "dismissing",
+            "message": "No changes needed. Tearing down provisioned resources...",
         })
 
 
