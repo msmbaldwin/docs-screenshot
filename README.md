@@ -1,4 +1,3 @@
-# docs-screenshot
 
 A Copilot CLI skill that automates screenshot capture across Microsoft web portals (Azure, M365, SharePoint, Entra ID, Power Platform, and more) for Microsoft Learn documentation. Handles browser automation, resource provisioning, PII redaction with official Microsoft-approved fictitious values, callout boxes, cropping, and GIMP handoff.
 
@@ -247,14 +246,15 @@ Works with any Microsoft portal using Microsoft SSO authentication:
 The skill auto-detects and installs most dependencies on first run. The only things you truly need pre-installed are:
 
 - **Windows** with [Microsoft Edge](https://www.microsoft.com/edge) (pre-installed on Windows)
+- **Or Linux/WSL2** with [Edge for Linux](https://www.microsoft.com/edge) (`sudo apt install microsoft-edge-stable`)
 - **Python 3.10+** (check with `python --version`; [download](https://www.python.org/downloads/) if missing)
 - **Copilot CLI** ([install guide](https://docs.github.com/en/copilot/github-copilot-in-the-cli))
 - **Your own Microsoft credentials**: The skill uses your logged-in identity. It will never hardcode or share credentials. If MFA is triggered, you will be asked to complete it manually.
 
 **Auto-installed on first run** (the skill handles these for you):
-- **Node.js 18+**: installed via `winget install OpenJS.NodeJS.LTS` if missing
-- **Azure CLI**: installed via `winget install Microsoft.AzureCLI` if missing
-- **GitHub CLI**: installed via `winget install GitHub.cli` if missing
+- **Node.js 18+**: installed via `winget` (Windows) or `apt` (Linux) if missing
+- **Azure CLI**: installed via `winget` (Windows) or the [official install script](https://aka.ms/InstallAzureCLIDeb) (Linux) if missing
+- **GitHub CLI**: installed via `winget` (Windows) or `apt` (Linux) if missing
 - **Playwright MCP server** (`@playwright/mcp`): detected and configured automatically
 - **Pillow** (Python imaging library): installed via `pip install Pillow` if missing
 - **GIMP** (optional): If not installed, the skill skips the GIMP review step gracefully
@@ -278,6 +278,24 @@ cmd /c mklink /J "%USERPROFILE%\.copilot\skills\docs-screenshot" "%CD%"
 # Copy the skill directory
 Copy-Item -Recurse .\docs-screenshot "$env:USERPROFILE\.copilot\skills\docs-screenshot"
 ```
+
+
+### Option C: WSL2 / Linux
+
+```bash
+# Clone to wherever you keep tools
+git clone https://github.com/jonburchel/docs-screenshot.git
+cd docs-screenshot
+
+# Symlink so Copilot CLI discovers the skill
+ln -s "$(pwd)" "$HOME/.copilot/skills/docs-screenshot"
+```
+
+> **Note:** Edge for Linux runs headless without a display server (no X11/Wayland needed). Sign in to Edge once to establish your Microsoft SSO session:
+> ```bash
+> microsoft-edge --no-sandbox https://portal.azure.com
+> ```
+> After that, the skill's headless browser picks up your session automatically.
 
 ### Verify installation
 
@@ -499,6 +517,7 @@ Found a bug you can fix, or want to add support for a new portal or PII pattern?
 - **`lib/callout_finder.js`**: Add CSS selectors for portal-specific UI elements
 - **`lib/dom_scrubber.py`**: Add new PII scrubbing patterns or avatar detection selectors
 - **`lib/pii_detector.py`**: Add new PII regex patterns and approved replacement values
+- **`lib/gimp_bridge.py`**: GIMP integration (cross-platform: Windows, WSL2, Linux)
 - **`lib/repo_config.py`**: Add navigation hints, service renames, and path rules for your repo
 
 ### Add your repo

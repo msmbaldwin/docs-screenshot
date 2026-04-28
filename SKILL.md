@@ -1,4 +1,3 @@
----
 name: docs-screenshot
 description: 'docs-screenshot <article-path | description> [nocallouts] [nogimp] [nopii] [help]'
 allowed-tools: Bash(playwright-cli:*), Bash(python:*), Bash(az:*), Bash(pwsh:*), Bash(powershell:*)
@@ -101,7 +100,7 @@ Options can be combined with any scenario. Examples:
 
 **Failure categories:** ✅ Success | ⚠️ UI Mismatch | ❌ Navigation Failed | 🔒 Privilege Issue | 🚨 PII Leak | 📄 Doc Gap | 🔍 Element Missing
 
-**Prerequisites:** Windows + Edge. Everything else (Node.js, Python/Pillow, Azure CLI, GitHub CLI, Playwright MCP) is auto-detected and installed on first run if missing. GIMP is optional.
+**Prerequisites:** Windows + Edge (or Linux/WSL2 + Edge for Linux). Everything else (Node.js, Python/Pillow, Azure CLI, GitHub CLI, Playwright MCP) is auto-detected and installed on first run if missing. GIMP is optional.
 
 ---
 
@@ -271,6 +270,39 @@ This skill works with ANY Microsoft web portal that uses Microsoft SSO. Choose t
    ```bash
    python -c "from PIL import Image; print('Pillow OK')" || pip install Pillow
    ```
+
+
+> **WSL2 / Linux users:** Steps 2–4 above use `winget`, which is Windows-only. On Linux or WSL2, install the same tools with your system package manager instead:
+>
+> ```bash
+> # Azure CLI
+> curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+>
+> # GitHub CLI
+> (type -p wget >/dev/null || sudo apt install wget -y) \
+>   && sudo mkdir -p -m 755 /etc/apt/keyrings \
+>   && out=$(mktemp) && wget -nv -O$out https://cli.github.com/packages/githubcli-archive-keyring.gpg \
+>   && cat $out | sudo tee /etc/apt/keyrings/githubcli-archive-keyring.gpg > /dev/null \
+>   && sudo chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg \
+>   && echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
+>   && sudo apt update && sudo apt install gh -y
+>
+> # Node.js 18+ (via NodeSource)
+> curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+> sudo apt install -y nodejs
+>
+> # Edge for Linux (headless — no display server needed)
+> curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
+> sudo install -o root -g root -m 644 microsoft.gpg /etc/apt/trusted.gpg.d/
+> echo "deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main" | sudo tee /etc/apt/sources.list.d/microsoft-edge.list
+> sudo apt update && sudo apt install -y microsoft-edge-stable
+> rm microsoft.gpg
+>
+> # GIMP (optional)
+> sudo apt install -y gimp
+> ```
+>
+> Edge for Linux runs headless without X11/Wayland. Sign in to Edge once (`microsoft-edge --no-sandbox https://portal.azure.com`) to establish your SSO session, then the skill's headless browser will pick it up.
 
 6. **Playwright MCP tools already loaded**: Check if tools like `playwright-browser_navigate`, `playwright-browser_snapshot`, `playwright-browser_click` are in the available tool list. If so, use them directly. No installation needed.
 
@@ -896,7 +928,9 @@ The processor automatically opens the result in GIMP. In GIMP, the user should:
 4. Verify the image looks natural and professional
 5. Export as PNG (File > Export As > .png)
 
-**GIMP location:** `C:\Program Files\GIMP 2\bin\gimp-2.10.exe`
+**GIMP location:**
+- **Windows:** `C:\Program Files\GIMP 2\bin\gimp-2.10.exe`
+- **Linux/WSL2:** `gimp` (install with `sudo apt install gimp` if missing)
 
 If GIMP is already open, images open in the existing window.
 
