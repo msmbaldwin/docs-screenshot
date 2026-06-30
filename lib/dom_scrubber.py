@@ -282,11 +282,26 @@ def generate_scrub_command(
 
 if __name__ == '__main__':
     # Demo: generate scrub JS for a typical Azure scenario.
-    # Replace these placeholder values with your own identifiers.
+    # If you have ~/.config/docs-screenshot/config.yaml, those values
+    # are used; otherwise the placeholders below kick in.
+    try:
+        from user_config import (
+            username as _cfg_username,
+            subscription as _cfg_subscription,
+            tenant_display_name as _cfg_tenant,
+            custom_replacements as _cfg_custom,
+        )
+    except ImportError:
+        _cfg_username = lambda *_, **__: None
+        _cfg_subscription = lambda *_, **__: None
+        _cfg_tenant = lambda *_, **__: None
+        _cfg_custom = lambda: {}
+
     js = generate_scrub_js(
-        username='myalias',
-        subscription_name='My Subscription',
-        custom_replacements={
+        username=_cfg_username() or 'myalias',
+        subscription_name=_cfg_subscription() or 'My Subscription',
+        tenant_display_name=_cfg_tenant(),
+        custom_replacements=_cfg_custom() or {
             'my-real-rg': 'contoso-rg',
             'rg-myalias': 'rg-contoso',
             'NetworkWatcherRG': 'contoso-networkwatcher-rg',

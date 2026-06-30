@@ -306,6 +306,32 @@ After installing, restart Copilot CLI. The skill should appear when you run:
 
 You can also just ask: *"Take an Azure screenshot of the resource groups page"* and the skill will activate automatically.
 
+### Optional: per-user config
+
+The skill reads optional defaults from `~/.config/docs-screenshot/config.yaml` (or `.json` if you don't have PyYAML). This is where to put values you don't want to type each invocation: your Microsoft alias, preferred subscription, tenant name, repo root, and any extra PII find/replace rules.
+
+```yaml
+# ~/.config/docs-screenshot/config.yaml
+username: myalias
+subscription: My Subscription
+tenant_display_name: My Tenant
+repo_root: ~/docs
+custom_replacements:
+  my-real-rg: contoso-rg
+  MyTenantName.onmicrosoft.com: contoso.onmicrosoft.com
+```
+
+Resolution order:
+1. `$DOCS_SCREENSHOT_CONFIG` (full path)
+2. `~/.config/docs-screenshot/config.yaml`
+3. `~/.config/docs-screenshot/config.json`
+
+Verify the config loads correctly:
+
+```bash
+python lib/user_config.py
+```
+
 ## What it does
 
 1. **Opens Azure portal** in Edge with your existing Microsoft SSO (persistent profile)
