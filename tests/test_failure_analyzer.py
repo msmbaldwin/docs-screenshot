@@ -1,9 +1,9 @@
 """Tests for lib/failure_analyzer.py."""
 from failure_analyzer import (
+    BADGE_DEFINITIONS,
+    FailureAnalyzer,
     FailureCategory,
     FailureReport,
-    FailureAnalyzer,
-    BADGE_DEFINITIONS,
 )
 
 

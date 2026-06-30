@@ -12,8 +12,7 @@ actually captured, flagging cases where a simple screenshot swap is insufficient
 """
 
 import re
-from dataclasses import dataclass, field
-
+from dataclasses import dataclass
 
 # ---------------------------------------------------------------------------
 # Default known service renames across Azure / Microsoft AI

@@ -102,8 +102,8 @@ def apply_correction(
         "--allow-all",
         "--effort", "high",
     ]
-    log(f"  Invoking Copilot CLI (claude-opus-4.6-1m, high effort, all permissions)...")
-    log(f"  This will take several minutes (browser automation + processing).")
+    log("  Invoking Copilot CLI (claude-opus-4.6-1m, high effort, all permissions)...")
+    log("  This will take several minutes (browser automation + processing).")
 
     try:
         proc = subprocess.Popen(
@@ -182,9 +182,9 @@ def main() -> None:
         ok = apply_correction(correction, pair, pairs_path, copilot_exe)
         if ok:
             success_count += 1
-            log(f"  [OK] Done")
+            log("  [OK] Done")
         else:
-            log(f"  [FAIL] Keeping current image")
+            log("  [FAIL] Keeping current image")
 
     log(f"\n{success_count}/{len(corrections)} correction(s) applied successfully.")
 

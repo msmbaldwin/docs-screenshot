@@ -8,14 +8,8 @@ authentication.
 
 from __future__ import annotations
 
-import base64
-import json
 import os
 import subprocess
-import sys
-from pathlib import Path
-from typing import Any
-
 
 REPO = os.environ.get("SCREENSHOT_REPO", "jonburchel/docs-screenshot")
 

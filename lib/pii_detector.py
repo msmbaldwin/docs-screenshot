@@ -9,7 +9,6 @@ Generates compliant dummy replacements using official CELA-approved values.
 
 import re
 from dataclasses import dataclass, field
-from typing import Optional
 
 
 @dataclass

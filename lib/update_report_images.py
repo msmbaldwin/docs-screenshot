@@ -1,11 +1,12 @@
 """Update base64 images in the comparison report HTML."""
 import base64
+import os
 import re
 import sys
-import os
+
 
 def update_report(report_path, image_ids):
-    with open(report_path, 'r', encoding='utf-8') as f:
+    with open(report_path, encoding='utf-8') as f:
         html = f.read()
 
     report_dir = os.path.dirname(report_path)

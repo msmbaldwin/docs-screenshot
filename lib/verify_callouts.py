@@ -14,11 +14,11 @@ Exit codes:
     2 = error reading files
 """
 
-import sys
 import os
+import sys
+
 import numpy as np
 from PIL import Image
-
 
 # Red callout color: RGB(233, 28, 28) with tolerance
 CALLOUT_R, CALLOUT_G, CALLOUT_B = 233, 28, 28

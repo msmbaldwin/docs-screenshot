@@ -1,5 +1,5 @@
 """Tests for lib/image_editor.py (pure functions)."""
-from image_editor import parse_css_color, parse_font_size, enforce_naming_convention
+from image_editor import enforce_naming_convention, parse_css_color, parse_font_size
 
 
 def test_parse_css_color_rgb():

@@ -240,5 +240,6 @@ The detailed workflow, reference tables, and module documentation live in [`refe
 | Understanding what each Python module in `lib/` does | [`references/lib-reference.md`](references/lib-reference.md) |
 | Adding or using repo-specific navigation/validation rules | [`references/repo-customizations.md`](references/repo-customizations.md) |
 | Classifying or interpreting capture failures | [`references/failure-categories.md`](references/failure-categories.md) |
+| Resuming a Scenario 2 run after a failure (checkpointing) | [`references/resumability.md`](references/resumability.md) |
 | Microsoft Learn screenshot contributor rules (sourced from learn.microsoft.com) | [`references/screenshot-guidelines.md`](references/screenshot-guidelines.md) |
 

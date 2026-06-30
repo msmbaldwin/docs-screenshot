@@ -31,7 +31,6 @@ import os
 from pathlib import Path
 from typing import Any
 
-
 _CACHE: dict[str, Any] | None = None
 _CACHE_PATH: Path | None = None
 

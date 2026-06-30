@@ -106,7 +106,7 @@ def load_feedback(path):
         print("Make sure to save feedback from the v7 report first.")
         sys.exit(1)
 
-    with open(path, 'r', encoding='utf-8') as f:
+    with open(path, encoding='utf-8') as f:
         data = json.load(f)
 
     # Validate structure
@@ -238,7 +238,7 @@ def generate_action_plan(analysis, feedback_data):
 def print_summary(analysis):
     """Print a human-readable summary."""
     print(f"\n{'='*60}")
-    print(f"V7 Feedback Analysis")
+    print("V7 Feedback Analysis")
     print(f"{'='*60}")
     print(f"Total images reviewed: {analysis['total_items']}")
     print(f"Categories changed by human: {analysis['total_changed']}")
@@ -247,18 +247,18 @@ def print_summary(analysis):
     
     if analysis['actions']:
         by_sev = group_by_severity(analysis['actions'])
-        print(f"\nBy severity:")
+        print("\nBy severity:")
         for sev in ['critical', 'high', 'medium', 'low', 'info', 'none']:
             count = len(by_sev.get(sev, []))
             if count:
                 print(f"  {sev}: {count}")
         
         by_repo = group_by_repo(analysis['actions'])
-        print(f"\nBy repo:")
+        print("\nBy repo:")
         for repo, items in sorted(by_repo.items()):
             print(f"  {repo}: {len(items)}")
         
-        print(f"\nTop priority actions:")
+        print("\nTop priority actions:")
         for action in analysis['actions'][:10]:
             notes_indicator = " [+notes]" if action['human_notes'] else ""
             print(f"  [{action['severity'].upper()}] {action['id']} ({action['repo']}): "

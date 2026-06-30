@@ -12,19 +12,23 @@ import argparse
 import json
 import os
 import sys
-from dataclasses import asdict
 from datetime import datetime
 
 # Add lib directory to path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from pii_detector import PIIDetector, PIIMatch
-from image_editor import (
-    redact_pii, draw_callouts, smart_crop, add_gray_border,
-    optimize_png, enforce_naming_convention,
-    RedactionSpec, CalloutSpec, parse_css_color
-)
 from gimp_bridge import open_in_gimp
+from image_editor import (
+    CalloutSpec,
+    RedactionSpec,
+    add_gray_border,
+    draw_callouts,
+    enforce_naming_convention,
+    optimize_png,
+    redact_pii,
+    smart_crop,
+)
+from pii_detector import PIIDetector
 from PIL import Image
 
 
@@ -72,7 +76,7 @@ def process_screenshot(
     }
     
     # Load DOM data
-    with open(dom_json_path, 'r', encoding='utf-8') as f:
+    with open(dom_json_path, encoding='utf-8') as f:
         dom_data = json.load(f)
     
     # Load image
@@ -212,7 +216,7 @@ def generate_report(summaries: list[dict], output_path: str = None) -> str:
         
         lines.append("")
     
-    lines.append(f"---")
+    lines.append("---")
     lines.append(f"**Total PII instances redacted: {total_pii}**")
     
     report = "\n".join(lines)

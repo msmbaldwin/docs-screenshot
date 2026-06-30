@@ -22,7 +22,10 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 try:
     from image_editor import (
-        add_gray_border, optimize_png, draw_callouts, CalloutSpec,
+        CalloutSpec,
+        add_gray_border,
+        draw_callouts,
+        optimize_png,
     )
     HAS_IMAGE_EDITOR = True
 except ImportError:
@@ -133,7 +136,7 @@ if __name__ == '__main__':
     if args.callouts:
         callouts = json.loads(args.callouts)
     elif args.callouts_file:
-        with open(args.callouts_file, 'r') as f:
+        with open(args.callouts_file) as f:
             callouts = json.loads(f.read())
 
     process_screenshot(

@@ -5,12 +5,12 @@ Detects running GIMP instances and reuses them when possible.
 Supports Windows, WSL2, and native Linux.
 """
 
-import subprocess
 import os
-import sys
-import time
 import platform
 import shutil
+import subprocess
+import sys
+import time
 
 GIMP_EXE_WINDOWS = r"C:\Program Files\GIMP 2\bin\gimp-2.10.exe"
 
@@ -25,7 +25,7 @@ def _is_wsl() -> bool:
     if platform.system() != "Linux":
         return False
     try:
-        with open("/proc/version", "r") as f:
+        with open("/proc/version") as f:
             return "microsoft" in f.read().lower()
     except OSError:
         return False

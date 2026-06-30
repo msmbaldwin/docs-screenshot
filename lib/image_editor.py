@@ -12,9 +12,8 @@ Handles all image manipulation for Azure documentation screenshots:
 import os
 import re
 from dataclasses import dataclass
-from typing import Optional
-from PIL import Image, ImageDraw, ImageFont, ImageFilter
-import numpy as np
+
+from PIL import Image, ImageDraw, ImageFont
 
 # Microsoft contributor guide: RGB 233, 28, 28 for callout borders
 CALLOUT_COLOR = (233, 28, 28)
@@ -92,7 +91,7 @@ def get_segoe_ui_font(size_px: float, weight: str = '400') -> ImageFont.FreeType
     for fb in fallbacks:
         try:
             return ImageFont.truetype(fb, size_pt)
-        except (OSError, IOError):
+        except OSError:
             continue
     
     return ImageFont.load_default()
@@ -220,7 +219,7 @@ def draw_callouts(image: Image.Image, specs: list[CalloutSpec]) -> Image.Image:
             try:
                 font = ImageFont.truetype(font_name, 14)
                 break
-            except (OSError, IOError):
+            except OSError:
                 continue
         if font is None:
             font = ImageFont.load_default()
