@@ -135,7 +135,7 @@ class RedactionSpec:
     """Specification for a single PII redaction."""
     px_rect: dict          # {x, y, width, height} in screenshot pixels
     replacement_text: str
-    bg_color: str          # CSS color string
+    bg_color: str          # CSS color string (used unless sample_bg_from is set)
     font_family: str
     font_size: str         # CSS size like "14px"
     font_weight: str       # CSS weight like "400"
@@ -149,6 +149,13 @@ class RedactionSpec:
     # caller's rect intentionally extends over a field border to catch
     # descenders but the border itself should be preserved.
     fill_inset: int = 0
+    # Optional: sample the fill background color from a known-clean pixel in
+    # the source image at (x, y) instead of using `bg_color`. Removes the
+    # guesswork of color-picking CSS values for fields whose actual rendered
+    # bg may differ slightly from the spec (anti-aliasing, theme variants).
+    sample_bg_from: tuple[int, int] | None = None
+    # Optional: sample the text color similarly from a known-inked pixel.
+    sample_text_from: tuple[int, int] | None = None
 
 
 @dataclass
@@ -214,11 +221,16 @@ def redact_pii(image: Image.Image, specs: list[RedactionSpec]) -> Image.Image:
         if w <= 0 or h <= 0:
             continue
 
-        # Step 1: Fill with background color (with optional inset so we don't
-        # wipe a 1px field border we want to keep). Pillow's rectangle
-        # coordinates are inclusive on both corners, so the rect occupies
-        # pixels [x .. x+w-1] horizontally and [y .. y+h-1] vertically.
-        bg_rgb = parse_css_color(spec.bg_color)
+        # Step 1: Determine the fill color, optionally sampling from a known
+        # clean pixel in the source image instead of trusting the caller's CSS.
+        if spec.sample_bg_from is not None:
+            sx, sy = spec.sample_bg_from
+            try:
+                bg_rgb = image.getpixel((sx, sy))[:3]
+            except (IndexError, TypeError):
+                bg_rgb = parse_css_color(spec.bg_color)
+        else:
+            bg_rgb = parse_css_color(spec.bg_color)
         inset = max(0, int(spec.fill_inset))
         fx0, fy0 = x + inset, y + inset
         fx1, fy1 = x + w - 1 - inset, y + h - 1 - inset
@@ -240,7 +252,14 @@ def redact_pii(image: Image.Image, specs: list[RedactionSpec]) -> Image.Image:
         )
 
         # Step 3: Truncate with ellipsis if still too wide after shrinking
-        text_rgb = parse_css_color(spec.text_color)
+        if spec.sample_text_from is not None:
+            tx, ty = spec.sample_text_from
+            try:
+                text_rgb = image.getpixel((tx, ty))[:3]
+            except (IndexError, TypeError):
+                text_rgb = parse_css_color(spec.text_color)
+        else:
+            text_rgb = parse_css_color(spec.text_color)
         replacement = spec.replacement_text
         text_w = bbox[2] - bbox[0]
         if text_w > w:

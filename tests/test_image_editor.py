@@ -194,3 +194,44 @@ def test_redact_pii_fill_inset_preserves_outer_border():
     # Outer border pixels untouched
     assert img.getpixel((10, 10)) == (50, 50, 50)
     assert img.getpixel((190, 50)) == (50, 50, 50)
+
+
+def test_redact_pii_sample_bg_from_uses_actual_pixel():
+    """sample_bg_from should pull bg color from a real pixel, ignoring the
+    bg_color CSS hint when set."""
+    from image_editor import RedactionSpec, redact_pii
+    from PIL import Image
+
+    img = Image.new('RGB', (200, 80), (255, 255, 255))
+    # Paint a swatch the caller will sample
+    for x in range(150, 200):
+        for y in range(0, 80):
+            img.putpixel((x, y), (123, 200, 50))
+
+    redact_pii(img, [RedactionSpec(
+        px_rect={'x': 10, 'y': 10, 'width': 100, 'height': 40},
+        replacement_text='',
+        bg_color='rgb(255, 0, 0)',         # would be wrong
+        font_family='Segoe UI', font_size='14px', font_weight='400',
+        text_color='rgb(0, 0, 0)',
+        sample_bg_from=(170, 40),          # real bg sampled here
+    )])
+    # The fill should be the sampled green, not the CSS red
+    assert img.getpixel((20, 20)) == (123, 200, 50)
+
+
+def test_redact_pii_sample_bg_falls_back_when_out_of_bounds():
+    """If sample_bg_from coordinate is out of bounds, fall back to bg_color."""
+    from image_editor import RedactionSpec, redact_pii
+    from PIL import Image
+
+    img = Image.new('RGB', (100, 50), (255, 255, 255))
+    redact_pii(img, [RedactionSpec(
+        px_rect={'x': 5, 'y': 5, 'width': 50, 'height': 30},
+        replacement_text='',
+        bg_color='rgb(10, 20, 30)',
+        font_family='Segoe UI', font_size='14px', font_weight='400',
+        text_color='rgb(0, 0, 0)',
+        sample_bg_from=(9999, 9999),
+    )])
+    assert img.getpixel((10, 10)) == (10, 20, 30)
