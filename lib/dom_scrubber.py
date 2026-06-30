@@ -10,8 +10,8 @@ BEFORE taking a screenshot. This is the most reliable approach because:
 This is the approach used by Microsoft's Screenshot Scrubber extension.
 """
 
-import re
 import json
+import re
 
 # PII patterns and their replacements
 DEFAULT_SCRUB_RULES = {
@@ -210,7 +210,7 @@ async page => {
     rules = []
     
     if include_default_rules:
-        for name, rule in DEFAULT_SCRUB_RULES.items():
+        for _name, rule in DEFAULT_SCRUB_RULES.items():
             rules.append({
                 'isRegex': True,
                 'pattern': rule['pattern'],
@@ -286,16 +286,22 @@ if __name__ == '__main__':
     # are used; otherwise the placeholders below kick in.
     try:
         from user_config import (
-            username as _cfg_username,
-            subscription as _cfg_subscription,
-            tenant_display_name as _cfg_tenant,
             custom_replacements as _cfg_custom,
         )
+        from user_config import (
+            subscription as _cfg_subscription,
+        )
+        from user_config import (
+            tenant_display_name as _cfg_tenant,
+        )
+        from user_config import (
+            username as _cfg_username,
+        )
     except ImportError:
-        _cfg_username = lambda *_, **__: None
-        _cfg_subscription = lambda *_, **__: None
-        _cfg_tenant = lambda *_, **__: None
-        _cfg_custom = lambda: {}
+        def _cfg_username(*_, **__): return None
+        def _cfg_subscription(*_, **__): return None
+        def _cfg_tenant(*_, **__): return None
+        def _cfg_custom(): return {}
 
     js = generate_scrub_js(
         username=_cfg_username() or 'myalias',

@@ -12,10 +12,7 @@ from __future__ import annotations
 
 import base64
 import html
-import json
-import os
 from pathlib import Path
-from typing import Any
 
 
 def _encode_image(path: str) -> str:
@@ -62,7 +59,7 @@ def generate_comparison_report(
         The HTML string
     """
     from . import github_integration as _gh_mod
-    skill_version = _gh_mod.get_skill_version()
+    _ = _gh_mod.get_skill_version()
 
     interactive = server_port > 0 and not pr_url
     finalized = bool(pr_url)

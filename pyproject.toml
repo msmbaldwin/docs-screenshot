@@ -1,0 +1,35 @@
+[project]
+name = "docs-screenshot"
+version = "0.1.0"
+description = "Skill for capturing and editing Azure docs screenshots."
+requires-python = ">=3.10"
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+extend-exclude = [
+    "test-comparison",
+    ".venv",
+    "build",
+    "dist",
+]
+
+[tool.ruff.lint]
+# Conservative defaults: pyflakes (F), pycodestyle errors (E), bugbear (B),
+# isort (I), pyupgrade (UP). Skip rules that would churn this codebase.
+select = ["E", "F", "B", "I", "UP"]
+ignore = [
+    "E501",  # line too long (handled by formatter, not enforced)
+    "E402",  # module-level import not at top (some lib/ files use sys.path tricks)
+    "B008",  # function call in default arg (used intentionally in dataclasses)
+    "B904",  # raise ... from err (cosmetic, not always wanted)
+    "UP038", # isinstance tuple-to-union (Python 3.10 quirk)
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["B011", "F401"]   # tests may assert False; allow unused imports
+"lib/__init__.py" = ["F401"]   # re-exports
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
