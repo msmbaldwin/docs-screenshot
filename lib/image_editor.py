@@ -140,6 +140,15 @@ class RedactionSpec:
     font_size: str         # CSS size like "14px"
     font_weight: str       # CSS weight like "400"
     text_color: str        # CSS color string
+    # Optional: redraw a 1px (or wider) border around the fill rect after
+    # painting, so the redaction doesn't wipe input-field outlines that the
+    # rect happens to overlap. Set to None to skip (default).
+    border_color: str | None = None
+    border_width: int = 1
+    # Optional: shrink the fill rect by N pixels on each side. Useful when the
+    # caller's rect intentionally extends over a field border to catch
+    # descenders but the border itself should be preserved.
+    fill_inset: int = 0
 
 
 @dataclass
@@ -152,59 +161,118 @@ class CalloutSpec:
     number: int = 0        # Callout number (0 = plain rectangle, 1+ = numbered circle)
 
 
+def _fit_font_to_box(
+    draw: ImageDraw.ImageDraw,
+    text: str,
+    requested_size_px: float,
+    weight: str,
+    box_w: int,
+    box_h: int,
+    min_size_px: int = 8,
+) -> tuple[ImageFont.FreeTypeFont, tuple[int, int, int, int]]:
+    """Return the largest font (<= requested_size_px) whose rendered text
+    fits within box_w x box_h. Important for Linux/macOS where the fallback
+    sans-serif (DejaVu, Liberation) has noticeably taller glyphs than Segoe UI
+    at the same pixel size and would otherwise overflow the original rect.
+    """
+    size = max(min_size_px, int(requested_size_px))
+    while size >= min_size_px:
+        font = get_segoe_ui_font(size, weight)
+        bbox = draw.textbbox((0, 0), text, font=font)
+        w = bbox[2] - bbox[0]
+        h = bbox[3] - bbox[1]
+        if w <= box_w and h <= box_h:
+            return font, bbox
+        size -= 1
+    # Below min_size_px - return the smallest version anyway
+    font = get_segoe_ui_font(min_size_px, weight)
+    bbox = draw.textbbox((0, 0), text, font=font)
+    return font, bbox
+
+
 def redact_pii(image: Image.Image, specs: list[RedactionSpec]) -> Image.Image:
     """
     Redact PII from an image by painting over with background color
     and rendering replacement text in matching font.
-    
+
     Args:
         image: PIL Image to modify (modified in-place and returned)
         specs: List of RedactionSpec objects
-        
+
     Returns:
         Modified image
     """
     draw = ImageDraw.Draw(image)
-    
+
     for spec in specs:
         rect = spec.px_rect
         x = rect.get('x', 0)
         y = rect.get('y', 0)
         w = rect.get('width', 0)
         h = rect.get('height', 0)
-        
+
         if w <= 0 or h <= 0:
             continue
-        
-        # Step 1: Fill with background color
+
+        # Step 1: Fill with background color (with optional inset so we don't
+        # wipe a 1px field border we want to keep). Pillow's rectangle
+        # coordinates are inclusive on both corners, so the rect occupies
+        # pixels [x .. x+w-1] horizontally and [y .. y+h-1] vertically.
         bg_rgb = parse_css_color(spec.bg_color)
-        draw.rectangle([x, y, x + w, y + h], fill=bg_rgb)
-        
-        # Step 2: Render replacement text
-        font_size = parse_font_size(spec.font_size)
-        font = get_segoe_ui_font(font_size, spec.font_weight)
+        inset = max(0, int(spec.fill_inset))
+        fx0, fy0 = x + inset, y + inset
+        fx1, fy1 = x + w - 1 - inset, y + h - 1 - inset
+        if fx1 >= fx0 and fy1 >= fy0:
+            draw.rectangle([fx0, fy0, fx1, fy1], fill=bg_rgb)
+
+        # Step 2: Pick a font size that fits the box (auto-shrink for
+        # Linux/macOS fallback fonts that render larger than Segoe UI).
+        requested_size = parse_font_size(spec.font_size)
+        # Allow the text to use ~90% of the box height to avoid touching edges.
+        usable_h = max(1, h - 2)
+        font, bbox = _fit_font_to_box(
+            draw,
+            spec.replacement_text,
+            requested_size,
+            spec.font_weight,
+            w,
+            usable_h,
+        )
+
+        # Step 3: Truncate with ellipsis if still too wide after shrinking
         text_rgb = parse_css_color(spec.text_color)
-        
-        # Truncate or pad replacement text to fit the available width
         replacement = spec.replacement_text
-        text_bbox = draw.textbbox((0, 0), replacement, font=font)
-        text_w = text_bbox[2] - text_bbox[0]
-        
-        # If replacement is wider than the box, truncate with ellipsis
+        text_w = bbox[2] - bbox[0]
         if text_w > w:
             while len(replacement) > 1:
                 replacement = replacement[:-1]
-                text_bbox = draw.textbbox((0, 0), replacement + '...', font=font)
-                if text_bbox[2] - text_bbox[0] <= w:
+                bbox = draw.textbbox((0, 0), replacement + '...', font=font)
+                if bbox[2] - bbox[0] <= w:
                     replacement += '...'
                     break
-        
-        # Center vertically in the rect
-        text_h = text_bbox[3] - text_bbox[1]
-        text_y = y + (h - text_h) // 2
-        
-        draw.text((x, text_y), replacement, fill=text_rgb, font=font)
-    
+
+        # Step 4: Vertically center the *visible glyphs* in the rect. PIL's
+        # textbbox returns (left, top, right, bottom) where `top` is the offset
+        # from the draw anchor to the top of the inked pixels. We must subtract
+        # that offset so the actual glyphs (not the font's ascent-padded box)
+        # land centered. Without this correction, text rendered with fonts that
+        # have large internal leading (DejaVu Sans) appears low in the box.
+        text_h = bbox[3] - bbox[1]
+        text_y = y + (h - text_h) // 2 - bbox[1]
+        text_x = x - bbox[0]  # also correct horizontal anchor
+
+        draw.text((text_x, text_y), replacement, fill=text_rgb, font=font)
+
+        # Step 5: Optionally redraw a border around the original rect, so a
+        # field outline that we painted over gets restored.
+        if spec.border_color:
+            border_rgb = parse_css_color(spec.border_color)
+            bw = max(1, int(spec.border_width))
+            # Pillow's rectangle outline width parameter draws inside the box,
+            # so use the full rect coords.
+            draw.rectangle([x, y, x + w - 1, y + h - 1],
+                           outline=border_rgb, width=bw)
+
     return image
 
 
