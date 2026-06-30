@@ -1,0 +1,12 @@
+name: reliability-docs-pr
+path_rules:
+  - glob: "**/*.md"
+    portal: "Azure portal"
+    notes: >-
+      Azure reliability documentation. Articles describe availability
+      zones, regions, and resiliency patterns. Screenshots typically show
+      resource creation blades with the Availability/Redundancy options
+      highlighted.
+service_renames: {}
+portal_hints: {}
+known_hidden_nav_items: []

@@ -1,0 +1,38 @@
+name: azure-security-docs-pr
+path_rules:
+  - glob: "articles/key-vault/**"
+    portal: "Azure portal"
+    notes: >-
+      Azure Key Vault documentation. Resources live under Microsoft.KeyVault
+      in the Azure portal. Soft delete is enabled by default on new vaults.
+    nav_hints:
+      - "Navigate to your Key Vault resource via Azure portal search or All resources."
+      - "Most management blades are under Settings (Secrets, Keys, Certificates, Access policies, Networking)."
+  - glob: "articles/managed-hsm/**"
+    portal: "Azure portal"
+    notes: >-
+      Managed HSM is a separate resource type (Microsoft.KeyVault/managedHSMs)
+      from standard Key Vault, with its own portal experience.
+    nav_hints:
+      - "Search 'Managed HSM' in the Azure portal; do not navigate via the Key Vault blade."
+      - "Initial setup requires HSM administrators to be specified at provisioning time."
+  - glob: "articles/cloud-hsm/**"
+    portal: "Azure portal"
+    notes: >-
+      Cloud HSM is distinct from Managed HSM. Resource provider:
+      Microsoft.HardwareSecurityModules.
+    nav_hints:
+      - "Cloud HSM is in preview / GA depending on region; verify availability before capturing screenshots."
+  - glob: "articles/confidential-ledger/**"
+    portal: "Azure portal"
+    notes: >-
+      Azure Confidential Ledger. Resource provider:
+      Microsoft.ConfidentialLedger. Ledger creation requires specifying the
+      ledger type (Public vs Private) up front.
+service_renames: {}
+portal_hints:
+  Azure portal: >-
+    Confidential Ledger and Managed HSM may require specific Azure roles
+    (Confidential Ledger Contributor, Managed HSM Crypto Officer, etc.)
+    that aren't granted automatically to subscription owners.
+known_hidden_nav_items: []

@@ -1,0 +1,17 @@
+name: azure-monitor-docs-pr
+path_rules:
+  - glob: "articles/azure-monitor/logs/**"
+    portal: "Azure portal"
+    notes: >-
+      Log Analytics workspaces and KQL query screenshots. The Logs blade is
+      reached from a workspace or from individual resources via Monitor >
+      Logs.
+    nav_hints:
+      - "Open Log Analytics workspace > Logs to capture query screenshots."
+  - glob: "articles/azure-monitor/alerts/**"
+    portal: "Azure portal"
+    nav_hints:
+      - "Monitor > Alerts shows the alerts dashboard."
+service_renames: {}
+portal_hints: {}
+known_hidden_nav_items: []

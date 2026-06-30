@@ -1,0 +1,52 @@
+name: fabric-docs-pr
+path_rules:
+  - glob: "docs/admin/**"
+    portal: "Fabric Admin portal"
+    notes: >-
+      Fabric Admin portal pages. Requires tenant admin or Fabric admin
+      privileges to access most settings.
+    nav_hints:
+      - "Open the Fabric Admin portal from the gear icon in the Fabric header."
+      - "Admin privileges are required; screenshots may differ for non-admins."
+  - glob: "docs/data-factory/**"
+    portal: "Fabric Data Factory"
+    notes: >-
+      Data Factory experience within Microsoft Fabric. Pipelines and
+      dataflows are accessed from the Data Factory workload switcher.
+    nav_hints:
+      - "Switch to the Data Factory workload in the Fabric portal."
+  - glob: "docs/real-time-intelligence/**"
+    portal: "Fabric Real-Time Intelligence"
+    notes: >-
+      Real-Time Intelligence (formerly Real-Time Analytics) workload in
+      Fabric.
+    nav_hints:
+      - "Switch to the Real-Time Intelligence workload in the Fabric portal."
+  - glob: "docs/power-bi/**"
+    portal: "Power BI"
+    notes: >-
+      Power BI documentation within Fabric. Some features require Power BI
+      Pro or Premium Per User licensing.
+    nav_hints:
+      - "Access Power BI through the Fabric portal or app.powerbi.com."
+      - "Pro or Premium licensing may be needed for certain features."
+  - glob: "docs/rest-api/**"
+    portal: "Fabric REST API"
+    notes: >-
+      Fabric REST API documentation. A Fabric capacity must be provisioned
+      before API calls will succeed.
+    nav_hints:
+      - "Ensure a Fabric capacity is provisioned before testing API calls."
+service_renames:
+  Real-Time Analytics: Real-Time Intelligence
+portal_hints:
+  Fabric Admin portal: >-
+    Requires Fabric administrator or Power Platform administrator
+    privileges. Non-admin users will see a restricted view.
+  Power BI: >-
+    Some pages require Power BI Pro or Premium Per User licensing. Free-tier
+    users may not see all features shown in screenshots.
+  Fabric REST API: >-
+    A Fabric capacity must be provisioned and active for REST API calls to
+    succeed. Paused capacities will return errors.
+known_hidden_nav_items: []

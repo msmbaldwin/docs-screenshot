@@ -1,0 +1,48 @@
+name: azure-ai-docs-pr
+path_rules:
+  - glob: "articles/ai-services/document-intelligence/**"
+    portal: "Azure portal"
+    notes: >-
+      Formerly 'Form Recognizer'. The service was renamed to 'Document
+      Intelligence' in 2023. Screenshots should reflect the new branding.
+    nav_hints:
+      - "Look for 'Document Intelligence' in the portal, not 'Form Recognizer'."
+  - glob: "articles/ai-studio/foundry/**"
+    exclude_globs:
+      - "articles/ai-studio/foundry-classic/**"
+    portal: "Azure AI Foundry portal"
+    notes: >-
+      This is the NEW Azure AI Foundry portal (https://ai.azure.com), NOT
+      the legacy foundry-classic experience. Left-nav items may be hidden
+      behind a 'More' button; you may need to click it to reveal the
+      target item.
+    nav_hints:
+      - "Use Azure AI Foundry portal (ai.azure.com), NOT foundry-classic."
+      - "If the portal shows a 'New Foundry' vs 'Classic' toggle at the top, select 'New Foundry'."
+      - "Left-nav items may be hidden behind a '... More' button at the bottom of the nav pane."
+      - "Playgrounds, Fine-tuning, and Models+endpoints are commonly hidden behind 'More'."
+      - "After switching to New Foundry or clicking More, wait for the nav pane to refresh."
+    known_hidden_nav_items:
+      - "Playgrounds"
+      - "Fine-tuning"
+      - "Models + endpoints"
+  - glob: "articles/ai-services/**"
+    portal: "Azure portal"
+    notes: >-
+      General Azure AI Services documentation. These pages typically
+      reference resources in the Azure portal under the 'Azure AI services'
+      resource provider.
+    nav_hints:
+      - "Navigate via Azure AI services in the Azure portal."
+service_renames:
+  Form Recognizer: Document Intelligence
+  Cognitive Services: Azure AI Services
+  Azure AI Studio: Azure AI Foundry
+portal_hints:
+  Azure AI Foundry portal: >-
+    Requires an Azure AI Foundry hub and project. Some features are gated
+    behind specific Azure role assignments.
+known_hidden_nav_items:
+  - "Playgrounds"
+  - "Fine-tuning"
+  - "Models + endpoints"

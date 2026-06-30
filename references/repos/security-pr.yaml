@@ -1,0 +1,12 @@
+name: security-pr
+path_rules:
+  - glob: "**/*.md"
+    portal: "Azure portal"
+    notes: >-
+      General Azure security documentation. Articles span multiple security
+      services (Defender, Sentinel, Entra Permissions Management, etc.).
+      Check the specific article's frontmatter ms.service field to determine
+      the correct portal/page.
+service_renames: {}
+portal_hints: {}
+known_hidden_nav_items: []

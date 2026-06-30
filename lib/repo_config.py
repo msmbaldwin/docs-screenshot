@@ -1,206 +1,106 @@
 """
 Repo-specific customization system for the docs-screenshot skill.
 
-Each repo can define path-based rules, service rename mappings, portal hints,
-and known hidden nav items. This allows the screenshot pipeline to adapt its
-behavior (navigation, portal selection, scrubbing, etc.) based on which repo
-and doc path it is operating on.
+Per-repo customizations (path rules, service renames, portal hints, known
+hidden nav items) live as YAML files under ``references/repos/<name>.yaml``.
+This module loads them on first use and exposes the same public API the
+rest of the skill has always used.
 
-To add a new repo config, add an entry to REPO_CONFIGS with the repo name as
-the key. See existing entries for the expected structure.
+To add a new repo:
+
+  1. Create ``references/repos/<repo-name>.yaml`` (use an existing file as
+     a template).
+  2. The file's basename (without ``.yaml``) is the repo name used by
+     ``detect_repo_from_path()``.
+  3. Restart any running Python process so the cache is refreshed.
+
+JSON files (``references/repos/<name>.json``) are also supported and take
+precedence over YAML when both exist. YAML support requires PyYAML; if it
+isn't installed and only YAML files exist, those repos are skipped.
 """
 
 from __future__ import annotations
 
 import fnmatch
+import json
 import os
+from pathlib import Path
 from typing import Any
 
 
-# ---------------------------------------------------------------------------
-# Repo configurations
-# ---------------------------------------------------------------------------
+_REPOS_DIR = Path(__file__).parent.parent / "references" / "repos"
+_CACHE: dict[str, dict[str, Any]] | None = None
 
-REPO_CONFIGS: dict[str, dict[str, Any]] = {
-    # -----------------------------------------------------------------------
-    # azure-ai-docs-pr
-    # -----------------------------------------------------------------------
-    "azure-ai-docs-pr": {
-        "path_rules": [
-            {
-                "glob": "articles/ai-services/document-intelligence/**",
-                "portal": "Azure portal",
-                "notes": (
-                    "Formerly 'Form Recognizer'. The service was renamed to "
-                    "'Document Intelligence' in 2023. Screenshots should "
-                    "reflect the new branding."
-                ),
-                "nav_hints": [
-                    "Look for 'Document Intelligence' in the portal, not 'Form Recognizer'.",
-                ],
-            },
-            {
-                "glob": "articles/ai-studio/foundry/**",
-                "exclude_globs": ["articles/ai-studio/foundry-classic/**"],
-                "portal": "Azure AI Foundry portal",
-                "notes": (
-                    "This is the NEW Azure AI Foundry portal "
-                    "(https://ai.azure.com), NOT the legacy foundry-classic "
-                    "experience. Left-nav items may be hidden behind a 'More' "
-                    "button; you may need to click it to reveal the target item."
-                ),
-                "nav_hints": [
-                    "Use Azure AI Foundry portal (ai.azure.com), NOT foundry-classic.",
-                    "If the portal shows a 'New Foundry' vs 'Classic' toggle at the top, select 'New Foundry'.",
-                    "Left-nav items may be hidden behind a '... More' button at the bottom of the nav pane.",
-                    "Playgrounds, Fine-tuning, and Models+endpoints are commonly hidden behind 'More'.",
-                    "After switching to New Foundry or clicking More, wait for the nav pane to refresh.",
-                ],
-                "known_hidden_nav_items": [
-                    "Playgrounds",
-                    "Fine-tuning",
-                    "Models + endpoints",
-                ],
-            },
-            {
-                "glob": "articles/ai-services/**",
-                "portal": "Azure portal",
-                "notes": (
-                    "General Azure AI Services documentation. These pages "
-                    "typically reference resources in the Azure portal under "
-                    "the 'Azure AI services' resource provider."
-                ),
-                "nav_hints": [
-                    "Navigate via Azure AI services in the Azure portal.",
-                ],
-            },
-        ],
-        "service_renames": {
-            "Form Recognizer": "Document Intelligence",
-            "Cognitive Services": "Azure AI Services",
-            "Azure AI Studio": "Azure AI Foundry",
-        },
-        "portal_hints": {
-            "Azure AI Foundry portal": (
-                "Requires an Azure AI Foundry hub and project. Some features "
-                "are gated behind specific Azure role assignments."
-            ),
-        },
-        "known_hidden_nav_items": [
-            "Playgrounds",
-            "Fine-tuning",
-            "Models + endpoints",
-        ],
-    },
 
-    # -----------------------------------------------------------------------
-    # fabric-docs-pr
-    # -----------------------------------------------------------------------
-    "fabric-docs-pr": {
-        "path_rules": [
-            {
-                "glob": "docs/admin/**",
-                "portal": "Fabric Admin portal",
-                "notes": (
-                    "Fabric Admin portal pages. Requires tenant admin or "
-                    "Fabric admin privileges to access most settings."
-                ),
-                "nav_hints": [
-                    "Open the Fabric Admin portal from the gear icon in the Fabric header.",
-                    "Admin privileges are required; screenshots may differ for non-admins.",
-                ],
-            },
-            {
-                "glob": "docs/data-factory/**",
-                "portal": "Fabric Data Factory",
-                "notes": (
-                    "Data Factory experience within Microsoft Fabric. "
-                    "Pipelines and dataflows are accessed from the Data "
-                    "Factory workload switcher."
-                ),
-                "nav_hints": [
-                    "Switch to the Data Factory workload in the Fabric portal.",
-                ],
-            },
-            {
-                "glob": "docs/real-time-intelligence/**",
-                "portal": "Fabric Real-Time Intelligence",
-                "notes": (
-                    "Real-Time Intelligence (formerly Real-Time Analytics) "
-                    "workload in Fabric."
-                ),
-                "nav_hints": [
-                    "Switch to the Real-Time Intelligence workload in the Fabric portal.",
-                ],
-            },
-            {
-                "glob": "docs/power-bi/**",
-                "portal": "Power BI",
-                "notes": (
-                    "Power BI documentation within Fabric. Some features "
-                    "require Power BI Pro or Premium Per User licensing."
-                ),
-                "nav_hints": [
-                    "Access Power BI through the Fabric portal or app.powerbi.com.",
-                    "Pro or Premium licensing may be needed for certain features.",
-                ],
-            },
-            {
-                "glob": "docs/rest-api/**",
-                "portal": "Fabric REST API",
-                "notes": (
-                    "Fabric REST API documentation. A Fabric capacity must be "
-                    "provisioned before API calls will succeed."
-                ),
-                "nav_hints": [
-                    "Ensure a Fabric capacity is provisioned before testing API calls.",
-                ],
-            },
-        ],
-        "service_renames": {
-            "Real-Time Analytics": "Real-Time Intelligence",
-        },
-        "portal_hints": {
-            "Fabric Admin portal": (
-                "Requires Fabric administrator or Power Platform administrator "
-                "privileges. Non-admin users will see a restricted view."
-            ),
-            "Power BI": (
-                "Some pages require Power BI Pro or Premium Per User licensing. "
-                "Free-tier users may not see all features shown in screenshots."
-            ),
-            "Fabric REST API": (
-                "A Fabric capacity must be provisioned and active for REST API "
-                "calls to succeed. Paused capacities will return errors."
-            ),
-        },
-        "known_hidden_nav_items": [],
-    },
-}
+def _load_one(path: Path) -> dict[str, Any] | None:
+    """Load a single repo-config file (YAML or JSON)."""
+    try:
+        text = path.read_text(encoding="utf-8")
+        if path.suffix.lower() == ".json":
+            return json.loads(text)
+        try:
+            import yaml  # type: ignore[import-untyped]
+        except ImportError:
+            print(
+                f"Warning: cannot load {path}: PyYAML not installed. "
+                "Install it with `pip install pyyaml` or convert the file to JSON."
+            )
+            return None
+        return yaml.safe_load(text)
+    except Exception as e:
+        print(f"Warning: failed to load {path}: {e}")
+        return None
+
+
+def _load_all(refresh: bool = False) -> dict[str, dict[str, Any]]:
+    """Load every config file in references/repos/."""
+    global _CACHE
+    if _CACHE is not None and not refresh:
+        return _CACHE
+    out: dict[str, dict[str, Any]] = {}
+    if _REPOS_DIR.is_dir():
+        # JSON first so we can prefer it if both formats exist for a repo.
+        for path in sorted(_REPOS_DIR.iterdir()):
+            if path.suffix.lower() not in (".yaml", ".yml", ".json"):
+                continue
+            data = _load_one(path)
+            if not isinstance(data, dict):
+                continue
+            name = data.get("name") or path.stem
+            # JSON wins over YAML for the same stem.
+            if name in out and path.suffix.lower() in (".yaml", ".yml"):
+                continue
+            out[name] = data
+    _CACHE = out
+    return _CACHE
+
+
+# Backward-compatible attribute: existing callers and tests reference
+# ``repo_config.REPO_CONFIGS``. Provide it as a module-level property-like
+# dict by computing it on first access via __getattr__ below.
+def __getattr__(name: str) -> Any:
+    if name == "REPO_CONFIGS":
+        return _load_all()
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 
 # ---------------------------------------------------------------------------
-# Helper functions
+# Helper functions (public API - unchanged from previous in-code dict version)
 # ---------------------------------------------------------------------------
-
 
 def get_repo_config(repo_name: str) -> dict[str, Any] | None:
     """Return the full configuration dict for a repo, or None if not found."""
-    return REPO_CONFIGS.get(repo_name)
+    return _load_all().get(repo_name)
 
 
 def _path_matches_rule(doc_path: str, rule: dict[str, Any]) -> bool:
     """Check whether *doc_path* matches the rule's glob while respecting exclude_globs."""
-    # Normalise to forward slashes for consistent matching.
     normalised = doc_path.replace("\\", "/")
-
     if not fnmatch.fnmatch(normalised, rule["glob"]):
         return False
-
     for exclude in rule.get("exclude_globs", []):
         if fnmatch.fnmatch(normalised, exclude):
             return False
-
     return True
 
 
@@ -208,13 +108,12 @@ def get_path_rules(repo_name: str, doc_path: str) -> list[dict[str, Any]]:
     """Return all path rules whose glob matches *doc_path* within the given repo.
 
     Rules that define ``exclude_globs`` will be skipped if *doc_path* matches
-    any of the exclusion patterns.  Returns an empty list when the repo is
+    any of the exclusion patterns. Returns an empty list when the repo is
     unknown or no rules match.
     """
     config = get_repo_config(repo_name)
     if config is None:
         return []
-
     return [
         rule
         for rule in config.get("path_rules", [])
@@ -230,7 +129,7 @@ def get_service_renames(repo_name: str) -> dict[str, str]:
     config = get_repo_config(repo_name)
     if config is None:
         return {}
-    return config.get("service_renames", {})
+    return config.get("service_renames", {}) or {}
 
 
 def get_nav_hints(repo_name: str, doc_path: str) -> list[str]:
@@ -241,13 +140,11 @@ def get_nav_hints(repo_name: str, doc_path: str) -> list[str]:
     """
     seen: set[str] = set()
     hints: list[str] = []
-
     for rule in get_path_rules(repo_name, doc_path):
-        for hint in rule.get("nav_hints", []):
+        for hint in rule.get("nav_hints", []) or []:
             if hint not in seen:
                 seen.add(hint)
                 hints.append(hint)
-
     return hints
 
 
@@ -256,25 +153,36 @@ def get_portal_hints(repo_name: str, portal: str) -> str | None:
     config = get_repo_config(repo_name)
     if config is None:
         return None
-    return config.get("portal_hints", {}).get(portal)
+    return (config.get("portal_hints") or {}).get(portal)
 
 
 def detect_repo_from_path(local_path: str) -> str | None:
     """Attempt to detect the repo name from a local filesystem path.
 
     Walks up the path components looking for a directory name that matches a
-    known repo in ``REPO_CONFIGS``.  Returns the repo name on the first match,
-    or None if no match is found.
+    known repo. Returns the repo name on the first match, or None if no match
+    is found.
 
     This is a best-effort heuristic; it relies on the checkout directory being
     named after the repo (which is the default for ``git clone``).
     """
-    # Normalise the path so splitting works on both Windows and POSIX.
     normalised = os.path.normpath(local_path)
     parts = normalised.split(os.sep)
-
+    known = _load_all()
     for part in parts:
-        if part in REPO_CONFIGS:
+        if part in known:
             return part
-
     return None
+
+
+def list_known_repos() -> list[str]:
+    """Return all repo names currently configured."""
+    return sorted(_load_all().keys())
+
+
+if __name__ == "__main__":
+    print(f"Loading repo configs from: {_REPOS_DIR}")
+    for name, cfg in sorted(_load_all().items()):
+        n_rules = len(cfg.get("path_rules", []) or [])
+        n_renames = len(cfg.get("service_renames", {}) or {})
+        print(f"  - {name}: {n_rules} path rules, {n_renames} renames")

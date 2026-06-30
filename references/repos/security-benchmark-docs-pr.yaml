@@ -1,0 +1,17 @@
+name: security-benchmark-docs-pr
+path_rules:
+  - glob: "**/*.md"
+    portal: "Microsoft Defender for Cloud"
+    notes: >-
+      Microsoft Cloud Security Benchmark documentation. Most screenshots
+      show Defender for Cloud or Azure Policy compliance dashboards.
+    nav_hints:
+      - "Defender for Cloud > Regulatory compliance shows the benchmark dashboard."
+service_renames:
+  Azure Security Benchmark: Microsoft Cloud Security Benchmark
+portal_hints:
+  Microsoft Defender for Cloud: >-
+    Many features require Defender plans to be enabled on the subscription.
+    Free-tier subscriptions will see a reduced view of the compliance
+    dashboard.
+known_hidden_nav_items: []
