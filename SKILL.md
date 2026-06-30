@@ -1,6 +1,6 @@
 name: docs-screenshot
 description: 'docs-screenshot <article-path | description> [nocallouts] [nogimp] [nopii] [help]'
-allowed-tools: Bash(playwright-cli:*), Bash(python:*), Bash(az:*), Bash(pwsh:*), Bash(powershell:*)
+allowed-tools: Bash(playwright-cli:*), Bash(python:*), Bash(az:*), Bash(pwsh:*), Bash(powershell:*), Bash(gimp:*), mcp__playwright__*
 ---
 
 # Microsoft Documentation Screenshot Skill

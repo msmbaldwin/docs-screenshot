@@ -104,7 +104,7 @@ This skill works with ANY Microsoft web portal that uses Microsoft SSO. Choose t
    ```
    Then use the `configure-copilot` agent (or equivalent) to add the MCP server configuration so the tools become available.
 
-The commands in this skill use `playwright-browser_*` MCP tool calls as the primary interface (e.g., `playwright-browser_navigate`, `playwright-browser_snapshot`, `playwright-browser_click`). Older `playwright-cli` syntax is shown in some examples for reference but the MCP tools are preferred when available.
+The bash examples throughout this guide use the `playwright-cli` command-line interface. If the Playwright MCP server is loaded into the agent (tools named `playwright-browser_navigate`, `playwright-browser_snapshot`, `playwright-browser_click`, `playwright-browser_evaluate`, etc.), call those tools directly instead of shelling out to `playwright-cli` — each MCP tool maps 1:1 to a `playwright-cli` subcommand. The examples here favor `playwright-cli` because they're copy-pasteable into a shell and unambiguous about arguments.
 
 **CRITICAL: Headless-first policy.** Always run headless to avoid desktop interference:
 - The browser runs in the background; the user never sees a window pop up
