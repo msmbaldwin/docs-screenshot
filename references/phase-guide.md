@@ -419,11 +419,11 @@ The most reliable approach is to replace PII directly in the DOM BEFORE taking t
 **Use the dom_scrubber.py module to generate the scrub script:**
 ```bash
 python -c "
-from F_home_azure_screenshot.lib.dom_scrubber import generate_scrub_js
+from lib.dom_scrubber import generate_scrub_js
 js = generate_scrub_js(
-    username='jburchel',
-    subscription_name='jburchel BAMI subscription',
-    tenant_display_name='Microsoft Customer Led',
+    username='myalias',
+    subscription_name='My Subscription',
+    tenant_display_name='My Tenant',
     custom_replacements={
         'my-real-rg': 'contoso-rg',
         'DefaultResourceGroup-EUS': 'contoso-default-eus',
@@ -440,8 +440,8 @@ playwright-cli run-code "$(cat temp_scrub.js)"
 playwright-cli run-code "async page => {
   const rules = [
     {isRegex: true, pattern: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}', flags: 'gi', replacement: 'aaaa0a0a-bb1b-cc2c-dd3d-eeeeee4e4e4e'},
-    {isRegex: true, pattern: 'jburchel', flags: 'gi', replacement: 'john'},
-    {isRegex: false, pattern: 'BAMI subscription', replacement: 'Contoso subscription'},
+    {isRegex: true, pattern: 'myalias', flags: 'gi', replacement: 'john'},
+    {isRegex: false, pattern: 'My Subscription', replacement: 'Contoso subscription'},
     // Add more rules as needed
   ];
   const frames = page.frames();

@@ -391,7 +391,7 @@ if __name__ == '__main__':
         "Object ID: aaaaaaaa-0000-1111-2222-bbbbbbbbbbbb",  # approved, should skip
         "john@contoso.com",  # approved fictitious, should skip
         "IP: 192.168.1.1",  # private, should skip
-        "jburchel@microsoft.com",  # real employee email, SHOULD flag
+        "testuser@microsoft.com",  # microsoft.com employee email, SHOULD flag
         "MicrosoftCustomerLed.onmicrosoft.com",  # real tenant, SHOULD flag
         "sara@contoso.com",  # approved fictitious (single first name), should skip
     ]

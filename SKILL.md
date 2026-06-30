@@ -30,11 +30,11 @@ Options can be combined with any scenario. Examples:
 
 ```
 /docs-screenshot help
-/docs-screenshot F:\git\azure-docs\articles\storage\files\storage-how-to-use-files-windows.md
-/docs-screenshot F:\git\azure-docs\articles\storage\files\storage-how-to-use-files-windows.md compare
+/docs-screenshot ~/docs/azure-docs-pr/articles/storage/files/storage-how-to-use-files-windows.md
+/docs-screenshot ~/docs/azure-docs-pr/articles/storage/files/storage-how-to-use-files-windows.md compare
 /docs-screenshot Take a screenshot of the Azure Key Vault secrets page. nocallouts
 /docs-screenshot Capture the VM creation blade with size B2s selected. Add callouts on the Size dropdown and the Review+Create button.
-/docs-screenshot F:\git\azure-docs\articles\storage\files\soft-delete.md nogimp
+/docs-screenshot ~/docs/azure-docs-pr/articles/storage/files/soft-delete.md nogimp
 ```
 
 ### Detailed Help

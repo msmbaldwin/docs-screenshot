@@ -63,7 +63,7 @@ def generate_scrub_js(
     
     Args:
         custom_replacements: Dict of {find_text: replace_text} for exact string replacements
-        username: If provided, replaces all occurrences (e.g., 'jburchel' -> 'john')
+        username: If provided, replaces all occurrences (e.g., 'myalias' -> 'john')
         subscription_name: If provided, replaces subscription display name
         tenant_display_name: If provided, replaces tenant/directory display name
         include_default_rules: Whether to include GUID/email/tenant regex replacements
@@ -281,16 +281,17 @@ def generate_scrub_command(
 
 
 if __name__ == '__main__':
-    # Demo: generate scrub JS for a typical Azure scenario
+    # Demo: generate scrub JS for a typical Azure scenario.
+    # Replace these placeholder values with your own identifiers.
     js = generate_scrub_js(
-        username='jburchel',
-        subscription_name='jburchel BAMI subscription',
+        username='myalias',
+        subscription_name='My Subscription',
         custom_replacements={
-            'content-work-rg': 'contoso-rg',
-            'rg-jburchel': 'rg-contoso',
+            'my-real-rg': 'contoso-rg',
+            'rg-myalias': 'rg-contoso',
             'NetworkWatcherRG': 'contoso-networkwatcher-rg',
-            'operationsunrise-rg': 'fabrikam-rg',
-            'jukullam-content-rg': 'northwind-rg',
+            'team-project-rg': 'fabrikam-rg',
+            'colleague-content-rg': 'northwind-rg',
         },
     )
     print("Generated scrub JS:")

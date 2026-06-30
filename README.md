@@ -48,7 +48,7 @@ Restart Copilot CLI after installing. Verify with `/skills`.
 
 Ask Copilot CLI to find articles you've authored that contain screenshots. Here's a good prompt:
 
-> *"Search for markdown files I've recently modified using `git log --author=<my-alias>` in F:\git\azure-ai-docs-pr. Filter to articles that contain `:::image:::` or `![` references pointing to portal screenshots (not diagrams or conceptual art). Show me the top 5 candidates with their screenshot counts, and let me pick which ones to run."*
+> *"Search for markdown files I've recently modified using `git log --author=<my-alias>` in ~/docs/azure-ai-docs-pr. Filter to articles that contain `:::image:::` or `![` references pointing to portal screenshots (not diagrams or conceptual art). Show me the top 5 candidates with their screenshot counts, and let me pick which ones to run."*
 
 Replace `<my-alias>` with your GitHub username or email, and adjust the repo path. The skill works best today with articles in **azure-ai-docs-pr** and **fabric-docs-pr** (these repos have built-in navigation hints and service rename mappings). Other repos will work but may need manual corrections for portal-specific quirks.
 
@@ -56,7 +56,7 @@ Replace `<my-alias>` with your GitHub username or email, and adjust the repo pat
 
 Pick an article from the candidates and run with `compare`:
 
-> *"Refresh the screenshots in F:\git\azure-ai-docs-pr\articles\ai-services\document-intelligence\how-to-guides\create-document-intelligence-resource.md compare"*
+> *"Refresh the screenshots in ~/docs/azure-ai-docs-pr/articles/ai-services/document-intelligence/how-to-guides/create-document-intelligence-resource.md compare"*
 
 This captures every screenshot in the article, generates a side-by-side comparison report, and opens it in your browser. See [Interactive Comparison Review](#interactive-comparison-review) for the full workflow.
 
@@ -144,21 +144,21 @@ These examples show progressively more complex ways to use the skill, from a sin
 
 ### Refresh a single article's screenshots
 
-> *"Refresh the screenshots in F:\git\azure-ai-docs-pr\articles\ai-services\document-intelligence\how-to-guides\create-document-intelligence-resource.md. Read the article, figure out what each screenshot should show, provision any resources needed, recapture each one with PII scrubbed, and save them to the correct media paths."*
+> *"Refresh the screenshots in ~/docs/azure-ai-docs-pr/articles/ai-services/document-intelligence/how-to-guides/create-document-intelligence-resource.md. Read the article, figure out what each screenshot should show, provision any resources needed, recapture each one with PII scrubbed, and save them to the correct media paths."*
 
 ### Validate and compare: side-by-side HTML report
 
-> *"Pick 5 articles from F:\git\azure-ai-docs-pr\articles\ai-services that have Azure portal screenshots. For each one, recreate the screenshots based on the article content and alt text. Then generate an HTML comparison page showing every original image side-by-side with your recaptured version. Include callout boxes wherever the originals have them."*
+> *"Pick 5 articles from ~/docs/azure-ai-docs-pr/articles/ai-services that have Azure portal screenshots. For each one, recreate the screenshots based on the article content and alt text. Then generate an HTML comparison page showing every original image side-by-side with your recaptured version. Include callout boxes wherever the originals have them."*
 
 This produces a self-contained HTML report with base64-embedded images, a summary table, PII handling notes, and click-to-zoom on each image. [See an example comparison report.](test-comparison/comparison-report.html)
 
 ### Batch refresh by folder
 
-> *"Refresh all screenshots in F:\git\azure-ai-docs-pr\articles\ai-services\content-safety\. Find every markdown file that contains :::image::: references pointing to Azure portal screenshots (not diagrams). For each article, recapture its screenshots and generate a comparison report. Create any Azure resources needed, then ask me before cleaning them up."*
+> *"Refresh all screenshots in ~/docs/azure-ai-docs-pr/articles/ai-services/content-safety/. Find every markdown file that contains :::image::: references pointing to Azure portal screenshots (not diagrams). For each article, recapture its screenshots and generate a comparison report. Create any Azure resources needed, then ask me before cleaning them up."*
 
 ### Batch refresh by topic or pattern
 
-> *"Find all articles under F:\git\azure-ai-docs-pr\articles\ that show the 'Keys and Endpoint' page for any Azure AI service. Recapture each one with current portal UI, scrub all PII, match callout boxes from the originals, and generate a single HTML comparison report covering all of them."*
+> *"Find all articles under ~/docs/azure-ai-docs-pr/articles/ that show the 'Keys and Endpoint' page for any Azure AI service. Recapture each one with current portal UI, scrub all PII, match callout boxes from the originals, and generate a single HTML comparison report covering all of them."*
 
 ### Surgical refresh with custom PII rules
 
@@ -184,7 +184,7 @@ This works even without an existing article or screenshot to reference. The skil
 
 ### Interactive comparison review (compare flag)
 
-> *"Refresh the screenshots in F:\git\azure-docs\articles\storage\files\storage-how-to-use-files-windows.md compare"*
+> *"Refresh the screenshots in ~/docs/azure-docs/articles/storage/files/storage-how-to-use-files-windows.md compare"*
 
 The `compare` flag enables an interactive review workflow:
 1. The skill recaptures all screenshots and generates a side-by-side comparison report
@@ -196,7 +196,7 @@ The `compare` flag enables an interactive review workflow:
 7. When all screenshots look good, leave all textboxes empty and click **Submit & Create PR**
 8. A PR is created with before/after comparison images for reviewer validation
 
-> *"Refresh the screenshots in F:\git\azure-ai-docs-pr\articles\ai-services\content-safety\. compare nogimp"*
+> *"Refresh the screenshots in ~/docs/azure-ai-docs-pr/articles/ai-services/content-safety/. compare nogimp"*
 
 Combines `compare` with `nogimp` to skip opening GIMP (useful for batch operations where you only want the comparison report, not per-image GIMP windows).
 

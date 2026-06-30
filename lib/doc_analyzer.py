@@ -1056,8 +1056,8 @@ if __name__ == "__main__":
     analyzer = DocAnalyzer()
     images = analyzer.parse_markdown_images(
         sample_md,
-        doc_file_path=r"C:\repos\docs\articles\ai-services\recover-resources.md",
-        repo_root=r"C:\repos\docs",
+        doc_file_path="docs/articles/ai-services/recover-resources.md",
+        repo_root="docs",
     )
 
     print(f"Found {len(images)} image(s):\n")

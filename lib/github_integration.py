@@ -123,8 +123,8 @@ def _repo_dir() -> str:
     if env and os.path.isdir(env):
         return env
     candidates = [
-        r"F:\home\docs-screenshot",
         os.path.expanduser("~/docs-screenshot"),
+        os.path.expanduser("~/.copilot/skills/docs-screenshot"),
         os.path.join(os.getcwd(), "docs-screenshot"),
     ]
     for c in candidates:

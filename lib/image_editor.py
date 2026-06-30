@@ -438,7 +438,7 @@ if __name__ == '__main__':
     
     # Test optimize + naming
     test_name = enforce_naming_convention("My Test Screenshot 01!")
-    output = optimize_png(bordered, f"F:\\home\\azure-screenshot\\{test_name}")
+    output = optimize_png(bordered, os.path.join(os.path.expanduser("~"), "tmp", test_name))
     size_kb = os.path.getsize(output) / 1024
     print(f"Saved: {output} ({size_kb:.1f} KB)")
     print(f"Name convention: '{test_name}'")
