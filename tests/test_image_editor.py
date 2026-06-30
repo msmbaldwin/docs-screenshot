@@ -1,5 +1,11 @@
 """Tests for lib/image_editor.py (pure functions)."""
-from image_editor import enforce_naming_convention, parse_css_color, parse_font_size
+
+from image_editor import (
+    enforce_naming_convention,
+    get_segoe_ui_font,
+    parse_css_color,
+    parse_font_size,
+)
 
 
 def test_parse_css_color_rgb():
@@ -66,3 +72,20 @@ def test_enforce_naming_strips_leading_trailing_hyphens():
 
 def test_enforce_naming_adds_png_extension():
     assert enforce_naming_convention("noextension") == "noextension.png"
+
+
+def test_get_segoe_ui_font_returns_truetype_on_linux():
+    """Regression: on Linux without Segoe UI/Arial, must still return a usable
+    TrueType font (DejaVu/Liberation), not the tiny PIL bitmap default."""
+    from PIL import ImageFont
+    font = get_segoe_ui_font(14, '400')
+    assert isinstance(font, ImageFont.FreeTypeFont), (
+        f"Expected FreeTypeFont fallback, got {type(font).__name__} "
+        f"(text rendering would be unusable)"
+    )
+
+
+def test_get_segoe_ui_font_bold_returns_truetype():
+    from PIL import ImageFont
+    font = get_segoe_ui_font(14, '700')
+    assert isinstance(font, ImageFont.FreeTypeFont)

@@ -63,37 +63,60 @@ def parse_font_size(css_font_size: str) -> float:
 def get_segoe_ui_font(size_px: float, weight: str = '400') -> ImageFont.FreeTypeFont:
     """
     Get Segoe UI font at the specified pixel size.
-    Falls back through variants based on weight.
+    Falls back through variants based on weight, then through cross-platform
+    sans-serif fonts (DejaVu Sans, Liberation Sans) on Linux/macOS where
+    Segoe UI isn't installed by default.
     """
     # Map CSS font-weight to font file variants
     weight_map = {
-        '100': 'segoeuil.ttf',   # Light
-        '200': 'segoeuil.ttf',
-        '300': 'segoeuisl.ttf',  # Semilight
-        '400': 'segoeui.ttf',    # Regular
-        '500': 'seguisb.ttf',    # Semibold
-        '600': 'seguisb.ttf',
-        '700': 'segoeuib.ttf',   # Bold
-        '800': 'segoeuib.ttf',
-        '900': 'segoeuib.ttf',
-        'normal': 'segoeui.ttf',
-        'bold': 'segoeuib.ttf',
+        '100': ('segoeuil.ttf',  False),  # Light
+        '200': ('segoeuil.ttf',  False),
+        '300': ('segoeuisl.ttf', False),  # Semilight
+        '400': ('segoeui.ttf',   False),  # Regular
+        '500': ('seguisb.ttf',   True),   # Semibold
+        '600': ('seguisb.ttf',   True),
+        '700': ('segoeuib.ttf',  True),   # Bold
+        '800': ('segoeuib.ttf',  True),
+        '900': ('segoeuib.ttf',  True),
+        'normal': ('segoeui.ttf',  False),
+        'bold':   ('segoeuib.ttf', True),
     }
-    
-    font_file = weight_map.get(str(weight), 'segoeui.ttf')
-    fallbacks = [font_file, 'segoeui.ttf', 'arial.ttf']
-    
-    # Convert CSS px to roughly equivalent pt for PIL
-    # PIL uses points; at 96 DPI, 1px ~ 0.75pt, but PIL TrueType
-    # size parameter is in pixels when using size in layout mode
-    size_pt = int(size_px)
-    
+
+    primary, is_bold = weight_map.get(str(weight), ('segoeui.ttf', False))
+
+    # Cross-platform fallback chain. ImageFont.truetype() can take either
+    # a bare filename (resolved via the system font path) or an absolute
+    # path. We mix both so the lookup works on Windows, macOS, and Linux.
+    linux_regular = [
+        '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',
+        '/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf',
+        'DejaVuSans.ttf',
+        'LiberationSans-Regular.ttf',
+        'Arial.ttf',
+    ]
+    linux_bold = [
+        '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf',
+        '/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf',
+        'DejaVuSans-Bold.ttf',
+        'LiberationSans-Bold.ttf',
+        'Arial-Bold.ttf',
+    ]
+    macos = ['/Library/Fonts/Arial.ttf', '/System/Library/Fonts/Helvetica.ttc']
+
+    fallbacks: list[str] = [primary, 'segoeui.ttf', 'arial.ttf']
+    fallbacks += linux_bold if is_bold else linux_regular
+    fallbacks += macos
+
+    size_pt = max(1, int(size_px))
+
     for fb in fallbacks:
         try:
             return ImageFont.truetype(fb, size_pt)
         except OSError:
             continue
-    
+
+    # Last-resort PIL default font (bitmap, very small) - signal that
+    # text rendering won't match Segoe UI on this system.
     return ImageFont.load_default()
 
 
