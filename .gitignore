@@ -4,6 +4,16 @@ test-*.json
 test-output/
 temp_*.js
 
+# Generated test-comparison artifacts (only Python harness scripts are tracked)
+test-comparison/captured/
+test-comparison/captured-v*/
+test-comparison/originals/
+test-comparison/compare-*/
+test-comparison/comparison-report*.html
+test-comparison/v*-results.json
+test-comparison/v*-manifest.json
+test-comparison/v*-auto-classifications.json
+
 # Python
 __pycache__/
 *.pyc
