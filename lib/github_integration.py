@@ -46,13 +46,26 @@ def create_branch(branch_name: str, base: str = "master") -> None:
     subprocess.run(["git", "checkout", "-b", branch_name], capture_output=True, cwd=_repo_dir())
 
 
+COPILOT_TRAILER = (
+    "Co-authored-by: Copilot "
+    "<223556219+Copilot@users.noreply.github.com>"
+)
+
+
+def _ensure_copilot_trailer(message: str) -> str:
+    """Append the Copilot co-author trailer if not already present."""
+    if "Co-authored-by: Copilot" in message:
+        return message
+    return message.rstrip() + "\n\n" + COPILOT_TRAILER + "\n"
+
+
 def commit_and_push(branch_name: str, message: str, files: list[str]) -> None:
     """Stage files, commit, and push the branch."""
     repo = _repo_dir()
     for f in files:
         subprocess.run(["git", "add", f], capture_output=True, cwd=repo)
     subprocess.run(
-        ["git", "commit", "-m", message,
+        ["git", "commit", "-m", _ensure_copilot_trailer(message),
          "--author", "Screenshot Feedback Bot <bot@docs-screenshot.local>"],
         capture_output=True, cwd=repo,
     )
@@ -73,7 +86,7 @@ def create_pull_request(
         "--head", branch,
         "--base", base,
         "--title", title,
-        "--body", body,
+        "--body", _ensure_copilot_trailer(body),
     ]
     return _gh(*cmd)
 
